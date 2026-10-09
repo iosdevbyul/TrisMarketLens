@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "../styles/wak-tokens.css";
+@import "../styles/wak-controls.css";
 
 :root {
   --background: var(--wak-background);

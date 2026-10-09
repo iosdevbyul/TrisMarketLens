@@ -3,6 +3,9 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+import { WakButton } from "@/components/design-system/WakButton";
+import { WakTextInput } from "@/components/design-system/WakTextInput";
+
 import {
   filterStocks,
   stockDisplayName,
@@ -21,17 +24,23 @@ export function StockExplorer({ stocks }: StockExplorerProps) {
   return (
     <section className="stock-explorer">
       <div className="stock-search-row">
-        <label className="stock-search">
-          <span>Search stocks</span>
-          <input
-            aria-label="Search stocks"
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Ticker, company, or sector"
-            type="search"
-            value={query}
-          />
-        </label>
-        <span className="panel-count">{filteredStocks.length} records</span>
+        <WakTextInput
+          aria-label="Search stocks"
+          className="stock-search"
+          label="Search stocks"
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="Ticker, company, or sector"
+          type="search"
+          value={query}
+        />
+        <div className="stock-search-actions">
+          {query ? (
+            <WakButton aria-label="Clear stock search" onClick={() => setQuery("")} variant="secondary">
+              Clear search
+            </WakButton>
+          ) : null}
+          <span className="panel-count">{filteredStocks.length} records</span>
+        </div>
       </div>
 
       <div className="stock-table" role="list">
