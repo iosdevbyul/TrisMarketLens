@@ -1,18 +1,19 @@
 @import "tailwindcss";
+@import "../styles/wak-tokens.css";
 
 :root {
-  --background: #07110f;
-  --surface: #0c1815;
-  --surface-strong: #10211d;
-  --border: rgba(185, 255, 222, 0.12);
-  --text: #eefcf5;
-  --muted: #8ba79a;
-  --accent: #83f6bd;
-  --accent-soft: rgba(131, 246, 189, 0.12);
+  --background: var(--wak-background);
+  --surface: var(--wak-surface);
+  --surface-strong: var(--wak-surface-secondary);
+  --border: var(--wak-divider);
+  --text: var(--wak-text-primary);
+  --muted: var(--wak-text-secondary);
+  --accent: var(--wak-primary);
+  --accent-soft: rgb(140 246 108 / 12%);
   --warning: #f4c96d;
-  --warning-soft: rgba(244, 201, 109, 0.12);
-  --danger: #ff8f89;
-  --danger-soft: rgba(255, 143, 137, 0.12);
+  --warning-soft: rgb(244 201 109 / 12%);
+  --danger: var(--wak-destructive);
+  --danger-soft: rgb(255 90 82 / 12%);
 }
 
 * {
@@ -27,7 +28,7 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at 75% 0%, rgba(48, 126, 92, 0.18), transparent 34rem),
+    radial-gradient(circle at 75% 0%, rgb(140 246 108 / 0.18), transparent 34rem),
     var(--background);
   color: var(--text);
   font-family:
@@ -52,7 +53,7 @@ button {
   height: 100vh;
   flex-direction: column;
   border-right: 1px solid var(--border);
-  background: rgba(5, 14, 12, 0.82);
+  background: rgb(11 14 17 / 0.82);
   padding: 28px 20px;
   backdrop-filter: blur(20px);
 }
@@ -69,7 +70,7 @@ button {
   height: 38px;
   width: 38px;
   place-items: center;
-  border: 1px solid rgba(131, 246, 189, 0.34);
+  border: 1px solid rgb(140 246 108 / 0.34);
   border-radius: 12px;
   background: var(--accent-soft);
   color: var(--accent);
@@ -125,7 +126,7 @@ button {
 }
 
 .nav-item small {
-  color: #557065;
+  color: var(--wak-text-secondary);
   font-size: 10px;
   text-transform: uppercase;
 }
@@ -145,7 +146,7 @@ button {
   width: 7px;
   border-radius: 999px;
   background: var(--accent);
-  box-shadow: 0 0 18px rgba(131, 246, 189, 0.8);
+  box-shadow: 0 0 18px rgb(140 246 108 / 0.8);
 }
 
 .content {
@@ -204,7 +205,7 @@ h1 {
 .metric-card,
 .panel {
   border: 1px solid var(--border);
-  background: linear-gradient(145deg, rgba(16, 33, 29, 0.88), rgba(8, 20, 17, 0.9));
+  background: linear-gradient(145deg, rgb(23 27 32 / 0.88), rgb(11 14 17 / 0.9));
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
 }
 
@@ -227,7 +228,7 @@ h1 {
 }
 
 .metric-detail {
-  color: #6f8b7f;
+  color: var(--wak-text-secondary);
   font-size: 11px;
   line-height: 1.5;
 }
@@ -272,7 +273,7 @@ h1 {
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  background: #0b1814;
+  background: var(--wak-surface);
   padding: 15px 16px;
 }
 
@@ -447,7 +448,7 @@ h1 {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  background: #0b1814;
+  background: var(--wak-surface);
   padding: 15px 16px;
 }
 
@@ -500,7 +501,7 @@ h1 {
   border: 1px solid var(--border);
   border-radius: 12px;
   outline: none;
-  background: #081410;
+  background: var(--wak-background);
   color: var(--text);
   padding: 13px 14px;
   font: inherit;
@@ -508,8 +509,8 @@ h1 {
 }
 
 .stock-search input:focus {
-  border-color: rgba(131, 246, 189, 0.45);
-  box-shadow: 0 0 0 3px rgba(131, 246, 189, 0.08);
+  border-color: rgb(140 246 108 / 0.45);
+  box-shadow: 0 0 0 3px rgb(140 246 108 / 0.08);
 }
 
 .stock-table {
@@ -524,7 +525,7 @@ h1 {
   justify-content: space-between;
   gap: 20px;
   color: inherit;
-  background: #0b1814;
+  background: var(--wak-surface);
   padding: 16px;
   text-decoration: none;
 }
@@ -534,7 +535,7 @@ h1 {
 }
 
 .stock-row:hover {
-  background: #10211d;
+  background: var(--wak-surface-secondary);
 }
 
 .stock-name,
@@ -626,8 +627,8 @@ h1 {
   border: 1px solid var(--border);
   border-radius: 16px;
   background:
-    linear-gradient(180deg, rgba(131, 246, 189, 0.035), transparent),
-    #081410;
+    linear-gradient(180deg, rgb(140 246 108 / 0.035), transparent),
+    var(--wak-background);
 }
 
 .chart-placeholder-grid {
@@ -638,7 +639,7 @@ h1 {
 }
 
 .chart-placeholder-grid span {
-  border-bottom: 1px solid rgba(185, 255, 222, 0.07);
+  border-bottom: 1px solid rgb(140 246 108 / 0.07);
 }
 
 .chart-placeholder-copy {
@@ -662,7 +663,7 @@ h1 {
 .chart-placeholder-copy > span {
   display: inline-block;
   margin-top: 14px;
-  color: #6f8b7f;
+  color: var(--wak-text-secondary);
   font-size: 11px;
   font-variant-numeric: tabular-nums;
 }
@@ -712,8 +713,8 @@ h1 {
 
 .model-link:hover {
   transform: translateY(-2px);
-  border-color: rgba(131, 246, 189, 0.24);
-  background: linear-gradient(145deg, rgba(18, 39, 34, 0.96), rgba(9, 23, 19, 0.96));
+  border-color: rgb(140 246 108 / 0.24);
+  background: linear-gradient(145deg, rgb(34 40 49 / 0.96), rgb(11 14 17 / 0.96));
 }
 
 .model-link-action {
@@ -754,7 +755,7 @@ h1 {
 .metric-comparison {
   border: 1px solid var(--border);
   border-radius: 14px;
-  background: #0b1814;
+  background: var(--wak-surface);
   padding: 16px;
 }
 
@@ -796,7 +797,7 @@ h1 {
   height: 7px;
   overflow: hidden;
   border-radius: 999px;
-  background: rgba(185, 255, 222, 0.08);
+  background: rgb(140 246 108 / 0.08);
 }
 
 .metric-bar-fill {
@@ -817,7 +818,7 @@ h1 {
   grid-template-columns: 1.2fr repeat(3, minmax(90px, 1fr));
   gap: 12px;
   padding: 13px 15px;
-  background: #0b1814;
+  background: var(--wak-surface);
   color: var(--muted);
   font-size: 11px;
   font-variant-numeric: tabular-nums;
@@ -828,7 +829,7 @@ h1 {
 }
 
 .model-metric-header {
-  color: #6f8b7f;
+  color: var(--wak-text-secondary);
   font-size: 10px;
   font-weight: 750;
   text-transform: uppercase;
@@ -845,7 +846,7 @@ h1 {
   margin-top: 22px;
   border: 1px solid var(--border);
   border-radius: 12px;
-  background: #081410;
+  background: var(--wak-background);
   color: var(--accent);
   padding: 14px;
   font-size: 11px;
@@ -896,8 +897,8 @@ h1 {
 
 .evidence-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(131, 246, 189, 0.24);
-  background: linear-gradient(145deg, rgba(18, 39, 34, 0.96), rgba(9, 23, 19, 0.96));
+  border-color: rgb(140 246 108 / 0.24);
+  background: linear-gradient(145deg, rgb(34 40 49 / 0.96), rgb(11 14 17 / 0.96));
 }
 
 .evidence-card-header {
@@ -928,7 +929,7 @@ h1 {
 .blocker-summary-grid > div {
   display: grid;
   gap: 8px;
-  background: #0b1814;
+  background: var(--wak-surface);
   padding: 18px;
 }
 
@@ -995,7 +996,7 @@ h1 {
 
 .verified-note {
   margin-top: 18px;
-  border: 1px solid rgba(131, 246, 189, 0.2);
+  border: 1px solid rgb(140 246 108 / 0.2);
   border-radius: 14px;
   background: var(--accent-soft);
   padding: 16px;
@@ -1047,8 +1048,8 @@ h1 {
 
 .backtest-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(131, 246, 189, 0.24);
-  background: linear-gradient(145deg, rgba(18, 39, 34, 0.96), rgba(9, 23, 19, 0.96));
+  border-color: rgb(140 246 108 / 0.24);
+  background: linear-gradient(145deg, rgb(34 40 49 / 0.96), rgb(11 14 17 / 0.96));
 }
 
 .backtest-card-header {
@@ -1079,7 +1080,7 @@ h1 {
   display: grid;
   grid-template-columns: 34px minmax(0, 1fr);
   gap: 14px;
-  background: #0b1814;
+  background: var(--wak-surface);
   padding: 17px;
 }
 
@@ -1088,7 +1089,7 @@ h1 {
   width: 28px;
   height: 28px;
   place-items: center;
-  border: 1px solid rgba(131, 246, 189, 0.22);
+  border: 1px solid rgb(140 246 108 / 0.22);
   border-radius: 999px;
   background: var(--accent-soft);
   color: var(--accent);
@@ -1140,7 +1141,7 @@ h1 {
 
 .backtest-rule-row dt small {
   max-width: 460px;
-  color: #6f8b7f;
+  color: var(--wak-text-secondary);
   font-size: 10px;
   font-weight: 500;
   line-height: 1.45;
@@ -1165,7 +1166,7 @@ h1 {
   grid-template-columns: 190px minmax(0, 1fr);
   gap: 16px;
   align-items: center;
-  background: #0b1814;
+  background: var(--wak-surface);
   padding: 15px 16px;
 }
 
@@ -1195,7 +1196,7 @@ h1 {
 .performance-placeholder > div {
   display: grid;
   gap: 8px;
-  background: #0b1814;
+  background: var(--wak-surface);
   padding: 18px;
 }
 
@@ -1205,7 +1206,7 @@ h1 {
 }
 
 .performance-placeholder strong {
-  color: #6f8b7f;
+  color: var(--wak-text-secondary);
   font-size: 24px;
   font-weight: 650;
 }
@@ -1236,3 +1237,11 @@ h1 {
     text-align: left;
   }
 }
+
+/* Shared WakTrainer primitives, scoped to the existing dashboard markup. */
+.metric-card, .panel { border-radius: var(--wak-radius-card); }
+.metric-card { padding: var(--wak-spacing-lg); }
+.panel { padding: var(--wak-spacing-lg); }
+.nav-item { border-radius: var(--wak-radius-md); }
+.metric-value { font-size: var(--wak-type-metric-md); }
+.panel h2 { font-size: var(--wak-type-section-title); }
