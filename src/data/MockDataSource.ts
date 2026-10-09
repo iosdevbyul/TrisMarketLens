@@ -1,6 +1,7 @@
 import type { DataSource } from "@/data/DataSource";
 import type { ProjectStatus } from "@/domain/project";
 import type { CoverageSummary, ModelSummary } from "@/domain/research";
+import type { StockDetail, StockSummary } from "@/domain/stock";
 
 const projectStatus: ProjectStatus = {
   productName: "Tris Market Lens",
@@ -52,6 +53,53 @@ const modelSummaries: ModelSummary[] = [
   },
 ];
 
+const stocks: StockDetail[] = [
+  {
+    ticker: "005930",
+    name: "Samsung Electronics",
+    market: "KOSPI",
+    sector: "Semiconductors",
+    dataStatus: "mock",
+    availableFrom: "2022-01-03",
+    latestDataDate: "2026-10-01",
+    evidenceNote: "Per-security evidence will be loaded from DonghakStockVision.",
+    chartNote: "No price values are fabricated in the mock UI.",
+  },
+  {
+    ticker: "000660",
+    name: "SK hynix",
+    market: "KOSPI",
+    sector: "Semiconductors",
+    dataStatus: "mock",
+    availableFrom: "2022-01-03",
+    latestDataDate: "2026-10-01",
+    evidenceNote: "Per-security evidence will be loaded from DonghakStockVision.",
+    chartNote: "No price values are fabricated in the mock UI.",
+  },
+  {
+    ticker: "005380",
+    name: "Hyundai Motor",
+    market: "KOSPI",
+    sector: "Automobiles",
+    dataStatus: "mock",
+    availableFrom: "2022-01-03",
+    latestDataDate: "2026-10-01",
+    evidenceNote: "Per-security evidence will be loaded from DonghakStockVision.",
+    chartNote: "No price values are fabricated in the mock UI.",
+  },
+  {
+    ticker: "105560",
+    name: "KB Financial Group",
+    market: "KOSPI",
+    sector: "Financials",
+    dataStatus: "mock",
+    availableFrom: "2022-01-03",
+    latestDataDate: "2026-10-01",
+    evidenceNote: "Per-security evidence will be loaded from DonghakStockVision.",
+    chartNote: "No price values are fabricated in the mock UI.",
+  },
+];
+
 export const mockDataSource: DataSource = {
   async getProjectStatus() {
     return projectStatus;
@@ -61,5 +109,16 @@ export const mockDataSource: DataSource = {
   },
   async getModelSummaries() {
     return modelSummaries;
+  },
+  async getStocks(): Promise<StockSummary[]> {
+    return stocks.map(({ ticker, name, market, sector }) => ({
+      ticker,
+      name,
+      market,
+      sector,
+    }));
+  },
+  async getStock(ticker: string) {
+    return stocks.find((stock) => stock.ticker === ticker) ?? null;
   },
 };

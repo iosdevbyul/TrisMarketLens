@@ -22,14 +22,15 @@ TrisMarketLens -> DataSource -> HttpDataSource -> DonghakStockVision API (planne
 Current routes:
 
 - / research overview
-- /stocks dataset coverage and future stock-explorer boundary
+- /stocks searchable mock stock explorer
+- /stocks/[ticker] stock detail and OHLC/evidence integration surface
 - /models qualified model metrics
 - /evidence evidence readiness and open blockers
 - /backtesting locked baseline run gate
 
-The UI intentionally uses a typed mock research snapshot until the HTTP API is
-available. It does not execute models, signals, or backtests and does not present
-simulated performance as real research output.
+The stock explorer intentionally ships without fabricated price values or
+per-security verification claims. Real OHLC, features, and lifecycle evidence will
+be rendered only after the DonghakStockVision HTTP API contract is connected.
 
 ## Development
 

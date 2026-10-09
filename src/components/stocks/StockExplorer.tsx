@@ -1,0 +1,55 @@
+"use client";
+
+import Link from "next/link";
+import { useMemo, useState } from "react";
+
+import { filterStocks, type StockSummary } from "@/domain/stock";
+
+interface StockExplorerProps {
+  stocks: StockSummary[];
+}
+
+export function StockExplorer({ stocks }: StockExplorerProps) {
+  const [query, setQuery] = useState("");
+  const filteredStocks = useMemo(() => filterStocks(stocks, query), [stocks, query]);
+
+  return (
+    <section className="stock-explorer">
+      <div className="stock-search-row">
+        <label className="stock-search">
+          <span>Search stocks</span>
+          <input
+            aria-label="Search stocks"
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Ticker, company, or sector"
+            type="search"
+            value={query}
+          />
+        </label>
+        <span className="panel-count">{filteredStocks.length} mock records</span>
+      </div>
+
+      <div className="stock-table" role="list">
+        {filteredStocks.map((stock) => (
+          <Link className="stock-row" href={`/stocks/${stock.ticker}`} key={stock.ticker}>
+            <div>
+              <p className="stock-name">{stock.name}</p>
+              <p className="stock-meta">{stock.ticker} · {stock.market}</p>
+            </div>
+            <div className="stock-row-right">
+              <span>{stock.sector}</span>
+              <span aria-hidden="true">→</span>
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      {filteredStocks.length === 0 ? (
+        <div className="empty-state">
+          <p>No matching mock stock.</p>
+          <span>Live universe search will arrive with the DonghakStockVision API.</span>
+        </div>
+      ) : null}
+    </section>
+  );
+}
