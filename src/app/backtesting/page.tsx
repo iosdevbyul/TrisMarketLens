@@ -1,32 +1,56 @@
+import Link from "next/link";
+
 import { PageHeader } from "@/components/common/PageHeader";
 import { StatusList } from "@/components/dashboard/StatusList";
 import { mockDataSource } from "@/data/MockDataSource";
 
 export default async function BacktestingPage() {
-  const status = await mockDataSource.getProjectStatus();
+  const baseline = await mockDataSource.getBaselineBacktest();
 
   return (
     <>
       <PageHeader
-        badge="No performance data yet"
-        description="The baseline strategy is locked, but the historical run will not execute until the input evidence is frozen."
+        badge="Run not executed"
+        description="The locked baseline contract is visible now, while performance remains intentionally unavailable until the evidence blockers, runner tail integration, and run-input freeze are complete."
         eyebrow="Backtesting"
-        title="Baseline"
+        title="Historical research"
       />
 
-      <section className="panel single-panel">
-        <div className="panel-heading">
-          <div>
-            <p className="eyebrow">Readiness</p>
-            <h2>Run gate</h2>
+      <section className="backtest-overview-grid">
+        <Link className="panel backtest-card" href="/backtesting/baseline">
+          <div className="backtest-card-header">
+            <div>
+              <p className="eyebrow">Locked policy</p>
+              <h2>{baseline.title}</h2>
+            </div>
+            <span className="status-pill" data-state="blocked">
+              Blocked
+            </span>
           </div>
-        </div>
-        <StatusList items={status.baseline} />
+          <p className="section-copy">{baseline.summary}</p>
+          <span className="backtest-card-action">View baseline contract →</span>
+        </Link>
+
+        <article className="panel">
+          <div className="panel-heading">
+            <div>
+              <p className="eyebrow">Readiness</p>
+              <h2>Run gate</h2>
+            </div>
+            <span className="panel-count">{baseline.readiness.length} checks</span>
+          </div>
+          <StatusList items={baseline.readiness} />
+        </article>
+      </section>
+
+      <section className="panel single-panel">
+        <p className="eyebrow">Performance</p>
+        <h2>No historical results yet</h2>
         <div className="run-lock">
           <p>No fabricated performance metrics.</p>
           <span>
-            Return, CAGR, drawdown, Sharpe, win rate, trades, and the equity curve
-            will stay absent until the locked historical baseline is actually run.
+            Return, CAGR, drawdown, Sharpe, win rate, trade history, monthly returns,
+            and the equity curve stay absent until the locked run actually executes.
           </span>
         </div>
       </section>

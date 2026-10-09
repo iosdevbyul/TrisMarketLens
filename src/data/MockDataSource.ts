@@ -1,4 +1,5 @@
 import type { DataSource } from "@/data/DataSource";
+import type { BaselineBacktestSnapshot } from "@/domain/backtest";
 import type { EvidenceDetail, EvidenceLayerId, EvidenceLayerSummary } from "@/domain/evidence";
 import type { ProjectStatus } from "@/domain/project";
 import type {
@@ -311,6 +312,215 @@ const evidenceLayers: EvidenceDetail[] = [
   },
 ];
 
+const baselineBacktest: BaselineBacktestSnapshot = {
+  id: "baseline",
+  title: "Locked historical baseline",
+  state: "blocked",
+  summary:
+    "The baseline policy is locked, but execution remains blocked until the remaining lifecycle and corporate-action evidence is complete and the runner tail contract is integrated.",
+  readiness: [
+    {
+      label: "Baseline policy",
+      state: "verified",
+      detail: "Signal, execution, sizing, liquidity, cost, and exit rules are locked.",
+    },
+    {
+      label: "Market calendar",
+      state: "verified",
+      detail: "Official market-wide calendar evidence is verified for the run window.",
+    },
+    {
+      label: "Settlement",
+      state: "verified",
+      detail: "Official T+2 settlement mapping is verified for possible execution sessions.",
+    },
+    {
+      label: "Security lifecycle",
+      state: "in_progress",
+      detail: "43 securities and 8,118 ticker-sessions remain unresolved.",
+    },
+    {
+      label: "Corporate actions",
+      state: "blocked",
+      detail: "Historical identity and corporate-action coverage are not complete.",
+    },
+    {
+      label: "Runner tail integration",
+      state: "blocked",
+      detail: "Execution-only tail sessions must process pending entries and exits without generating new signals.",
+    },
+    {
+      label: "Run input freeze",
+      state: "blocked",
+      detail: "The immutable baseline input manifest cannot be frozen yet.",
+    },
+    {
+      label: "Historical execution",
+      state: "not_started",
+      detail: "No locked historical baseline run has been executed.",
+    },
+  ],
+  timeline: [
+    {
+      label: "Signal anchor",
+      value: "2024-07-01 → 2025-06-30",
+      detail: "Approved historical simulation signal range; not an untouched final test.",
+    },
+    {
+      label: "Execution-only tail",
+      value: "2025-07-01 → 2025-07-07",
+      detail: "No new signals; only pending entries, open positions, and exits may resolve.",
+    },
+    {
+      label: "Settlement tail",
+      value: "2025-07-08 → 2025-07-09",
+      detail: "Allows the final 2025-07-07 exit to settle under T+2.",
+    },
+  ],
+  policyGroups: [
+    {
+      title: "Signal and position",
+      rules: [
+        {
+          label: "Executable model",
+          value: "Up HGB-7",
+          detail: "Only the qualified Up direction is executable in this baseline.",
+        },
+        {
+          label: "Signal threshold",
+          value: "Score ≥ 0.5",
+          detail: "Raw Up model score threshold.",
+        },
+        {
+          label: "Position side",
+          value: "Long only",
+          detail: "No shorts, leverage, fractional shares, or pyramiding.",
+        },
+        {
+          label: "Position limit",
+          value: "1 per ticker",
+          detail: "At most one open position for each security.",
+        },
+      ],
+    },
+    {
+      title: "Entry and sizing",
+      rules: [
+        {
+          label: "Entry timing",
+          value: "Next observed T+1 open",
+          detail: "Same-session entry is prohibited and failed T+1 entries are not retried on T+2.",
+        },
+        {
+          label: "Initial capital",
+          value: "₩100,000,000",
+          detail: "Locked starting capital for the historical baseline.",
+        },
+        {
+          label: "Target allocation",
+          value: "5% current equity",
+          detail: "Quantity is planned at signal time using the adverse planning price.",
+        },
+        {
+          label: "Concurrent positions",
+          value: "20 max",
+          detail: "Signals rank by score descending, then ticker ascending.",
+        },
+      ],
+    },
+    {
+      title: "Liquidity and reservation",
+      rules: [
+        {
+          label: "Zero volume",
+          value: "Reject",
+          detail: "A T+1 bar with zero volume cannot fill.",
+        },
+        {
+          label: "Volume cap",
+          value: "1%",
+          detail: "Maximum fill is capped at 1% of observed session volume.",
+        },
+        {
+          label: "Reservation",
+          value: "Immutable planned quantity",
+          detail: "Notional plus commission is reserved at signal time and unused reservation is released after resolution.",
+        },
+        {
+          label: "Actual cost guard",
+          value: "No resize on T+1",
+          detail: "If the full planned quantity exceeds its reservation at actual T+1 cost, the entry is rejected.",
+        },
+      ],
+    },
+    {
+      title: "Exit policy",
+      rules: [
+        {
+          label: "Barrier",
+          value: "max(2%, 2 × volatility_10)",
+          detail: "Target and stop distances are anchored to the entry price.",
+        },
+        {
+          label: "Holding limit",
+          value: "5 observed sessions",
+          detail: "Positions exit by target, stop, or the maximum holding period.",
+        },
+        {
+          label: "Same-bar conflict",
+          value: "Stop first",
+          detail: "When stop and target are both crossed on the same bar, stop wins.",
+        },
+      ],
+    },
+    {
+      title: "Costs",
+      rules: [
+        {
+          label: "Slippage",
+          value: "10 bps / side",
+          detail: "Adverse slippage is applied to both buys and sells.",
+        },
+        {
+          label: "Commission",
+          value: "1.5 bps / side",
+          detail: "Commission is rounded up to whole KRW.",
+        },
+        {
+          label: "Buy rounding",
+          value: "Ceil whole KRW",
+          detail: "Adverse buy price is rounded upward.",
+        },
+        {
+          label: "Sell rounding",
+          value: "Floor whole KRW",
+          detail: "Adverse sell price is rounded downward.",
+        },
+        {
+          label: "Tax and levy",
+          value: "Date aware",
+          detail: "Settlement-date tax and rural special tax schedules are applied by calendar year.",
+        },
+      ],
+    },
+  ],
+  fingerprints: [
+    {
+      label: "Baseline policy v3",
+      value: "89a5c0f6de304b6a5b7033b97b925f752609f9245d2994b6cc1634aedb1e41a8",
+    },
+    {
+      label: "Quality policy",
+      value: "c091f3...a489c",
+    },
+    {
+      label: "Integrated evidence package",
+      value: "68d732...fd92",
+    },
+  ],
+  performanceAvailable: false,
+};
+
 const stocks: StockDetail[] = [
   {
     ticker: "005930",
@@ -400,6 +610,9 @@ export const mockDataSource: DataSource = {
   },
   async getEvidenceLayer(id: EvidenceLayerId) {
     return evidenceLayers.find((layer) => layer.id === id) ?? null;
+  },
+  async getBaselineBacktest() {
+    return baselineBacktest;
   },
   async getStocks(): Promise<StockSummary[]> {
     return stocks.map(({ ticker, name, market, sector }) => ({
