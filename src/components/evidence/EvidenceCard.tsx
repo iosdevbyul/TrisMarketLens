@@ -1,13 +1,8 @@
 import Link from "next/link";
 
-import type { EvidenceLayerSummary } from "@/domain/evidence";
+import { WakStatusBadge } from "@/components/design-system/WakStatusBadge";
 
-const stateLabel = {
-  verified: "Verified",
-  in_progress: "In progress",
-  blocked: "Blocked",
-  not_started: "Not started",
-} as const;
+import type { EvidenceLayerSummary } from "@/domain/evidence";
 
 export function EvidenceCard({ layer }: { layer: EvidenceLayerSummary }) {
   return (
@@ -17,9 +12,7 @@ export function EvidenceCard({ layer }: { layer: EvidenceLayerSummary }) {
           <p className="eyebrow">{layer.sourceLabel}</p>
           <h2>{layer.title}</h2>
         </div>
-        <span className="status-pill" data-state={layer.state}>
-          {stateLabel[layer.state]}
-        </span>
+        <WakStatusBadge state={layer.state} />
       </div>
       <p className="section-copy">{layer.summary}</p>
       <span className="evidence-card-action">View evidence details →</span>
