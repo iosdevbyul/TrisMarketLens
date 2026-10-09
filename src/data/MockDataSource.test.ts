@@ -51,6 +51,47 @@ describe("MockDataSource", () => {
     expect(down?.oos.averagePrecision).toBe(0.442473);
   });
 
+  it("exposes evidence layers with scope-specific states", async () => {
+    const layers = await mockDataSource.getEvidenceLayers();
+
+    expect(layers).toHaveLength(5);
+    expect(layers.find((layer) => layer.id === "calendar")?.state).toBe("verified");
+    expect(layers.find((layer) => layer.id === "security-lifecycle")?.state).toBe(
+      "in_progress",
+    );
+    expect(layers.find((layer) => layer.id === "corporate-actions")?.state).toBe(
+      "blocked",
+    );
+  });
+
+  it("keeps calendar verification separate from lifecycle blockers", async () => {
+    const calendar = await mockDataSource.getEvidenceLayer("calendar");
+    const lifecycle = await mockDataSource.getEvidenceLayer("security-lifecycle");
+
+    expect(calendar?.metrics.find((metric) => metric.label === "Trading sessions")?.value).toBe(
+      "283",
+    );
+    expect(calendar?.blocker).toBeNull();
+
+    expect(
+      lifecycle?.metrics.find((metric) => metric.label === "Unexplained sessions")?.value,
+    ).toBe("8,118");
+    expect(lifecycle?.blocker).toContain("43 securities");
+  });
+
+  it("does not equate current DART mapping with historical identity coverage", async () => {
+    const dart = await mockDataSource.getEvidenceLayer("dart");
+    const corporateActions = await mockDataSource.getEvidenceLayer("corporate-actions");
+
+    expect(dart?.metrics.find((metric) => metric.label === "Current mapping")?.value).toBe(
+      "871 / 993",
+    );
+    expect(
+      corporateActions?.metrics.find((metric) => metric.label === "Historical identity")
+        ?.value,
+    ).toBe("0 / 993");
+  });
+
   it("returns searchable stock summaries and explicit mock-only details", async () => {
     const stocks = await mockDataSource.getStocks();
     const samsung = await mockDataSource.getStock("005930");
