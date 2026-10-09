@@ -1,6 +1,11 @@
 import type { DataSource } from "@/data/DataSource";
 import type { ProjectStatus } from "@/domain/project";
-import type { CoverageSummary, ModelSummary } from "@/domain/research";
+import type {
+  CoverageSummary,
+  ModelDetail,
+  ModelDirection,
+  ModelSummary,
+} from "@/domain/research";
 import type { StockDetail, StockSummary } from "@/domain/stock";
 
 const projectStatus: ProjectStatus = {
@@ -36,20 +41,92 @@ const coverageSummary: CoverageSummary = {
   unexplainedTickerSessions: 8_118,
 };
 
-const modelSummaries: ModelSummary[] = [
+const models: ModelDetail[] = [
   {
+    id: "up",
     direction: "Up",
     modelName: "HGB-7",
+    role: "baseline_executable",
     validationAveragePrecision: 0.37486,
     oosAveragePrecision: 0.369409,
-    note: "Executable baseline direction",
+    note: "Executable direction in the locked long-only baseline.",
+    selectionMeanAveragePrecision: 0.411851,
+    selectionStdAveragePrecision: 0.036128,
+    validation: {
+      sampleCount: 55_081,
+      precision: 0.348164,
+      recall: 0.828423,
+      f1: 0.490277,
+      averagePrecision: 0.37486,
+      brier: 0.264718,
+    },
+    oos: {
+      sampleCount: 129_196,
+      precision: 0.351497,
+      recall: 0.76391,
+      f1: 0.48146,
+      averagePrecision: 0.369409,
+      brier: 0.258437,
+    },
+    provenance: {
+      artifactSha256: "43ffe774ce67f70c692a087183153b1cf5da86528ac36f2e2e78305daac29f60",
+      featureSet: "ohlcv_value_v1",
+      label: "reversal_barrier_v1",
+      horizonSessions: 5,
+      threshold: 0.5,
+      maxLeafNodes: 7,
+      learningRate: 0.05,
+      maxIterations: 150,
+      minSamplesLeaf: 100,
+      l2Regularization: 1,
+      maxBins: 255,
+      classWeight: "balanced",
+      earlyStopping: false,
+      randomSeed: 42,
+    },
   },
   {
+    id: "down",
     direction: "Down",
     modelName: "HGB-15",
+    role: "research_only",
     validationAveragePrecision: 0.398382,
     oosAveragePrecision: 0.442473,
-    note: "Qualified research model, not executable in the locked baseline",
+    note: "Qualified research model; the locked baseline does not execute short trades.",
+    selectionMeanAveragePrecision: 0.431781,
+    selectionStdAveragePrecision: 0.050672,
+    validation: {
+      sampleCount: 46_006,
+      precision: 0.355472,
+      recall: 0.863953,
+      f1: 0.503699,
+      averagePrecision: 0.398382,
+      brier: 0.269693,
+    },
+    oos: {
+      sampleCount: 114_582,
+      precision: 0.403392,
+      recall: 0.763866,
+      f1: 0.527968,
+      averagePrecision: 0.442473,
+      brier: 0.253538,
+    },
+    provenance: {
+      artifactSha256: "42e3ed40c33b513a9ee066157ceada00b2b44c337259f817875f018e943a6b2c",
+      featureSet: "ohlcv_value_v1",
+      label: "reversal_barrier_v1",
+      horizonSessions: 5,
+      threshold: 0.5,
+      maxLeafNodes: 15,
+      learningRate: 0.05,
+      maxIterations: 150,
+      minSamplesLeaf: 100,
+      l2Regularization: 1,
+      maxBins: 255,
+      classWeight: "balanced",
+      earlyStopping: false,
+      randomSeed: 42,
+    },
   },
 ];
 
@@ -107,8 +184,29 @@ export const mockDataSource: DataSource = {
   async getCoverageSummary() {
     return coverageSummary;
   },
-  async getModelSummaries() {
-    return modelSummaries;
+  async getModelSummaries(): Promise<ModelSummary[]> {
+    return models.map(
+      ({
+        id,
+        direction,
+        modelName,
+        role,
+        validationAveragePrecision,
+        oosAveragePrecision,
+        note,
+      }) => ({
+        id,
+        direction,
+        modelName,
+        role,
+        validationAveragePrecision,
+        oosAveragePrecision,
+        note,
+      }),
+    );
+  },
+  async getModel(direction: ModelDirection) {
+    return models.find((model) => model.id === direction) ?? null;
   },
   async getStocks(): Promise<StockSummary[]> {
     return stocks.map(({ ticker, name, market, sector }) => ({
