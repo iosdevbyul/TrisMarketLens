@@ -32,10 +32,23 @@ describe("MockDataSource", () => {
     const models = await mockDataSource.getModelSummaries();
 
     expect(models).toHaveLength(2);
-    expect(models.find((model) => model.direction === "Up")?.modelName).toBe("HGB-7");
-    expect(models.find((model) => model.direction === "Down")?.oosAveragePrecision).toBe(
+    expect(models.find((model) => model.id === "up")?.modelName).toBe("HGB-7");
+    expect(models.find((model) => model.id === "down")?.oosAveragePrecision).toBe(
       0.442473,
     );
+  });
+
+  it("keeps the Up model executable and the Down model research-only", async () => {
+    const up = await mockDataSource.getModel("up");
+    const down = await mockDataSource.getModel("down");
+
+    expect(up?.role).toBe("baseline_executable");
+    expect(up?.provenance.maxLeafNodes).toBe(7);
+    expect(up?.oos.averagePrecision).toBe(0.369409);
+
+    expect(down?.role).toBe("research_only");
+    expect(down?.provenance.maxLeafNodes).toBe(15);
+    expect(down?.oos.averagePrecision).toBe(0.442473);
   });
 
   it("returns searchable stock summaries and explicit mock-only details", async () => {

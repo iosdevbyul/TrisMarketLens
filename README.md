@@ -24,13 +24,17 @@ Current routes:
 - / research overview
 - /stocks searchable mock stock explorer
 - /stocks/[ticker] stock detail and OHLC/evidence integration surface
-- /models qualified model metrics
+- /models qualified model overview
+- /models/[direction] model qualification, validation/OOS metrics, configuration, and artifact provenance
 - /evidence evidence readiness and open blockers
 - /backtesting locked baseline run gate
 
-The stock explorer intentionally ships without fabricated price values or
-per-security verification claims. Real OHLC, features, and lifecycle evidence will
-be rendered only after the DonghakStockVision HTTP API contract is connected.
+The UI intentionally uses typed mock research snapshots until the HTTP API is
+available. It does not execute models, signals, or backtests and does not present
+simulated performance as real research output.
+
+The model detail pages expose already-qualified research metrics and locked
+artifact metadata only. They do not load model files or invoke inference.
 
 ## Development
 
