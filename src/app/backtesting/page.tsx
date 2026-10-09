@@ -2,6 +2,8 @@ import Link from "next/link";
 
 import { PageHeader } from "@/components/common/PageHeader";
 import { StatusList } from "@/components/dashboard/StatusList";
+import { WakSectionHeader } from "@/components/design-system/WakSectionHeader";
+import { WakStatusBadge } from "@/components/design-system/WakStatusBadge";
 import { getDataSource } from "@/data/getDataSource";
 
 export default async function BacktestingPage() {
@@ -24,22 +26,14 @@ export default async function BacktestingPage() {
               <p className="eyebrow">Locked policy</p>
               <h2>{baseline.title}</h2>
             </div>
-            <span className="status-pill" data-state="blocked">
-              Blocked
-            </span>
+            <WakStatusBadge state="blocked" />
           </div>
           <p className="section-copy">{baseline.summary}</p>
           <span className="backtest-card-action">View baseline contract →</span>
         </Link>
 
         <article className="panel">
-          <div className="panel-heading">
-            <div>
-              <p className="eyebrow">Readiness</p>
-              <h2>Run gate</h2>
-            </div>
-            <span className="panel-count">{baseline.readiness.length} checks</span>
-          </div>
+          <WakSectionHeader eyebrow="Readiness" title="Run gate" trailing={<span className="panel-count">{baseline.readiness.length} checks</span>} />
           <StatusList items={baseline.readiness} />
         </article>
       </section>

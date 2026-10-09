@@ -1,5 +1,7 @@
 import { PageHeader } from "@/components/common/PageHeader";
 import { EvidenceCard } from "@/components/evidence/EvidenceCard";
+import { WakSectionHeader } from "@/components/design-system/WakSectionHeader";
+import { WakStatusBadge } from "@/components/design-system/WakStatusBadge";
 import { getDataSource } from "@/data/getDataSource";
 
 export default async function EvidencePage() {
@@ -25,15 +27,7 @@ export default async function EvidencePage() {
       </section>
 
       <section className="panel single-panel">
-        <div className="panel-heading">
-          <div>
-            <p className="eyebrow">Open blockers</p>
-            <h2>What still prevents the baseline freeze</h2>
-          </div>
-          <span className="status-pill" data-state="blocked">
-            Freeze blocked
-          </span>
-        </div>
+        <WakSectionHeader eyebrow="Open blockers" title="What still prevents the baseline freeze" trailing={<WakStatusBadge state="blocked" label="Freeze blocked" />} />
 
         <div className="blocker-summary-grid">
           <div>

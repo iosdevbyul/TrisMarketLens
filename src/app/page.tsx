@@ -2,6 +2,7 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { StatusList } from "@/components/dashboard/StatusList";
 import { WakMetricCard } from "@/components/design-system/WakMetricCard";
 import { WakPanel } from "@/components/design-system/WakPanel";
+import { WakSectionHeader } from "@/components/design-system/WakSectionHeader";
 import { getDataSource } from "@/data/getDataSource";
 
 export default async function Home() {
@@ -25,23 +26,12 @@ export default async function Home() {
 
       <section className="panel-grid">
         <WakPanel>
-          <div className="panel-heading">
-            <div>
-              <p className="eyebrow">Evidence</p>
-              <h2>Research readiness</h2>
-            </div>
-            <span className="panel-count">{status.evidence.length} checks</span>
-          </div>
+          <WakSectionHeader eyebrow="Evidence" title="Research readiness" trailing={<span className="panel-count">{status.evidence.length} checks</span>} />
           <StatusList items={status.evidence} />
         </WakPanel>
 
         <WakPanel>
-          <div className="panel-heading">
-            <div>
-              <p className="eyebrow">Baseline</p>
-              <h2>Historical run</h2>
-            </div>
-          </div>
+          <WakSectionHeader eyebrow="Baseline" title="Historical run" />
           <StatusList items={status.baseline} />
           <div className="run-lock">
             <p>Historical baseline is intentionally locked.</p>

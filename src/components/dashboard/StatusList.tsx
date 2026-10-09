@@ -1,11 +1,5 @@
-import type { ProjectState, ResearchCheckpoint } from "@/domain/project";
-
-const stateLabel: Record<ProjectState, string> = {
-  verified: "Verified",
-  in_progress: "In progress",
-  blocked: "Blocked",
-  not_started: "Not started",
-};
+import { WakStatusBadge } from "@/components/design-system/WakStatusBadge";
+import type { ResearchCheckpoint } from "@/domain/project";
 
 interface StatusListProps {
   items: ResearchCheckpoint[];
@@ -20,9 +14,7 @@ export function StatusList({ items }: StatusListProps) {
             <p className="status-title">{item.label}</p>
             <p className="status-detail">{item.detail}</p>
           </div>
-          <span className="status-pill" data-state={item.state}>
-            {stateLabel[item.state]}
-          </span>
+          <WakStatusBadge state={item.state} />
         </article>
       ))}
     </div>
