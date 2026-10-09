@@ -1,14 +1,18 @@
 import { PageHeader } from "@/components/common/PageHeader";
+import { StockExplorer } from "@/components/stocks/StockExplorer";
 import { mockDataSource } from "@/data/MockDataSource";
 
 export default async function StocksPage() {
-  const coverage = await mockDataSource.getCoverageSummary();
+  const [coverage, stocks] = await Promise.all([
+    mockDataSource.getCoverageSummary(),
+    mockDataSource.getStocks(),
+  ]);
 
   return (
     <>
       <PageHeader
-        badge="Coverage snapshot"
-        description="The stock explorer will use the same typed data boundary as the research dashboard. For now this page exposes dataset coverage without pretending that a live API exists."
+        badge="Mock explorer"
+        description="Search the initial stock explorer shell now. Real ticker coverage, OHLC history, features, and evidence will arrive through the DonghakStockVision HTTP API."
         eyebrow="Market"
         title="Stocks"
       />
@@ -34,22 +38,23 @@ export default async function StocksPage() {
           <p className="metric-detail">Official current corporation mapping</p>
         </article>
         <article className="metric-card">
-          <p className="metric-label">Historical identity</p>
-          <p className="metric-value">
-            {coverage.historicalIdentityVerified}/{coverage.universe}
+          <p className="metric-label">Open lifecycle cases</p>
+          <p className="metric-value">{coverage.unresolvedSecurities}</p>
+          <p className="metric-detail">
+            {coverage.unexplainedTickerSessions.toLocaleString()} unexplained sessions
           </p>
-          <p className="metric-detail">Full-period identity continuity verified</p>
         </article>
       </section>
 
       <section className="panel single-panel">
-        <p className="eyebrow">Next integration</p>
-        <h2>Stock explorer is API-gated</h2>
-        <p className="section-copy">
-          Ticker search, OHLC history, feature inspection, and per-security quality
-          evidence will be connected after the DonghakStockVision HTTP API contract is
-          available.
-        </p>
+        <div className="panel-heading">
+          <div>
+            <p className="eyebrow">Stock explorer</p>
+            <h2>Browse the future API surface</h2>
+          </div>
+          <span className="panel-count">Mock only</span>
+        </div>
+        <StockExplorer stocks={stocks} />
       </section>
     </>
   );

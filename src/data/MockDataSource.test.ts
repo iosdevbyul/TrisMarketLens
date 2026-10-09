@@ -37,4 +37,17 @@ describe("MockDataSource", () => {
       0.442473,
     );
   });
+
+  it("returns searchable stock summaries and explicit mock-only details", async () => {
+    const stocks = await mockDataSource.getStocks();
+    const samsung = await mockDataSource.getStock("005930");
+
+    expect(stocks.some((stock) => stock.ticker === "005930")).toBe(true);
+    expect(samsung?.dataStatus).toBe("mock");
+    expect(samsung?.chartNote).toContain("No price values are fabricated");
+  });
+
+  it("returns null for a stock outside the mock explorer", async () => {
+    await expect(mockDataSource.getStock("999999")).resolves.toBeNull();
+  });
 });
