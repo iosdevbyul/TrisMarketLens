@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { PageHeader } from "@/components/common/PageHeader";
 import { StatusList } from "@/components/dashboard/StatusList";
+import { WakPanel } from "@/components/design-system/WakPanel";
 import { WakSectionHeader } from "@/components/design-system/WakSectionHeader";
 import { WakStatusBadge } from "@/components/design-system/WakStatusBadge";
 import { getDataSource } from "@/data/getDataSource";
@@ -32,13 +33,13 @@ export default async function BacktestingPage() {
           <span className="backtest-card-action">View baseline contract →</span>
         </Link>
 
-        <article className="panel">
+        <WakPanel>
           <WakSectionHeader eyebrow="Readiness" title="Run gate" trailing={<span className="panel-count">{baseline.readiness.length} checks</span>} />
           <StatusList items={baseline.readiness} />
-        </article>
+        </WakPanel>
       </section>
 
-      <section className="panel single-panel">
+      <WakPanel as="section" className="single-panel">
         <p className="eyebrow">Performance</p>
         <h2>No historical results yet</h2>
         <div className="run-lock">
@@ -48,7 +49,7 @@ export default async function BacktestingPage() {
             and the equity curve stay absent until the locked run actually executes.
           </span>
         </div>
-      </section>
+      </WakPanel>
     </>
   );
 }

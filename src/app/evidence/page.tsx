@@ -1,5 +1,6 @@
 import { PageHeader } from "@/components/common/PageHeader";
 import { EvidenceCard } from "@/components/evidence/EvidenceCard";
+import { WakPanel } from "@/components/design-system/WakPanel";
 import { WakSectionHeader } from "@/components/design-system/WakSectionHeader";
 import { WakStatusBadge } from "@/components/design-system/WakStatusBadge";
 import { getDataSource } from "@/data/getDataSource";
@@ -26,7 +27,7 @@ export default async function EvidencePage() {
         ))}
       </section>
 
-      <section className="panel single-panel">
+      <WakPanel as="section" className="single-panel">
         <WakSectionHeader eyebrow="Open blockers" title="What still prevents the baseline freeze" trailing={<WakStatusBadge state="blocked" label="Freeze blocked" />} />
 
         <div className="blocker-summary-grid">
@@ -51,7 +52,7 @@ export default async function EvidencePage() {
           research evidence state until DonghakStockVision exposes the same data
           through its HTTP API.
         </p>
-      </section>
+      </WakPanel>
     </>
   );
 }

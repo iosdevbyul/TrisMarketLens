@@ -1,4 +1,7 @@
 import { PageHeader } from "@/components/common/PageHeader";
+import { WakMetricCard } from "@/components/design-system/WakMetricCard";
+import { WakPanel } from "@/components/design-system/WakPanel";
+import { WakSectionHeader } from "@/components/design-system/WakSectionHeader";
 import { StockExplorer } from "@/components/stocks/StockExplorer";
 import { getDataSource } from "@/data/getDataSource";
 
@@ -19,44 +22,16 @@ export default async function StocksPage() {
       />
 
       <section className="metric-grid">
-        <article className="metric-card">
-          <p className="metric-label">Universe</p>
-          <p className="metric-value">{coverage.universe.toLocaleString()}</p>
-          <p className="metric-detail">Approved KOSPI securities</p>
-        </article>
-        <article className="metric-card">
-          <p className="metric-label">Daily bars</p>
-          <p className="metric-value">{coverage.totalBars.toLocaleString()}</p>
-          <p className="metric-detail">
-            {coverage.startDate} through {coverage.endDate}
-          </p>
-        </article>
-        <article className="metric-card">
-          <p className="metric-label">Current identity</p>
-          <p className="metric-value">
-            {coverage.currentIdentityVerified}/{coverage.universe}
-          </p>
-          <p className="metric-detail">Official current corporation mapping</p>
-        </article>
-        <article className="metric-card">
-          <p className="metric-label">Open lifecycle cases</p>
-          <p className="metric-value">{coverage.unresolvedSecurities}</p>
-          <p className="metric-detail">
-            {coverage.unexplainedTickerSessions.toLocaleString()} unexplained sessions
-          </p>
-        </article>
+        <WakMetricCard label="Universe" value={coverage.universe.toLocaleString()} detail="Approved KOSPI securities" />
+        <WakMetricCard label="Daily bars" value={coverage.totalBars.toLocaleString()} detail={`${coverage.startDate} through ${coverage.endDate}`} />
+        <WakMetricCard label="Current identity" value={`${coverage.currentIdentityVerified}/${coverage.universe}`} detail="Official current corporation mapping" />
+        <WakMetricCard label="Open lifecycle cases" value={String(coverage.unresolvedSecurities)} detail={`${coverage.unexplainedTickerSessions.toLocaleString()} unexplained sessions`} />
       </section>
 
-      <section className="panel single-panel">
-        <div className="panel-heading">
-          <div>
-            <p className="eyebrow">Stock explorer</p>
-            <h2>Browse the current research universe</h2>
-          </div>
-          <span className="panel-count">DataSource</span>
-        </div>
+      <WakPanel as="section" className="single-panel">
+        <WakSectionHeader eyebrow="Stock explorer" title="Browse the current research universe" trailing={<span className="panel-count">DataSource</span>} />
         <StockExplorer stocks={stocks} />
-      </section>
+      </WakPanel>
     </>
   );
 }

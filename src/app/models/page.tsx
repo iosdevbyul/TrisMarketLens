@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { WakStatusBadge } from "@/components/design-system/WakStatusBadge";
 import { PageHeader } from "@/components/common/PageHeader";
 import { getDataSource } from "@/data/getDataSource";
 
@@ -32,12 +33,7 @@ export default async function ModelsPage() {
                 <p className="eyebrow">{model.direction} direction</p>
                 <h2>{model.modelName}</h2>
               </div>
-              <span
-                className="status-pill"
-                data-state={model.role === "baseline_executable" ? "verified" : "not_started"}
-              >
-                {roleLabel(model.role)}
-              </span>
+              <WakStatusBadge state={model.role === "baseline_executable" ? "verified" : "not_started"} label={roleLabel(model.role)} />
             </div>
 
             <dl className="metric-list">
