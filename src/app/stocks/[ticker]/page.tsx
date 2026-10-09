@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/common/PageHeader";
 import { ChartPlaceholder } from "@/components/stocks/ChartPlaceholder";
 import { getDataSource } from "@/data/getDataSource";
+import { stockDisplayName, stockSectorLabel } from "@/domain/stock";
 
 interface StockDetailPageProps {
   params: Promise<{ ticker: string }>;
@@ -26,9 +27,9 @@ export default async function StockDetailPage({ params }: StockDetailPageProps) 
 
       <PageHeader
         badge={stock.dataStatus === "mock" ? "Mock stock detail" : "API stock detail"}
-        description={`${stock.ticker} · ${stock.market} · ${stock.sector}`}
+        description={`${stock.ticker} · ${stock.market} · ${stockSectorLabel(stock)}`}
         eyebrow="Stock research"
-        title={stock.name}
+        title={stockDisplayName(stock)}
       />
 
       <section className="stock-detail-grid">
@@ -56,15 +57,15 @@ export default async function StockDetailPage({ params }: StockDetailPageProps) 
           <h2>Quality and lifecycle</h2>
           <div className="evidence-placeholder">
             <span className="status-pill" data-state="in_progress">
-              API pending
+              Evidence limited
             </span>
             <p>{stock.evidenceNote}</p>
           </div>
           <div className="run-lock">
             <p>No inferred quality state.</p>
             <span>
-              The UI will not mark this security verified until the backend returns
-              authoritative per-security evidence.
+              The UI only presents evidence returned by DonghakStockVision and does not
+              infer lifecycle state from missing bars.
             </span>
           </div>
         </article>

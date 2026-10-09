@@ -13,7 +13,7 @@ export default async function StocksPage() {
     <>
       <PageHeader
         badge="Typed data source"
-        description="Search through the current data source. The default local mode is mock data, while the same UI can switch to the DonghakStockVision HTTP API when that backend is available."
+        description="Search the currently selected research data source. HTTP mode reads the reviewed DonghakStockVision snapshot without recreating research logic in the frontend."
         eyebrow="Market"
         title="Stocks"
       />
@@ -51,7 +51,7 @@ export default async function StocksPage() {
         <div className="panel-heading">
           <div>
             <p className="eyebrow">Stock explorer</p>
-            <h2>Browse the future API surface</h2>
+            <h2>Browse the current research universe</h2>
           </div>
           <span className="panel-count">DataSource</span>
         </div>
