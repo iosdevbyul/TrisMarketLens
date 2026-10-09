@@ -28,7 +28,8 @@ Current routes:
 - /models/[direction] model qualification, validation/OOS metrics, configuration, and artifact provenance
 - /evidence evidence-layer overview and baseline-freeze blockers
 - /evidence/[layer] calendar, settlement, DART, security-lifecycle, and corporate-action evidence details
-- /backtesting locked baseline run gate
+- /backtesting backtest overview and run-readiness gate
+- /backtesting/baseline locked baseline contract, chronology, policy, and performance placeholders
 
 The UI intentionally uses typed mock research snapshots until the HTTP API is
 available. It does not execute models, signals, evidence collection, or backtests
@@ -37,6 +38,12 @@ and does not present simulated performance as real research output.
 Evidence pages preserve scope boundaries. A verified market-wide calendar or
 settlement layer does not imply that per-security lifecycle or corporate-action
 coverage is complete. Open research blockers stay visible and fail closed.
+
+The baseline backtest page exposes the already-locked policy and chronology only.
+The signal anchor ends on 2025-06-30. Execution-only sessions may resolve pending
+entries and open positions afterward without generating new signals, followed by
+the settlement tail. Performance fields remain empty until the immutable run is
+actually executed.
 
 ## Development
 

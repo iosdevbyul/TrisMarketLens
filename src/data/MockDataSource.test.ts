@@ -92,6 +92,41 @@ describe("MockDataSource", () => {
     ).toBe("0 / 993");
   });
 
+  it("exposes the locked baseline without fabricating performance", async () => {
+    const baseline = await mockDataSource.getBaselineBacktest();
+
+    expect(baseline.state).toBe("blocked");
+    expect(baseline.performanceAvailable).toBe(false);
+    expect(
+      baseline.readiness.find((step) => step.label === "Historical execution")?.state,
+    ).toBe("not_started");
+  });
+
+  it("keeps signal anchors separate from the execution-only and settlement tails", async () => {
+    const baseline = await mockDataSource.getBaselineBacktest();
+
+    expect(baseline.timeline.map((item) => item.value)).toEqual([
+      "2024-07-01 → 2025-06-30",
+      "2025-07-01 → 2025-07-07",
+      "2025-07-08 → 2025-07-09",
+    ]);
+    expect(baseline.timeline[1]?.detail).toContain("No new signals");
+  });
+
+  it("preserves the locked baseline execution and sizing policy", async () => {
+    const baseline = await mockDataSource.getBaselineBacktest();
+    const rules = baseline.policyGroups.flatMap((group) => group.rules);
+
+    expect(rules.find((rule) => rule.label === "Executable model")?.value).toBe("Up HGB-7");
+    expect(rules.find((rule) => rule.label === "Initial capital")?.value).toBe(
+      "₩100,000,000",
+    );
+    expect(rules.find((rule) => rule.label === "Volume cap")?.value).toBe("1%");
+    expect(rules.find((rule) => rule.label === "Slippage")?.value).toBe(
+      "10 bps / side",
+    );
+  });
+
   it("returns searchable stock summaries and explicit mock-only details", async () => {
     const stocks = await mockDataSource.getStocks();
     const samsung = await mockDataSource.getStock("005930");
