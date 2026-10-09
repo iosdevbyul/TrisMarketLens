@@ -1,3 +1,4 @@
+import type { EvidenceDetail, EvidenceLayerId, EvidenceLayerSummary } from "@/domain/evidence";
 import type { ProjectStatus } from "@/domain/project";
 import type {
   CoverageSummary,
@@ -12,6 +13,8 @@ export interface DataSource {
   getCoverageSummary(): Promise<CoverageSummary>;
   getModelSummaries(): Promise<ModelSummary[]>;
   getModel(direction: ModelDirection): Promise<ModelDetail | null>;
+  getEvidenceLayers(): Promise<EvidenceLayerSummary[]>;
+  getEvidenceLayer(id: EvidenceLayerId): Promise<EvidenceDetail | null>;
   getStocks(): Promise<StockSummary[]>;
   getStock(ticker: string): Promise<StockDetail | null>;
 }

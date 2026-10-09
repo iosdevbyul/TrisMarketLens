@@ -26,15 +26,17 @@ Current routes:
 - /stocks/[ticker] stock detail and OHLC/evidence integration surface
 - /models qualified model overview
 - /models/[direction] model qualification, validation/OOS metrics, configuration, and artifact provenance
-- /evidence evidence readiness and open blockers
+- /evidence evidence-layer overview and baseline-freeze blockers
+- /evidence/[layer] calendar, settlement, DART, security-lifecycle, and corporate-action evidence details
 - /backtesting locked baseline run gate
 
 The UI intentionally uses typed mock research snapshots until the HTTP API is
-available. It does not execute models, signals, or backtests and does not present
-simulated performance as real research output.
+available. It does not execute models, signals, evidence collection, or backtests
+and does not present simulated performance as real research output.
 
-The model detail pages expose already-qualified research metrics and locked
-artifact metadata only. They do not load model files or invoke inference.
+Evidence pages preserve scope boundaries. A verified market-wide calendar or
+settlement layer does not imply that per-security lifecycle or corporate-action
+coverage is complete. Open research blockers stay visible and fail closed.
 
 ## Development
 
