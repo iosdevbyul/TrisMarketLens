@@ -48,3 +48,16 @@
   font-size: var(--wak-type-caption);
 }
 .wak-input-field input:focus { border-color: var(--wak-primary); }
+
+.stock-search-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--wak-spacing-md);
+}
+.stock-search-actions .wak-button {
+  min-height: 40px;
+  font-size: var(--wak-type-caption);
+}
+@media (max-width: 640px) {
+  .stock-search-actions { justify-content: space-between; }
+}
