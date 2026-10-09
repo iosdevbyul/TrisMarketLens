@@ -116,9 +116,25 @@ button {
   border-radius: 12px;
   background: transparent;
   color: var(--muted);
-  cursor: default;
+  cursor: pointer;
   padding: 11px 12px;
   text-align: left;
+}
+
+.nav-item:hover,
+.nav-item:focus-visible {
+  color: var(--wak-text-primary);
+  background: var(--wak-surface-secondary);
+}
+
+.nav-item:focus-visible,
+.brand:focus-visible,
+.stock-row:focus-visible,
+.model-link:focus-visible,
+.evidence-card:focus-visible,
+.backtest-card:focus-visible {
+  outline: 2px solid var(--wak-primary);
+  outline-offset: 2px;
 }
 
 .nav-item[data-active="true"] {
@@ -358,6 +374,10 @@ h1 {
     margin-top: 24px;
   }
 
+  .nav-item {
+    width: auto;
+  }
+
   .sidebar-note {
     display: none;
   }
@@ -486,32 +506,6 @@ h1 {
   align-items: end;
   justify-content: space-between;
   gap: 16px;
-}
-
-.stock-search {
-  display: grid;
-  gap: 8px;
-  width: min(520px, 100%);
-  color: var(--muted);
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.stock-search input {
-  width: 100%;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  outline: none;
-  background: var(--wak-background);
-  color: var(--text);
-  padding: 13px 14px;
-  font: inherit;
-  font-size: 13px;
-}
-
-.stock-search input:focus {
-  border-color: rgb(140 246 108 / 0.45);
-  box-shadow: 0 0 0 3px rgb(140 246 108 / 0.08);
 }
 
 .stock-table {
@@ -1246,3 +1240,17 @@ h1 {
 .nav-item { border-radius: var(--wak-radius-md); }
 .metric-value { font-size: var(--wak-type-metric-md); }
 .panel h2 { font-size: var(--wak-type-section-title); }
+
+/* Small-screen and reduced-motion accessibility refinements. */
+@media (max-width: 640px) {
+  .content { min-width: 0; }
+  .panel, .metric-card { min-width: 0; padding: var(--wak-spacing-regular); }
+  .panel-heading { flex-wrap: wrap; gap: var(--wak-spacing-md); }
+  .stock-row { overflow-wrap: anywhere; }
+  .stock-row-right { text-align: right; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .model-link, .evidence-card, .backtest-card { transition: none; }
+  .model-link:hover, .evidence-card:hover, .backtest-card:hover { transform: none; }
+}
