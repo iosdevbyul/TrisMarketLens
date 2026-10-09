@@ -19,4 +19,22 @@ describe("MockDataSource", () => {
       "verified",
     );
   });
+
+  it("keeps unresolved lifecycle evidence visible instead of hiding it", async () => {
+    const coverage = await mockDataSource.getCoverageSummary();
+
+    expect(coverage.unresolvedSecurities).toBe(43);
+    expect(coverage.unexplainedTickerSessions).toBe(8_118);
+    expect(coverage.historicalIdentityVerified).toBe(0);
+  });
+
+  it("exposes model qualification metrics without inventing backtest performance", async () => {
+    const models = await mockDataSource.getModelSummaries();
+
+    expect(models).toHaveLength(2);
+    expect(models.find((model) => model.direction === "Up")?.modelName).toBe("HGB-7");
+    expect(models.find((model) => model.direction === "Down")?.oosAveragePrecision).toBe(
+      0.442473,
+    );
+  });
 });
