@@ -1,11 +1,12 @@
 import { PageHeader } from "@/components/common/PageHeader";
 import { EvidenceCard } from "@/components/evidence/EvidenceCard";
-import { mockDataSource } from "@/data/MockDataSource";
+import { getDataSource } from "@/data/getDataSource";
 
 export default async function EvidencePage() {
+  const dataSource = getDataSource();
   const [layers, coverage] = await Promise.all([
-    mockDataSource.getEvidenceLayers(),
-    mockDataSource.getCoverageSummary(),
+    dataSource.getEvidenceLayers(),
+    dataSource.getCoverageSummary(),
   ]);
 
   return (
