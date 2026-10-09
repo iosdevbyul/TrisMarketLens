@@ -1,18 +1,19 @@
 import { PageHeader } from "@/components/common/PageHeader";
 import { StockExplorer } from "@/components/stocks/StockExplorer";
-import { mockDataSource } from "@/data/MockDataSource";
+import { getDataSource } from "@/data/getDataSource";
 
 export default async function StocksPage() {
+  const dataSource = getDataSource();
   const [coverage, stocks] = await Promise.all([
-    mockDataSource.getCoverageSummary(),
-    mockDataSource.getStocks(),
+    dataSource.getCoverageSummary(),
+    dataSource.getStocks(),
   ]);
 
   return (
     <>
       <PageHeader
-        badge="Mock explorer"
-        description="Search the initial stock explorer shell now. Real ticker coverage, OHLC history, features, and evidence will arrive through the DonghakStockVision HTTP API."
+        badge="Typed data source"
+        description="Search through the current data source. The default local mode is mock data, while the same UI can switch to the DonghakStockVision HTTP API when that backend is available."
         eyebrow="Market"
         title="Stocks"
       />
@@ -52,7 +53,7 @@ export default async function StocksPage() {
             <p className="eyebrow">Stock explorer</p>
             <h2>Browse the future API surface</h2>
           </div>
-          <span className="panel-count">Mock only</span>
+          <span className="panel-count">DataSource</span>
         </div>
         <StockExplorer stocks={stocks} />
       </section>

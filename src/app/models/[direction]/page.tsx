@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import { PageHeader } from "@/components/common/PageHeader";
 import { MetricComparison } from "@/components/models/MetricComparison";
-import { mockDataSource } from "@/data/MockDataSource";
+import { getDataSource } from "@/data/getDataSource";
 import type { ModelDirection } from "@/domain/research";
 
 interface ModelDetailPageProps {
@@ -19,13 +19,14 @@ function formatMetric(value: number) {
 }
 
 export default async function ModelDetailPage({ params }: ModelDetailPageProps) {
+  const dataSource = getDataSource();
   const { direction } = await params;
 
   if (!isModelDirection(direction)) {
     notFound();
   }
 
-  const model = await mockDataSource.getModel(direction);
+  const model = await dataSource.getModel(direction);
 
   if (!model) {
     notFound();

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { PageHeader } from "@/components/common/PageHeader";
-import { mockDataSource } from "@/data/MockDataSource";
+import { getDataSource } from "@/data/getDataSource";
 import type { EvidenceLayerId } from "@/domain/evidence";
 
 interface EvidenceDetailPageProps {
@@ -31,13 +31,14 @@ const stateLabel = {
 export default async function EvidenceDetailPage({
   params,
 }: EvidenceDetailPageProps) {
+  const dataSource = getDataSource();
   const { layer } = await params;
 
   if (!isEvidenceLayer(layer)) {
     notFound();
   }
 
-  const evidence = await mockDataSource.getEvidenceLayer(layer);
+  const evidence = await dataSource.getEvidenceLayer(layer);
 
   if (!evidence) {
     notFound();

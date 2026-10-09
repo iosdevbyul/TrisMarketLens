@@ -2,10 +2,11 @@ import Link from "next/link";
 
 import { PageHeader } from "@/components/common/PageHeader";
 import { StatusList } from "@/components/dashboard/StatusList";
-import { mockDataSource } from "@/data/MockDataSource";
+import { getDataSource } from "@/data/getDataSource";
 
 export default async function BacktestingPage() {
-  const baseline = await mockDataSource.getBaselineBacktest();
+  const dataSource = getDataSource();
+  const baseline = await dataSource.getBaselineBacktest();
 
   return (
     <>

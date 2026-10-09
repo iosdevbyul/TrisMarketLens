@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { PageHeader } from "@/components/common/PageHeader";
-import { mockDataSource } from "@/data/MockDataSource";
+import { getDataSource } from "@/data/getDataSource";
 
 function formatMetric(value: number) {
   return value.toFixed(6);
@@ -12,7 +12,8 @@ function roleLabel(role: "baseline_executable" | "research_only") {
 }
 
 export default async function ModelsPage() {
-  const models = await mockDataSource.getModelSummaries();
+  const dataSource = getDataSource();
+  const models = await dataSource.getModelSummaries();
 
   return (
     <>

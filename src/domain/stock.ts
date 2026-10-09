@@ -1,4 +1,4 @@
-export type StockDataStatus = "mock" | "api_pending";
+export type StockDataStatus = "mock" | "api";
 
 export interface StockSummary {
   ticker: string;

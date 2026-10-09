@@ -1,9 +1,10 @@
 import { PageHeader } from "@/components/common/PageHeader";
 import { StatusList } from "@/components/dashboard/StatusList";
-import { mockDataSource } from "@/data/MockDataSource";
+import { getDataSource } from "@/data/getDataSource";
 
 export default async function Home() {
-  const status = await mockDataSource.getProjectStatus();
+  const dataSource = getDataSource();
+  const status = await dataSource.getProjectStatus();
 
   return (
     <>

@@ -3,15 +3,16 @@ import { notFound } from "next/navigation";
 
 import { PageHeader } from "@/components/common/PageHeader";
 import { ChartPlaceholder } from "@/components/stocks/ChartPlaceholder";
-import { mockDataSource } from "@/data/MockDataSource";
+import { getDataSource } from "@/data/getDataSource";
 
 interface StockDetailPageProps {
   params: Promise<{ ticker: string }>;
 }
 
 export default async function StockDetailPage({ params }: StockDetailPageProps) {
+  const dataSource = getDataSource();
   const { ticker } = await params;
-  const stock = await mockDataSource.getStock(ticker);
+  const stock = await dataSource.getStock(ticker);
 
   if (!stock) {
     notFound();
@@ -24,7 +25,7 @@ export default async function StockDetailPage({ params }: StockDetailPageProps) 
       </Link>
 
       <PageHeader
-        badge="Mock stock detail"
+        badge={stock.dataStatus === "mock" ? "Mock stock detail" : "API stock detail"}
         description={`${stock.ticker} · ${stock.market} · ${stock.sector}`}
         eyebrow="Stock research"
         title={stock.name}
@@ -40,12 +41,12 @@ export default async function StockDetailPage({ params }: StockDetailPageProps) 
               <dd>{stock.availableFrom}</dd>
             </div>
             <div>
-              <dt>Latest mock coverage</dt>
+              <dt>Latest coverage</dt>
               <dd>{stock.latestDataDate}</dd>
             </div>
             <div>
               <dt>Data mode</dt>
-              <dd>Mock only</dd>
+              <dd>{stock.dataStatus === "mock" ? "Mock only" : "DonghakStockVision API"}</dd>
             </div>
           </dl>
         </article>
