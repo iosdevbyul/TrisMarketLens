@@ -1,0 +1,32 @@
+/* Mirrors WakTrainerDesignSystem/Foundation (SwiftUI). Keep in sync. */
+:root {
+  --wak-background: #0b0e11;
+  --wak-surface: #171b20;
+  --wak-surface-secondary: #222831;
+  --wak-primary: #8cf66c;
+  --wak-primary-pressed: #72d956;
+  --wak-text-primary: #f7f8f9;
+  --wak-text-secondary: #9aa3ad;
+  --wak-divider: #2a3038;
+  --wak-destructive: #ff5a52;
+
+  --wak-spacing-xs: 4px;
+  --wak-spacing-sm: 8px;
+  --wak-spacing-md: 12px;
+  --wak-spacing-regular: 16px;
+  --wak-spacing-lg: 24px;
+  --wak-spacing-xl: 32px;
+
+  --wak-radius-sm: 8px;
+  --wak-radius-md: 12px;
+  --wak-radius-card: 16px;
+  --wak-radius-lg: 24px;
+
+  --wak-type-screen-title: 28px;
+  --wak-type-section-title: 17px;
+  --wak-type-body: 16px;
+  --wak-type-caption: 13px;
+  --wak-type-button: 17px;
+  --wak-type-metric-lg: 42px;
+  --wak-type-metric-md: 28px;
+}
