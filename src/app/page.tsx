@@ -1,5 +1,7 @@
 import { PageHeader } from "@/components/common/PageHeader";
 import { StatusList } from "@/components/dashboard/StatusList";
+import { WakMetricCard } from "@/components/design-system/WakMetricCard";
+import { WakPanel } from "@/components/design-system/WakPanel";
 import { getDataSource } from "@/data/getDataSource";
 
 export default async function Home() {
@@ -17,16 +19,12 @@ export default async function Home() {
 
       <section className="metric-grid" aria-label="Research summary">
         {status.metrics.map((metric) => (
-          <article className="metric-card" key={metric.label}>
-            <p className="metric-label">{metric.label}</p>
-            <p className="metric-value">{metric.value}</p>
-            <p className="metric-detail">{metric.detail}</p>
-          </article>
+          <WakMetricCard key={metric.label} label={metric.label} value={metric.value} detail={metric.detail} />
         ))}
       </section>
 
       <section className="panel-grid">
-        <article className="panel">
+        <WakPanel>
           <div className="panel-heading">
             <div>
               <p className="eyebrow">Evidence</p>
@@ -35,9 +33,9 @@ export default async function Home() {
             <span className="panel-count">{status.evidence.length} checks</span>
           </div>
           <StatusList items={status.evidence} />
-        </article>
+        </WakPanel>
 
-        <article className="panel">
+        <WakPanel>
           <div className="panel-heading">
             <div>
               <p className="eyebrow">Baseline</p>
@@ -51,7 +49,7 @@ export default async function Home() {
               Performance metrics will appear only after the run-input freeze is complete.
             </span>
           </div>
-        </article>
+        </WakPanel>
       </section>
     </>
   );
