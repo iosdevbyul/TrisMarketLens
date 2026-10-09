@@ -1,0 +1,50 @@
+/* Web equivalents of WakTrainer's button and input visual language. */
+.wak-button {
+  display: inline-flex;
+  min-height: 54px;
+  align-items: center;
+  justify-content: center;
+  gap: var(--wak-spacing-sm);
+  border: 0;
+  border-radius: var(--wak-radius-md);
+  padding: var(--wak-spacing-md) var(--wak-spacing-regular);
+  font-size: var(--wak-type-button);
+  font-weight: 600;
+  cursor: pointer;
+}
+.wak-button--primary {
+  background: var(--wak-primary);
+  color: #000;
+}
+.wak-button--primary:active:not(:disabled) {
+  background: var(--wak-primary-pressed);
+}
+.wak-button--secondary {
+  background: var(--wak-surface-secondary);
+  color: var(--wak-text-primary);
+}
+.wak-button:disabled { opacity: .6; cursor: not-allowed; }
+.wak-button:focus-visible,
+.wak-input-field input:focus-visible {
+  outline: 2px solid var(--wak-primary);
+  outline-offset: 2px;
+}
+.wak-input-field {
+  display: grid;
+  gap: var(--wak-spacing-sm);
+  width: min(520px, 100%);
+  color: var(--wak-text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+}
+.wak-input-field input {
+  width: 100%;
+  border: 1px solid var(--wak-divider);
+  border-radius: var(--wak-radius-md);
+  background: var(--wak-background);
+  color: var(--wak-text-primary);
+  padding: 13px 14px;
+  font: inherit;
+  font-size: var(--wak-type-caption);
+}
+.wak-input-field input:focus { border-color: var(--wak-primary); }
