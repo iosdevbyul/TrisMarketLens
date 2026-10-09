@@ -16,45 +16,34 @@ logic, evidence, model inference, and backtesting.
 
 ## Current architecture
 
-```text
-TrisMarketLens
-  Next.js UI
-      |
-      v
-  DataSource
-      |
-      +-- MockDataSource  (current)
-      |
-      +-- HttpDataSource  (planned)
-              |
-              v
-        DonghakStockVision API
-```
+TrisMarketLens -> DataSource -> MockDataSource (current)
+TrisMarketLens -> DataSource -> HttpDataSource -> DonghakStockVision API (planned)
 
-The initial dashboard intentionally uses mock research status data. It does not
-execute models, signals, or backtests and does not present simulated performance
-as real research output.
+Current routes:
+
+- / research overview
+- /stocks dataset coverage and future stock-explorer boundary
+- /models qualified model metrics
+- /evidence evidence readiness and open blockers
+- /backtesting locked baseline run gate
+
+The UI intentionally uses a typed mock research snapshot until the HTTP API is
+available. It does not execute models, signals, or backtests and does not present
+simulated performance as real research output.
 
 ## Development
 
 Requires Node.js 22.
 
-```bash
-npm install
-npm run dev
-```
-
-Open `http://localhost:3000`.
+Run npm install, then npm run dev, and open http://localhost:3000.
 
 ## Validation
 
-```bash
-npm run check
-```
+Run npm run check.
 
 This runs linting, TypeScript checks, unit tests, and a production build.
 
 ## Branch workflow
 
 Development is performed on task branches and merged through pull requests after
-CI passes. Do not develop directly on `main`.
+CI passes. Do not develop directly on main.
