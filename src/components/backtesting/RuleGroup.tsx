@@ -1,8 +1,10 @@
+import { WakPanel } from "@/components/design-system/WakPanel";
+
 import type { BacktestRuleGroup } from "@/domain/backtest";
 
 export function RuleGroup({ group }: { group: BacktestRuleGroup }) {
   return (
-    <article className="panel backtest-rule-group">
+    <WakPanel className="backtest-rule-group">
       <p className="eyebrow">Locked policy</p>
       <h2>{group.title}</h2>
       <dl className="metric-list compact-metric-list">
@@ -16,6 +18,6 @@ export function RuleGroup({ group }: { group: BacktestRuleGroup }) {
           </div>
         ))}
       </dl>
-    </article>
+    </WakPanel>
   );
 }
