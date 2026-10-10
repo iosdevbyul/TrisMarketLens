@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getLocale } from "@/i18n/server";
 
 import { AppShell } from "@/components/layout/AppShell";
 
@@ -9,13 +10,14 @@ export const metadata: Metadata = {
   description: "Research-driven market intelligence dashboard",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body>
         <AppShell>{children}</AppShell>
       </body>

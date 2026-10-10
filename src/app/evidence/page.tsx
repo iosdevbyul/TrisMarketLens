@@ -1,3 +1,4 @@
+import { getTranslator } from "@/i18n/server";
 import { PageHeader } from "@/components/common/PageHeader";
 import { EvidenceCard } from "@/components/evidence/EvidenceCard";
 import { WakPanel } from "@/components/design-system/WakPanel";
@@ -6,6 +7,7 @@ import { WakStatusBadge } from "@/components/design-system/WakStatusBadge";
 import { getDataSource } from "@/data/getDataSource";
 
 export default async function EvidencePage() {
+  const t = await getTranslator();
   const dataSource = getDataSource();
   const [layers, coverage] = await Promise.all([
     dataSource.getEvidenceLayers(),
@@ -15,10 +17,10 @@ export default async function EvidencePage() {
   return (
     <>
       <PageHeader
-        badge="Fail closed"
-        description="Evidence is treated as an explicit research dependency. Verified market-wide evidence stays distinct from unresolved per-security lifecycle and corporate-action coverage."
-        eyebrow="Research integrity"
-        title="Evidence"
+        badge={t("Fail closed")}
+        description={t("Evidence is treated as an explicit research dependency. Verified market-wide evidence stays distinct from unresolved per-security lifecycle and corporate-action coverage.")}
+        eyebrow={t("Research integrity")}
+        title={t("Evidence")}
       />
 
       <section className="evidence-grid">
@@ -28,19 +30,19 @@ export default async function EvidencePage() {
       </section>
 
       <WakPanel as="section" className="single-panel">
-        <WakSectionHeader eyebrow="Open blockers" title="What still prevents the baseline freeze" trailing={<WakStatusBadge state="blocked" label="Freeze blocked" />} />
+        <WakSectionHeader eyebrow={t("Open blockers")} title={t("What still prevents the baseline freeze")} trailing={<WakStatusBadge state="blocked" label={t("Freeze blocked")} />} />
 
         <div className="blocker-summary-grid">
           <div>
-            <span>Unresolved securities</span>
+            <span>{t("Unresolved securities")}</span>
             <strong>{coverage.unresolvedSecurities.toLocaleString()}</strong>
           </div>
           <div>
-            <span>Unexplained ticker-sessions</span>
+            <span>{t("Unexplained ticker-sessions")}</span>
             <strong>{coverage.unexplainedTickerSessions.toLocaleString()}</strong>
           </div>
           <div>
-            <span>Historical identity coverage</span>
+            <span>{t("Historical identity coverage")}</span>
             <strong>
               {coverage.historicalIdentityVerified}/{coverage.universe}
             </strong>
@@ -48,9 +50,7 @@ export default async function EvidencePage() {
         </div>
 
         <p className="section-copy">
-          The web does not reinterpret these blockers. It mirrors the current
-          research evidence state until DonghakStockVision exposes the same data
-          through its HTTP API.
+          {t("The web does not reinterpret these blockers. It mirrors the current\n          research evidence state until DonghakStockVision exposes the same data\n          through its HTTP API.")}
         </p>
       </WakPanel>
     </>

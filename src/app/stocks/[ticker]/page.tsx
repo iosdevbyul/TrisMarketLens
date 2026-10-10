@@ -1,3 +1,4 @@
+import { getTranslator } from "@/i18n/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -11,6 +12,7 @@ interface StockDetailPageProps {
 }
 
 export default async function StockDetailPage({ params }: StockDetailPageProps) {
+  const t = await getTranslator();
   const dataSource = getDataSource();
   const { ticker } = await params;
   const stock = await dataSource.getStock(ticker);
@@ -22,50 +24,49 @@ export default async function StockDetailPage({ params }: StockDetailPageProps) 
   return (
     <>
       <Link className="back-link" href="/stocks">
-        ← Back to stocks
+        {t("← Back to stocks")}
       </Link>
 
       <PageHeader
         badge={stock.dataStatus === "mock" ? "Mock stock detail" : "API stock detail"}
         description={`${stock.ticker} · ${stock.market} · ${stockSectorLabel(stock)}`}
-        eyebrow="Stock research"
+        eyebrow={t("Stock research")}
         title={stockDisplayName(stock)}
       />
 
       <section className="stock-detail-grid">
         <article className="panel">
-          <p className="eyebrow">Data contract</p>
-          <h2>Historical coverage</h2>
+          <p className="eyebrow">{t("Data contract")}</p>
+          <h2>{t("Historical coverage")}</h2>
           <dl className="metric-list">
             <div>
-              <dt>Available from</dt>
+              <dt>{t("Available from")}</dt>
               <dd>{stock.availableFrom}</dd>
             </div>
             <div>
-              <dt>Latest coverage</dt>
+              <dt>{t("Latest coverage")}</dt>
               <dd>{stock.latestDataDate}</dd>
             </div>
             <div>
-              <dt>Data mode</dt>
+              <dt>{t("Data mode")}</dt>
               <dd>{stock.dataStatus === "mock" ? "Mock only" : "DonghakStockVision API"}</dd>
             </div>
           </dl>
         </article>
 
         <article className="panel">
-          <p className="eyebrow">Evidence</p>
-          <h2>Quality and lifecycle</h2>
+          <p className="eyebrow">{t("Evidence")}</p>
+          <h2>{t("Quality and lifecycle")}</h2>
           <div className="evidence-placeholder">
             <span className="status-pill" data-state="in_progress">
-              Evidence limited
+              {t("Evidence limited")}
             </span>
-            <p>{stock.evidenceNote}</p>
+            <p>{t(stock.evidenceNote)}</p>
           </div>
           <div className="run-lock">
-            <p>No inferred quality state.</p>
+            <p>{t("No inferred quality state.")}</p>
             <span>
-              The UI only presents evidence returned by DonghakStockVision and does not
-              infer lifecycle state from missing bars.
+              {t("The UI only presents evidence returned by DonghakStockVision and does not\n              infer lifecycle state from missing bars.")}
             </span>
           </div>
         </article>
@@ -77,7 +78,7 @@ export default async function StockDetailPage({ params }: StockDetailPageProps) 
           latestDataDate={stock.latestDataDate}
           ticker={stock.ticker}
         />
-        <p className="chart-note">{stock.chartNote}</p>
+        <p className="chart-note">{t(stock.chartNote)}</p>
       </section>
     </>
   );

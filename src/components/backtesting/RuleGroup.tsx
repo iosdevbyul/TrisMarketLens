@@ -1,20 +1,22 @@
+import { getTranslator } from "@/i18n/server";
 import { WakPanel } from "@/components/design-system/WakPanel";
 
 import type { BacktestRuleGroup } from "@/domain/backtest";
 
-export function RuleGroup({ group }: { group: BacktestRuleGroup }) {
+export async function RuleGroup({ group }: { group: BacktestRuleGroup }) {
+  const t = await getTranslator();
   return (
     <WakPanel className="backtest-rule-group">
-      <p className="eyebrow">Locked policy</p>
-      <h2>{group.title}</h2>
+      <p className="eyebrow">{t("Locked policy")}</p>
+      <h2>{t(group.title)}</h2>
       <dl className="metric-list compact-metric-list">
         {group.rules.map((rule) => (
-          <div className="backtest-rule-row" key={rule.label}>
+          <div className="backtest-rule-row" key={t(rule.label)}>
             <dt>
-              {rule.label}
-              <small>{rule.detail}</small>
+              {t(rule.label)}
+              <small>{t(rule.detail)}</small>
             </dt>
-            <dd>{rule.value}</dd>
+            <dd>{t(rule.value)}</dd>
           </div>
         ))}
       </dl>

@@ -1,3 +1,4 @@
+import { getTranslator } from "@/i18n/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -31,6 +32,7 @@ const stateLabel = {
 export default async function EvidenceDetailPage({
   params,
 }: EvidenceDetailPageProps) {
+  const t = await getTranslator();
   const dataSource = getDataSource();
   const { layer } = await params;
 
@@ -47,62 +49,61 @@ export default async function EvidenceDetailPage({
   return (
     <>
       <Link className="back-link" href="/evidence">
-        ← Back to evidence
+        {t("← Back to evidence")}
       </Link>
 
       <PageHeader
-        badge={stateLabel[evidence.state]}
-        description={evidence.summary}
-        eyebrow={evidence.sourceLabel}
-        title={evidence.title}
+        badge={t(stateLabel[evidence.state])}
+        description={t(evidence.summary)}
+        eyebrow={t(evidence.sourceLabel)}
+        title={t(evidence.title)}
       />
 
       <section className="evidence-metric-grid">
         {evidence.metrics.map((metric) => (
-          <article className="metric-card" key={metric.label}>
-            <p className="metric-label">{metric.label}</p>
+          <article className="metric-card" key={t(metric.label)}>
+            <p className="metric-label">{t(metric.label)}</p>
             <p className="evidence-metric-value">{metric.value}</p>
-            <p className="metric-detail">{metric.detail}</p>
+            <p className="metric-detail">{t(metric.detail)}</p>
           </article>
         ))}
       </section>
 
       <section className="panel-grid evidence-detail-panels">
         <article className="panel">
-          <p className="eyebrow">Verified findings</p>
-          <h2>What the evidence supports</h2>
+          <p className="eyebrow">{t("Verified findings")}</p>
+          <h2>{t("What the evidence supports")}</h2>
           <ul className="finding-list">
             {evidence.findings.map((finding) => (
-              <li key={finding}>{finding}</li>
+              <li key={t(finding)}>{t(finding)}</li>
             ))}
           </ul>
         </article>
 
         <article className="panel">
-          <p className="eyebrow">Evidence contract</p>
-          <h2>Source and blocker state</h2>
+          <p className="eyebrow">{t("Evidence contract")}</p>
+          <h2>{t("Source and blocker state")}</h2>
           <dl className="metric-list">
             <div>
-              <dt>Source scope</dt>
-              <dd>{evidence.sourceScope}</dd>
+              <dt>{t("Source scope")}</dt>
+              <dd>{t(evidence.sourceScope)}</dd>
             </div>
             <div>
-              <dt>State</dt>
-              <dd>{stateLabel[evidence.state]}</dd>
+              <dt>{t("State")}</dt>
+              <dd>{t(stateLabel[evidence.state])}</dd>
             </div>
           </dl>
 
           {evidence.blocker ? (
             <div className="run-lock evidence-blocker">
-              <p>Blocker remains open.</p>
+              <p>{t("Blocker remains open.")}</p>
               <span>{evidence.blocker}</span>
             </div>
           ) : (
             <div className="verified-note">
-              <p>This evidence layer is verified for its stated scope.</p>
+              <p>{t("This evidence layer is verified for its stated scope.")}</p>
               <span>
-                Verification does not imply that separate lifecycle or corporate-action
-                blockers are resolved.
+                {t("Verification does not imply that separate lifecycle or corporate-action\n                blockers are resolved.")}
               </span>
             </div>
           )}
@@ -110,16 +111,15 @@ export default async function EvidenceDetailPage({
       </section>
 
       <section className="panel single-panel">
-        <p className="eyebrow">Artifact identity</p>
-        <h2>Evidence fingerprint</h2>
+        <p className="eyebrow">{t("Artifact identity")}</p>
+        <h2>{t("Evidence fingerprint")}</h2>
         {evidence.fingerprint ? (
           <code className="artifact-sha">{evidence.fingerprint}</code>
         ) : (
-          <p className="section-copy">No fingerprint is exposed in this mock snapshot.</p>
+          <p className="section-copy">{t("No fingerprint is exposed in this mock snapshot.")}</p>
         )}
         <p className="section-copy">
-          The web is displaying the research snapshot only. It does not recollect,
-          regenerate, or reinterpret official evidence.
+          {t("The web is displaying the research snapshot only. It does not recollect,\n          regenerate, or reinterpret official evidence.")}
         </p>
       </section>
     </>

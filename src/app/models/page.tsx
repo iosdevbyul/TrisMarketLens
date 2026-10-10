@@ -1,3 +1,4 @@
+import { getTranslator } from "@/i18n/server";
 import Link from "next/link";
 
 import { WakStatusBadge } from "@/components/design-system/WakStatusBadge";
@@ -13,16 +14,17 @@ function roleLabel(role: "baseline_executable" | "research_only") {
 }
 
 export default async function ModelsPage() {
+  const t = await getTranslator();
   const dataSource = getDataSource();
   const models = await dataSource.getModelSummaries();
 
   return (
     <>
       <PageHeader
-        badge="Qualified research models"
-        description="Validation and frozen out-of-sample classification metrics are shown here. Backtest performance is intentionally excluded."
-        eyebrow="Research"
-        title="Models"
+        badge={t("Qualified research models")}
+        description={t("Validation and frozen out-of-sample classification metrics are shown here. Backtest performance is intentionally excluded.")}
+        eyebrow={t("Research")}
+        title={t("Models")}
       />
 
       <section className="model-grid">
@@ -33,22 +35,22 @@ export default async function ModelsPage() {
                 <p className="eyebrow">{model.direction} direction</p>
                 <h2>{model.modelName}</h2>
               </div>
-              <WakStatusBadge state={model.role === "baseline_executable" ? "verified" : "not_started"} label={roleLabel(model.role)} />
+              <WakStatusBadge state={model.role === "baseline_executable" ? "verified" : "not_started"} label={t(roleLabel(model.role))} />
             </div>
 
             <dl className="metric-list">
               <div>
-                <dt>Validation AP</dt>
+                <dt>{t("Validation AP")}</dt>
                 <dd>{formatMetric(model.validationAveragePrecision)}</dd>
               </div>
               <div>
-                <dt>OOS AP</dt>
+                <dt>{t("OOS AP")}</dt>
                 <dd>{formatMetric(model.oosAveragePrecision)}</dd>
               </div>
             </dl>
 
-            <p className="section-copy">{model.note}</p>
-            <span className="model-link-action">View model details →</span>
+            <p className="section-copy">{t(model.note)}</p>
+            <span className="model-link-action">{t("View model details →")}</span>
           </Link>
         ))}
       </section>

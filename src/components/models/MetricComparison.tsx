@@ -1,3 +1,4 @@
+import { getTranslator } from "@/i18n/server";
 interface MetricComparisonProps {
   label: string;
   validation: number;
@@ -8,20 +9,21 @@ function percentageWidth(value: number) {
   return String(Math.max(0, Math.min(1, value)) * 100) + "%";
 }
 
-export function MetricComparison({
+export async function MetricComparison({
   label,
   validation,
   oos,
 }: MetricComparisonProps) {
+  const t = await getTranslator();
   return (
     <div className="metric-comparison">
       <div className="metric-comparison-heading">
-        <span>{label}</span>
-        <span>Validation vs OOS</span>
+        <span>{t(label)}</span>
+        <span>{t("Validation vs OOS")}</span>
       </div>
 
       <div className="metric-bar-row">
-        <span>Validation</span>
+        <span>{t("Validation")}</span>
         <div className="metric-bar-track">
           <div
             aria-hidden="true"
@@ -33,7 +35,7 @@ export function MetricComparison({
       </div>
 
       <div className="metric-bar-row">
-        <span>OOS</span>
+        <span>{t("OOS")}</span>
         <div className="metric-bar-track">
           <div
             aria-hidden="true"

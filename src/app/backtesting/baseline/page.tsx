@@ -1,3 +1,4 @@
+import { getTranslator } from "@/i18n/server";
 import Link from "next/link";
 
 import { PageHeader } from "@/components/common/PageHeader";
@@ -6,30 +7,31 @@ import { RuleGroup } from "@/components/backtesting/RuleGroup";
 import { getDataSource } from "@/data/getDataSource";
 
 export default async function BaselineBacktestPage() {
+  const t = await getTranslator();
   const dataSource = getDataSource();
   const baseline = await dataSource.getBaselineBacktest();
 
   return (
     <>
       <Link className="back-link" href="/backtesting">
-        ← Back to backtesting
+        {t("← Back to backtesting")}
       </Link>
 
       <PageHeader
-        badge="Blocked before execution"
-        description={baseline.summary}
-        eyebrow="Historical baseline"
-        title="Baseline contract"
+        badge={t("Blocked before execution")}
+        description={t(baseline.summary)}
+        eyebrow={t("Historical baseline")}
+        title={t("Baseline contract")}
       />
 
       <section className="panel single-panel">
         <div className="panel-heading">
           <div>
-            <p className="eyebrow">Run readiness</p>
-            <h2>Pre-execution gates</h2>
+            <p className="eyebrow">{t("Run readiness")}</p>
+            <h2>{t("Pre-execution gates")}</h2>
           </div>
           <span className="status-pill" data-state="blocked">
-            Not ready
+            {t("Not ready")}
           </span>
         </div>
         <StatusList items={baseline.readiness} />
@@ -38,20 +40,20 @@ export default async function BaselineBacktestPage() {
       <section className="panel single-panel">
         <div className="panel-heading">
           <div>
-            <p className="eyebrow">Chronology</p>
-            <h2>Anchor and execution tails</h2>
+            <p className="eyebrow">{t("Chronology")}</p>
+            <h2>{t("Anchor and execution tails")}</h2>
           </div>
-          <span className="panel-count">No signal generation in tail</span>
+          <span className="panel-count">{t("No signal generation in tail")}</span>
         </div>
 
         <div className="backtest-timeline">
           {baseline.timeline.map((item, index) => (
-            <article className="timeline-item" key={item.label}>
+            <article className="timeline-item" key={t(item.label)}>
               <span className="timeline-index">{index + 1}</span>
               <div>
-                <p>{item.label}</p>
+                <p>{t(item.label)}</p>
                 <strong>{item.value}</strong>
-                <span>{item.detail}</span>
+                <span>{t(item.detail)}</span>
               </div>
             </article>
           ))}
@@ -67,8 +69,8 @@ export default async function BaselineBacktestPage() {
       <section className="panel single-panel">
         <div className="panel-heading">
           <div>
-            <p className="eyebrow">Immutable references</p>
-            <h2>Policy and evidence identities</h2>
+            <p className="eyebrow">{t("Immutable references")}</p>
+            <h2>{t("Policy and evidence identities")}</h2>
           </div>
         </div>
 
@@ -83,37 +85,36 @@ export default async function BaselineBacktestPage() {
       </section>
 
       <section className="panel single-panel">
-        <p className="eyebrow">Performance surface</p>
-        <h2>Waiting for the locked run</h2>
+        <p className="eyebrow">{t("Performance surface")}</p>
+        <h2>{t("Waiting for the locked run")}</h2>
         <div className="performance-placeholder">
           <div>
-            <span>Total return</span>
+            <span>{t("Total return")}</span>
             <strong>—</strong>
           </div>
           <div>
-            <span>CAGR</span>
+            <span>{t("CAGR")}</span>
             <strong>—</strong>
           </div>
           <div>
-            <span>Max drawdown</span>
+            <span>{t("Max drawdown")}</span>
             <strong>—</strong>
           </div>
           <div>
-            <span>Sharpe</span>
+            <span>{t("Sharpe")}</span>
             <strong>—</strong>
           </div>
           <div>
-            <span>Trades</span>
+            <span>{t("Trades")}</span>
             <strong>—</strong>
           </div>
           <div>
-            <span>Win rate</span>
+            <span>{t("Win rate")}</span>
             <strong>—</strong>
           </div>
         </div>
         <p className="section-copy">
-          These fields are structural placeholders only. They will receive values
-          from the immutable historical-run artifact after the baseline input freeze.
+          {t("These fields are structural placeholders only. They will receive values\n          from the immutable historical-run artifact after the baseline input freeze.")}
         </p>
       </section>
     </>

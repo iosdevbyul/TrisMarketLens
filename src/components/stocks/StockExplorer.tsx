@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { translate, type Locale } from "@/i18n/translations";
 import { useMemo, useState } from "react";
 
 import { WakButton } from "@/components/design-system/WakButton";
@@ -15,9 +16,10 @@ import {
 
 interface StockExplorerProps {
   stocks: StockSummary[];
+  locale: Locale;
 }
 
-export function StockExplorer({ stocks }: StockExplorerProps) {
+export function StockExplorer({ stocks, locale }: StockExplorerProps) {
   const [query, setQuery] = useState("");
   const filteredStocks = useMemo(() => filterStocks(stocks, query), [stocks, query]);
 
@@ -25,21 +27,21 @@ export function StockExplorer({ stocks }: StockExplorerProps) {
     <section className="stock-explorer">
       <div className="stock-search-row">
         <WakTextInput
-          aria-label="Search stocks"
+          aria-label={translate(locale, "Search stocks")}
           className="stock-search"
-          label="Search stocks"
+          label={translate(locale, "Search stocks")}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Ticker, company, or sector"
+          placeholder={translate(locale, "Ticker, company, or sector")}
           type="search"
           value={query}
         />
         <div className="stock-search-actions">
           {query ? (
-            <WakButton aria-label="Clear stock search" onClick={() => setQuery("")} variant="secondary">
-              Clear search
+            <WakButton aria-label={translate(locale, "Clear stock search")} onClick={() => setQuery("")} variant="secondary">
+              {translate(locale, "Clear search")}
             </WakButton>
           ) : null}
-          <span className="panel-count">{filteredStocks.length} records</span>
+          <span className="panel-count">{filteredStocks.length} {translate(locale, "records")}</span>
         </div>
       </div>
 
@@ -62,8 +64,8 @@ export function StockExplorer({ stocks }: StockExplorerProps) {
 
       {filteredStocks.length === 0 ? (
         <div className="empty-state">
-          <p>No matching stock.</p>
-          <span>Try a ticker, company name, or available sector label.</span>
+          <p>{translate(locale, "No matching stock.")}</p>
+          <span>{translate(locale, "Try a ticker, company name, or available sector label.")}</span>
         </div>
       ) : null}
     </section>

@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { translate, type Locale } from "@/i18n/translations";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 import { usePathname } from "next/navigation";
 
 const navigation = [
@@ -11,7 +13,7 @@ const navigation = [
   { href: "/backtesting", label: "Backtesting" },
 ];
 
-export function Sidebar() {
+export function Sidebar({ locale }: { locale: Locale }) {
   const pathname = usePathname();
 
   return (
@@ -24,6 +26,7 @@ export function Sidebar() {
         </span>
       </Link>
 
+      <LanguageSwitcher locale={locale} />
       <nav className="nav-list" aria-label="Primary navigation">
         {navigation.map((item) => {
           const active =
@@ -37,7 +40,7 @@ export function Sidebar() {
               href={item.href}
               key={item.href}
             >
-              {item.label}
+              {translate(locale, item.label)}
             </Link>
           );
         })}
@@ -45,7 +48,7 @@ export function Sidebar() {
 
       <div className="sidebar-note">
         <span className="live-dot" />
-        Mock research data
+        {translate(locale, "Mock research data")}
       </div>
     </aside>
   );
