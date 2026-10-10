@@ -15,7 +15,6 @@ export function filterOhlcvPeriod(bars: OhlcvBar[], period: ChartPeriod): OhlcvB
 
 const W = 960, H = 360, LEFT = 72, RIGHT = 26, TOP = 22, PRICE_BOTTOM = 258, VOL_TOP = 278, VOL_BOTTOM = 326;
 export function OhlcvChart({ ticker, bars, locale }: Props) {
-  if (!bars.length) return null;
   const [period, setPeriod] = useState<ChartPeriod>("3M");
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const visible = useMemo(() => filterOhlcvPeriod(bars, period), [bars, period]);
@@ -37,7 +36,7 @@ export function OhlcvChart({ ticker, bars, locale }: Props) {
         {(["1M","3M","6M","1Y"] as const).map(item => <button key={item} type="button" aria-pressed={period === item} onClick={() => { setPeriod(item); setSelectedDate(null); }}>{item}</button>)}
       </div>
       <div className="ohlcv-scroll" role="region" aria-label={locale === "ko" ? `${ticker} 가격 및 거래량 차트` : `${ticker} price and volume chart`} tabIndex={0}>
-      <svg viewBox={`0 0 ${chartWidth} ${H}`} xmlns="http://www.w3.org/2000/svg" className="ohlcv-svg" aria-hidden="true">
+      <svg viewBox={`0 0 ${chartWidth} ${H}`} style={{ minWidth: chartWidth }} xmlns="http://www.w3.org/2000/svg" className="ohlcv-svg" aria-hidden="true">
         {ticks.map((n,i) => <g key={i}>
           <line x1={LEFT} x2={chartWidth-RIGHT} y1={priceY(n)} y2={priceY(n)} stroke="var(--border)" strokeDasharray="3 5" />
           <text x={LEFT - 12} y={priceY(n)+4} textAnchor="end" fontSize="12" fill="var(--muted)">{number.format(n)}</text>
@@ -56,7 +55,7 @@ export function OhlcvChart({ ticker, bars, locale }: Props) {
             <rect x={x-step/2} y={TOP} width={step} height={VOL_BOTTOM-TOP} fill="transparent" role="button" tabIndex={0} aria-label={`${b.date}: O ${b.open}, H ${b.high}, L ${b.low}, C ${b.close}, V ${b.volume}`} onClick={() => setSelectedDate(b.date)} onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setSelectedDate(b.date); } }} />
           </g>;
         })}
-        <line x1={LEFT} x2={W-RIGHT} y1={VOL_BOTTOM} y2={VOL_BOTTOM} stroke="var(--border)" />
+        <line x1={LEFT} x2={chartWidth-RIGHT} y1={VOL_BOTTOM} y2={VOL_BOTTOM} stroke="var(--border)" />
         {[0,Math.floor((visible.length-1)/2),visible.length-1].map(i => <text key={i} x={LEFT + step*(i+0.5)} y={H-12} textAnchor="middle" fontSize="12" fill="var(--muted)">{visible[i].date.slice(5)}</text>)}
         <text x={LEFT-12} y={VOL_TOP+8} textAnchor="end" fontSize="11" fill="var(--muted)">{locale === "ko" ? "거래량" : "Volume"}</text>
       </svg>
