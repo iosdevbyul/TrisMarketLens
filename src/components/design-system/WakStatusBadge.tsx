@@ -1,3 +1,4 @@
+import { getTranslator } from "@/i18n/server";
 import type { ProjectState } from "@/domain/project";
 
 const stateLabels: Record<ProjectState, string> = {
@@ -12,10 +13,11 @@ interface WakStatusBadgeProps {
   label?: string;
 }
 
-export function WakStatusBadge({ state, label }: WakStatusBadgeProps) {
+export async function WakStatusBadge({ state, label }: WakStatusBadgeProps) {
+  const t = await getTranslator();
   return (
     <span className="status-pill" data-state={state}>
-      {label ?? stateLabels[state]}
+      {t(label ?? stateLabels[state])}
     </span>
   );
 }
