@@ -101,7 +101,7 @@ export default async function StockDetailPage({ params }: StockDetailPageProps) 
         <div className="panel-heading"><div><p className="eyebrow">{t("OHLC history")}</p><h2>{t("Price and volume")}</h2></div><span className="panel-count">{prices.source === "mock" ? t("Demo data") : prices.source === "http" ? t("API data") : t("Not connected")}</span></div>
         {prices.source === "mock" ? <div className="run-lock" role="status"><p>{t("Artificial OHLCV demo")}</p><span>{t("Example candles are not historical market prices.")}</span></div> : null}
         {prices.error ? <div className="run-lock" role="alert"><p>{t("Price data unavailable")}</p><span>{prices.error}</span></div> : null}
-        {prices.data.bars.length ? <OhlcvChart ticker={ticker} bars={prices.data.bars} locale={locale} /> : <p className="section-copy">{t("No validated price bars available yet.")}</p>}
+        {prices.data.bars.length ? <OhlcvChart ticker={ticker} bars={prices.data.bars} locale={locale} analyses={analysis.data.records} analysisIsDemo={analysis.source === "mock"} /> : <p className="section-copy">{t("No validated price bars available yet.")}</p>}
       </section>
     </>
   );

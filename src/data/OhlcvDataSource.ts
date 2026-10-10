@@ -5,7 +5,7 @@ export interface OhlcvOptions { mode?: string; apiBaseUrl?: string; fetcher?: ty
 /** Completely artificial example values for UI testing. Never market prices. */
 export function demoOhlcv(ticker: string): OhlcvSeries {
   const bars = Array.from({ length: 48 }, (_, i) => {
-    const d = new Date(Date.UTC(2026, 6, 1 + i));
+    const d = new Date(Date.UTC(2026, 7, 21 + i));
     const base = 100 + i * 0.35 + Math.sin(i * 0.6) * 5;
     const open = Math.round((base - Math.sin(i) * 1.6) * 100) / 100;
     const close = Math.round((base + Math.cos(i * 0.7) * 1.8) * 100) / 100;
