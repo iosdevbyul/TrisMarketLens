@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 const navigation = [
   { href: "/", label: "Overview" },
   { href: "/stocks", label: "Stocks" },
+  { href: "/screener", label: "AI Screener" },
   { href: "/models", label: "Models" },
   { href: "/evidence", label: "Evidence" },
   { href: "/backtesting", label: "Backtesting" },
