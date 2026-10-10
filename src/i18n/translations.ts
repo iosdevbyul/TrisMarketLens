@@ -249,4 +249,17 @@ Object.assign(ko, {
   "matching analyses": "개 분석 결과",
   "No analyses match your filters.": "조건에 맞는 분석 결과가 없습니다."
 });
+Object.assign(ko, {
+  "AI analysis overview": "AI 분석 요약",
+  "Open AI Screener": "AI 종목 탐색기 열기",
+  "This summary uses fictional model records, not live market signals.": "이 요약은 실시간 시장 신호가 아닌 가상의 모델 기록을 사용합니다.",
+  "Connect the analysis data source to populate this dashboard.": "분석 데이터 소스를 연결하면 요약 결과가 표시됩니다.",
+  "Analyzed securities": "분석된 종목 수",
+  "Analysis records": "분석 기록 수",
+  "Verified rate": "검증 완료 비율",
+  "Latest data through": "최근 데이터 기준일",
+  "Prediction direction": "예측 방향",
+  "Validation status": "검증 상태",
+  "Latest analysis time": "최근 분석 시각"
+});
 export function translate(locale: Locale, text: string): string { return locale === "ko" ? (ko[text] ?? ko[text.replace(/\s+/g, " ").trim()] ?? text) : text; }

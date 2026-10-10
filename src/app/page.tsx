@@ -5,11 +5,14 @@ import { WakMetricCard } from "@/components/design-system/WakMetricCard";
 import { WakPanel } from "@/components/design-system/WakPanel";
 import { WakSectionHeader } from "@/components/design-system/WakSectionHeader";
 import { getDataSource } from "@/data/getDataSource";
+import { getScreener } from "@/data/ScreenerDataSource";
+import { getLocale } from "@/i18n/server";
+import { AnalysisOverviewPanel } from "@/components/dashboard/AnalysisOverviewPanel";
 
 export default async function Home() {
   const t = await getTranslator();
   const dataSource = getDataSource();
-  const status = await dataSource.getProjectStatus();
+  const [status, screener, locale] = await Promise.all([dataSource.getProjectStatus(), getScreener(), getLocale()]);
 
   return (
     <>
@@ -25,6 +28,8 @@ export default async function Home() {
           <WakMetricCard key={t(metric.label)} label={t(metric.label)} value={metric.value} detail={t(metric.detail)} />
         ))}
       </section>
+
+      <AnalysisOverviewPanel result={screener} locale={locale} />
 
       <section className="panel-grid">
         <WakPanel>
