@@ -218,4 +218,16 @@ Object.assign(ko, {
 "Price data unavailable":"가격 데이터를 불러올 수 없습니다",
 "No validated price bars available yet.":"아직 검증된 가격 데이터가 없습니다."
 });
+Object.assign(ko, {
+"Research evaluation":"연구 평가","Prediction evaluation":"예측 결과 평가",
+"Evaluation outcomes are supplied by the research backend, not inferred by the web interface.":"평가 결과는 연구 백엔드가 제공하며 웹에서 임의로 판정하지 않습니다.",
+"Demonstration evaluations":"시연용 평가 데이터",
+"All evaluation prices and returns below are fictional examples.":"아래 평가 가격과 수익률은 모두 가상의 예시입니다.",
+"Evaluation unavailable":"평가 데이터를 불러올 수 없습니다",
+"No evaluated predictions available.":"아직 평가된 예측 결과가 없습니다.",
+"Correct":"정답","Incorrect":"오답","Inconclusive":"판정 보류","Pending":"평가 대기",
+"Reference price":"기준 가격","Evaluation price":"평가 가격","Realized return":"실현 수익률","Evaluation date":"평가 날짜",
+"Demonstration evaluation only; no policy decision has been made.":"가상 평가 기록이며 정책상 판정이 내려지지 않았습니다.",
+"Demonstration evaluation only; no verified success verdict.":"가상 평가 기록이며 검증된 성공 판정이 아닙니다."
+});
 export function translate(locale: Locale, text: string): string { return locale === "ko" ? (ko[text] ?? ko[text.replace(/\s+/g, " ").trim()] ?? text) : text; }

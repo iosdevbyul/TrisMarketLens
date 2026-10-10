@@ -8,6 +8,7 @@ import { getOhlcv } from "@/data/OhlcvDataSource";
 import { getLocale } from "@/i18n/server";
 import { getDataSource } from "@/data/getDataSource";
 import { getStockAnalysis } from "@/data/StockAnalysisDataSource";
+import { getPredictionEvaluations } from "@/data/PredictionEvaluationDataSource";
 import { stockDisplayName, stockSectorLabel } from "@/domain/stock";
 
 interface StockDetailPageProps {
@@ -18,7 +19,7 @@ export default async function StockDetailPage({ params }: StockDetailPageProps) 
   const t = await getTranslator();
   const dataSource = getDataSource();
   const { ticker } = await params;
-  const [stock, analysis, prices, locale] = await Promise.all([dataSource.getStock(ticker), getStockAnalysis(ticker), getOhlcv(ticker), getLocale()]);
+  const [stock, analysis, prices, locale, evaluation] = await Promise.all([dataSource.getStock(ticker), getStockAnalysis(ticker), getOhlcv(ticker), getLocale(), getPredictionEvaluations(ticker)]);
 
   if (!stock) {
     notFound();
@@ -59,6 +60,23 @@ export default async function StockDetailPage({ params }: StockDetailPageProps) 
           </article>)}</div>}
       </section>
 
+      <section className="panel single-panel" aria-label={t("Prediction evaluation")}>
+        <div className="panel-heading"><div><p className="eyebrow">{t("Research evaluation")}</p><h2>{t("Prediction evaluation")}</h2></div>
+          <span className="panel-count">{evaluation.source === "mock" ? t("Demo data") : evaluation.source === "http" ? t("API data") : t("Not connected")}</span>
+        </div>
+        <p className="section-copy">{t("Evaluation outcomes are supplied by the research backend, not inferred by the web interface.")}</p>
+        {evaluation.source === "mock" ? <div className="run-lock" role="status"><p>{t("Demonstration evaluations")}</p><span>{t("All evaluation prices and returns below are fictional examples.")}</span></div> : null}
+        {evaluation.error ? <div className="run-lock" role="alert"><p>{t("Evaluation unavailable")}</p><span>{evaluation.error}</span></div> : null}
+        {evaluation.data.evaluations.length === 0 ? <p className="section-copy">{t("No evaluated predictions available.")}</p> :
+          <div className="evaluation-list">{evaluation.data.evaluations.map(item => <article className="evaluation-item" key={item.id}>
+            <div className="stock-analysis-heading"><div><strong>{item.analysisId}</strong><p className="metric-detail">{item.policyId} · {item.referenceDate}</p></div>
+            <span className="status-pill" data-state={item.verdict === "correct" ? "verified" : item.verdict === "incorrect" ? "blocked" : "in_progress"}>{t(({correct:"Correct",incorrect:"Incorrect",inconclusive:"Inconclusive",pending:"Pending"} as const)[item.verdict])}</span></div>
+            <dl className="evaluation-metrics">
+              {[[t("Horizon"), String(item.horizonSessions)], [t("Reference price"), item.referencePrice?.toLocaleString() ?? "—"], [t("Evaluation price"), item.evaluationPrice?.toLocaleString() ?? "—"], [t("Realized return"), item.realizedReturn === null ? "—" : (item.realizedReturn*100).toFixed(2)+"%"], [t("Evaluation date"), item.evaluationDate ?? "—"]].map(([label,value])=><div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}
+            </dl>
+            {item.explanation ? <p className="section-copy">{t(item.explanation)}</p> : null}
+          </article>)}</div>}
+      </section>
       <section className="stock-detail-grid">
         <article className="panel">
           <p className="eyebrow">{t("Data contract")}</p>
