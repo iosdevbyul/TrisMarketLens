@@ -97,7 +97,7 @@ export default async function EvidenceDetailPage({
           {evidence.blocker ? (
             <div className="run-lock evidence-blocker">
               <p>{t("Blocker remains open.")}</p>
-              <span>{evidence.blocker}</span>
+              <span>{t(evidence.blocker)}</span>
             </div>
           ) : (
             <div className="verified-note">

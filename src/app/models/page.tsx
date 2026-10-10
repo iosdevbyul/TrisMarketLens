@@ -32,7 +32,7 @@ export default async function ModelsPage() {
           <Link className="panel model-card model-link" href={"/models/" + model.id} key={model.id}>
             <div className="model-card-header">
               <div>
-                <p className="eyebrow">{model.direction} direction</p>
+                <p className="eyebrow">{t(model.direction)} {t("direction")}</p>
                 <h2>{model.modelName}</h2>
               </div>
               <WakStatusBadge state={model.role === "baseline_executable" ? "verified" : "not_started"} label={t(roleLabel(model.role))} />

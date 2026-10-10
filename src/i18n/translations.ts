@@ -151,4 +151,9 @@ Object.assign(ko, {
   "Quality policy": "품질 정책",
   "Integrated evidence package": "통합 근거 자료 패키지"
 });
+Object.assign(ko, {
+  "This direction is permitted by the locked long-only baseline policy.": "이 방향은 고정된 매수 전용 기준 전략에서 허용됩니다.",
+  "This model remains qualified research evidence but is not executed by the locked baseline policy.": "이 모델은 검증된 연구 자료지만 고정된 기준 전략에서는 실행하지 않습니다.",
+  "direction": "방향", "Up": "상승", "Down": "하락", "sessions": "거래일", "checks": "개 점검"
+});
 export function translate(locale: Locale, text: string): string { return locale === "ko" ? (ko[text] ?? ko[text.replace(/\s+/g, " ").trim()] ?? text) : text; }

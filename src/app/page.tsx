@@ -28,7 +28,7 @@ export default async function Home() {
 
       <section className="panel-grid">
         <WakPanel>
-          <WakSectionHeader eyebrow={t("Evidence")} title={t("Research readiness")} trailing={<span className="panel-count">{status.evidence.length} checks</span>} />
+          <WakSectionHeader eyebrow={t("Evidence")} title={t("Research readiness")} trailing={<span className="panel-count">{status.evidence.length} {t("checks")}</span>} />
           <StatusList items={status.evidence} />
         </WakPanel>
 
