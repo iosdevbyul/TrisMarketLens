@@ -273,4 +273,18 @@ Object.assign(ko, {
   "No recorded analysis history yet.": "기록된 분석 이력이 없습니다.",
   "Dates without observations are omitted, not counted as zero activity.": "기록이 없는 날짜는 활동 0건으로 간주하지 않고 표시에서 제외합니다."
 });
+Object.assign(ko, {
+  "Pipeline health": "파이프라인 상태",
+  "Unknown": "알 수 없음",
+  "Needs attention": "확인 필요",
+  "Reported successful": "보고된 실행 성공",
+  "States describe reported jobs only. Data timeliness and completion are not independently certified.": "상태는 전달받은 작업 기록만 나타내며 데이터 최신성과 전체 작업 완료 여부를 별도로 보증하지 않습니다.",
+  "Last status check": "마지막 상태 확인",
+  "Market collection": "시장 데이터 수집",
+  "Market validation": "시장 데이터 검증",
+  "Latest run": "최근 실행",
+  "Last successful completion": "마지막 성공 완료",
+  "Successful data through": "성공 작업의 데이터 기준일",
+  "Pipeline status uses fictional demonstration runs.": "파이프라인 상태는 가상의 데모 실행 기록을 사용합니다."
+});
 export function translate(locale: Locale, text: string): string { return locale === "ko" ? (ko[text] ?? ko[text.replace(/\s+/g, " ").trim()] ?? text) : text; }
