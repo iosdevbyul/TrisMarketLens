@@ -262,4 +262,15 @@ Object.assign(ko, {
   "Validation status": "검증 상태",
   "Latest analysis time": "최근 분석 시각"
 });
+Object.assign(ko, {
+  "AI Analysis History": "AI 분석 이력",
+  "Review observed daily model-analysis activity and validation state. This is not a backtest.": "실제 기록된 날짜별 모델 분석 활동과 검증 상태를 조회합니다. 백테스트가 아닙니다.",
+  "Historical counts here are fictional examples, not actual model runs.": "이 이력 수치는 실제 모델 실행 결과가 아닌 가상 예시입니다.",
+  "Historical activity": "과거 활동",
+  "Analysis activity by date": "날짜별 분석 활동",
+  "observed dates": "개 관측 날짜",
+  "History metric": "이력 기준",
+  "No recorded analysis history yet.": "기록된 분석 이력이 없습니다.",
+  "Dates without observations are omitted, not counted as zero activity.": "기록이 없는 날짜는 활동 0건으로 간주하지 않고 표시에서 제외합니다."
+});
 export function translate(locale: Locale, text: string): string { return locale === "ko" ? (ko[text] ?? ko[text.replace(/\s+/g, " ").trim()] ?? text) : text; }
