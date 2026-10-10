@@ -26,6 +26,17 @@ describe("HttpDataSource", () => {
     );
   });
 
+  it("rejects valid JSON with an incompatible typed payload", async () => {
+    const source = new HttpDataSource("http://localhost:8000", async () => Response.json({ universe: "invalid" }));
+    await expect(source.getCoverageSummary()).rejects.toMatchObject({ name: "HttpDataSourceError", status: 200 });
+  });
+
+  it("passes a bounded timeout signal to fetch", async () => {
+    const fetcher = vi.fn(async () => Response.json({productName:"X",sourceLabel:"Y",metrics:[],evidence:[],baseline:[]}));
+    await new HttpDataSource("http://localhost:8000", fetcher).getProjectStatus();
+    expect(fetcher).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({signal:expect.any(AbortSignal)}));
+  });
+
   it("maps a detail 404 to null", async () => {
     const fetcher = vi.fn(async () => new Response(null, { status: 404 }));
     const dataSource = new HttpDataSource("http://localhost:8000", fetcher);
