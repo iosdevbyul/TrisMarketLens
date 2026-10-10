@@ -14,6 +14,7 @@ import type {
 import type { StockDetail, StockSummary } from "@/domain/stock";
 
 import type { DataSource } from "./DataSource";
+import {isBaseline,isCoverage,isEvidenceDetail,isEvidenceSummary,isModelDetail,isModelSummary,isProjectStatus,isStockDetail,isStockSummary} from "./researchResponseValidators";
 
 export type Fetcher = (
   input: RequestInfo | URL,
@@ -60,58 +61,62 @@ export class HttpDataSource implements DataSource {
   }
 
   getProjectStatus() {
-    return this.request<ProjectStatus>("/api/v1/project/status");
+    return this.request<ProjectStatus>("/api/v1/project/status", isProjectStatus);
   }
 
   getCoverageSummary() {
-    return this.request<CoverageSummary>("/api/v1/research/coverage");
+    return this.request<CoverageSummary>("/api/v1/research/coverage", isCoverage);
   }
 
   getModelSummaries() {
-    return this.request<ModelSummary[]>("/api/v1/models");
+    return this.request<ModelSummary[]>("/api/v1/models", (v): v is ModelSummary[] => Array.isArray(v) && v.every(isModelSummary));
   }
 
   getModel(direction: ModelDirection) {
     return this.requestNullable<ModelDetail>(
       "/api/v1/models/" + encodeURIComponent(direction),
+      isModelDetail,
     );
   }
 
   getEvidenceLayers() {
-    return this.request<EvidenceLayerSummary[]>("/api/v1/evidence");
+    return this.request<EvidenceLayerSummary[]>("/api/v1/evidence", (v): v is EvidenceLayerSummary[] => Array.isArray(v) && v.every(isEvidenceSummary));
   }
 
   getEvidenceLayer(id: EvidenceLayerId) {
     return this.requestNullable<EvidenceDetail>(
       "/api/v1/evidence/" + encodeURIComponent(id),
+      isEvidenceDetail,
     );
   }
 
   getBaselineBacktest() {
-    return this.request<BaselineBacktestSnapshot>("/api/v1/backtests/baseline");
+    return this.request<BaselineBacktestSnapshot>("/api/v1/backtests/baseline", isBaseline);
   }
 
   getStocks() {
-    return this.request<StockSummary[]>("/api/v1/stocks");
+    return this.request<StockSummary[]>("/api/v1/stocks", (v): v is StockSummary[] => Array.isArray(v) && v.every(isStockSummary));
   }
 
   getStock(ticker: string) {
     return this.requestNullable<StockDetail>(
       "/api/v1/stocks/" + encodeURIComponent(ticker),
+      isStockDetail,
     );
   }
 
-  private request<T>(path: string): Promise<T> {
-    return this.performRequest<T>(path, false) as Promise<T>;
+  private request<T>(path: string, validate: (value: unknown) => value is T): Promise<T> {
+    return this.performRequest<T>(path, false, validate) as Promise<T>;
   }
 
-  private requestNullable<T>(path: string): Promise<T | null> {
-    return this.performRequest<T>(path, true);
+  private requestNullable<T>(path: string, validate: (value: unknown) => value is T): Promise<T | null> {
+    return this.performRequest<T>(path, true, validate);
   }
 
   private async performRequest<T>(
     path: string,
     nullable404: boolean,
+    validate: (value: unknown) => value is T,
   ): Promise<T | null> {
     const url = this.baseUrl + path;
     let response: Response;
@@ -122,6 +127,7 @@ export class HttpDataSource implements DataSource {
           Accept: "application/json",
         },
         cache: "no-store",
+        signal: AbortSignal.timeout(5000),
       });
     } catch (error) {
       throw new HttpDataSourceError({
@@ -155,8 +161,13 @@ export class HttpDataSource implements DataSource {
     }
 
     try {
-      return (await response.json()) as T;
-    } catch {
+      const payload: unknown = await response.json();
+      if (!validate(payload)) {
+        throw new HttpDataSourceError({message: "DonghakStockVision API returned invalid response shape for " + path + ".", status: response.status, url});
+      }
+      return payload;
+    } catch (error) {
+      if (error instanceof HttpDataSourceError) throw error;
       throw new HttpDataSourceError({
         message: "DonghakStockVision API returned invalid JSON for " + path + ".",
         status: response.status,
