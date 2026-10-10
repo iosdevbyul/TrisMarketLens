@@ -27,7 +27,7 @@ export async function loadStockAnalysis(ticker: string, { mode = "disconnected",
   if (mode !== "http") return { source: "disconnected", data: empty, error: "Unsupported stock analysis mode" };
   if (!apiBaseUrl?.trim()) return { source: "http", data: empty, error: "Stock analysis API base URL is not configured" };
   try {
-    const url = apiBaseUrl.trim().replace(/\\/+$/, "") + "/api/v1/stocks/" + encodeURIComponent(ticker) + "/analysis";
+    const url = apiBaseUrl.trim().replace(/\/+$/, "") + "/api/v1/stocks/" + encodeURIComponent(ticker) + "/analysis";
     const response = await fetcher(url, { headers: { Accept: "application/json" }, cache: "no-store", signal: AbortSignal.timeout(5000) });
     if (!response.ok) return { source: "http", data: empty, error: `Stock analysis API returned HTTP ${response.status}` };
     const body: unknown = await response.json();
