@@ -7,6 +7,8 @@ import { FreshnessPanel } from "@/components/operations/FreshnessPanel";
 import { getFreshness } from "@/data/FreshnessDataSource";
 import { getOperationalAlerts } from "@/data/OperationalAlertsDataSource";
 import { OperationalAlertsPanel } from "@/components/operations/OperationalAlertsPanel";
+import { OperationsOverviewPanel } from "@/components/operations/OperationsOverviewPanel";
+import { summarizeOperationsOverview } from "@/domain/operationsOverview";
 
 const stateLabels: Record<AnalysisRunState,string> = {
   queued: "Queued", running: "Running", succeeded: "Succeeded", failed: "Failed", blocked: "Blocked",
@@ -32,6 +34,7 @@ export default async function OperationsPage() {
         description={t("Monitor market data collection, validation, inference and the operational history supplied by DonghakStockVision.")} />
       {source === "mock" ? <div className="run-lock" role="status"><p>{t("Demonstration mode")}</p><span>{t("The timestamps and run records below are examples, not actual market processing.")}</span></div> : null}
       {error ? <div className="run-lock" role="alert"><p>{t("Operations unavailable")}</p><span>{error}</span></div> : null}
+      <OperationsOverviewPanel overview={summarizeOperationsOverview(result,freshness,alerts)} locale={locale} demonstration={[result.source,freshness.source,alerts.source].includes("mock")}/>
       <PipelineHealthPanel result={result} locale={locale}/>
       <FreshnessPanel result={freshness} locale={locale}/>
       <OperationalAlertsPanel result={alerts} locale={locale}/>

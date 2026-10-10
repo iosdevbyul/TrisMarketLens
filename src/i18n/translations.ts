@@ -321,4 +321,13 @@ Object.assign(ko, {
   "Resolved at": "해결 시각",
   "Fictional demonstration alert only.": "가상 데모 알림입니다."
 });
+Object.assign(ko, {
+  "Operations overview": "운영 상태 종합 요약",
+  "Reported healthy": "보고된 정상 상태",
+  "Overall state summarizes received reports only; it does not certify live system health.": "종합 상태는 수신된 보고만 요약하며 실제 시스템의 정상 상태를 보증하지 않습니다.",
+  "Open alerts": "미해결 알림",
+  "Critical open alerts": "심각한 미해결 알림",
+  "At least one overview input contains fictional demo records.": "종합 요약에 사용된 데이터 중 가상의 데모 기록이 포함되어 있습니다.",
+  "One or more sources are missing or unavailable. Unknown is not healthy.": "하나 이상의 데이터 소스를 사용할 수 없습니다. 미확인을 정상으로 취급하지 않습니다."
+});
 export function translate(locale: Locale, text: string): string { return locale === "ko" ? (ko[text] ?? ko[text.replace(/\s+/g, " ").trim()] ?? text) : text; }

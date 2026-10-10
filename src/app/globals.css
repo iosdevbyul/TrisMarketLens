@@ -1391,3 +1391,11 @@ h1 {
 .operational-alerts-filters select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .operational-alerts-list{display:grid;gap:12px}
 .operational-alert-item{padding:18px;border:1px solid var(--border);border-radius:14px}
+
+.operations-overview{margin-top:26px}
+.operations-overview-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:20px 0}
+.operations-overview-stat{display:grid;gap:12px;padding:17px;border:1px solid var(--border);border-radius:14px;min-width:0}
+.operations-overview-stat span{color:var(--muted);font-size:11px}
+.operations-overview-stat strong{font-size:18px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+@media(max-width:900px){.operations-overview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.operations-overview-grid{grid-template-columns:1fr}}
