@@ -18,6 +18,15 @@ describe("Stock analysis read-only adapter", () => {
     expect(r.error).toBeNull();
     expect(fetcher).toHaveBeenCalledWith("http://localhost:8000/api/v1/stocks/005930/analysis", expect.objectContaining({ cache: "no-store" }));
   });
+  it("treats an approved empty backend publication as no predictions", async () => {
+    const fetcher = vi.fn(async () => Response.json({ ticker: "005930", records: [] }));
+    const result = await loadStockAnalysis("005930", {
+      mode: "http", apiBaseUrl: "http://localhost:8000", fetcher: fetcher as typeof fetch,
+    });
+    expect(result.source).toBe("http");
+    expect(result.error).toBeNull();
+    expect(result.data.records).toEqual([]);
+  });
   it("rejects cross-ticker results and invalid scores", () => {
     const snapshot = demoStockAnalysis("005930");
     expect(isStockAnalysisSnapshot(snapshot, "000660")).toBe(false);
