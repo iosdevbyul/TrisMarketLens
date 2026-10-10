@@ -24,10 +24,10 @@ export const demonstrationOperations: OperationsSnapshot = {
 };
 
 function isIsoDate(value: unknown): value is string {
-  return typeof value === "string" && /^\\d{4}-\\d{2}-\\d{2}$/.test(value) && Number.isFinite(Date.parse(value));
+  return typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value) && Number.isFinite(Date.parse(value));
 }
 function isTimestamp(value: unknown): value is string {
-  return typeof value === "string" && /(?:Z|[+-]\\d{2}:\\d{2})$/.test(value) && Number.isFinite(Date.parse(value));
+  return typeof value === "string" && /(?:Z|[+-]\d{2}:\d{2})$/.test(value) && Number.isFinite(Date.parse(value));
 }
 function isValidSnapshot(value: unknown): value is OperationsSnapshot {
   if (!value || typeof value !== "object") return false;
@@ -58,7 +58,7 @@ export async function loadOperations({ mode = "disconnected", apiBaseUrl, fetche
   if (mode !== "http") return unavailable("disconnected", "Unsupported operations mode");
   if (!apiBaseUrl?.trim()) return unavailable("http", "Operations API base URL is not configured");
   try {
-    const response = await fetcher(apiBaseUrl.trim().replace(/\\/+$/, "") + "/api/v1/operations", {
+    const response = await fetcher(apiBaseUrl.trim().replace(/\/+$/, "") + "/api/v1/operations", {
       headers: { Accept: "application/json" }, cache: "no-store", signal: AbortSignal.timeout(5000),
     });
     if (!response.ok) return unavailable("http", `Operations API returned HTTP ${response.status}`);
