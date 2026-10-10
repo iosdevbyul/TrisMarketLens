@@ -1284,3 +1284,15 @@ h1 {
 .ohlcv-rise { color:var(--accent); }
 .ohlcv-fall { color:var(--danger); }
 @media(max-width:640px){.ohlcv-legend{margin-left:0}.ohlcv-svg{min-width:520px}.ohlcv-chart{overflow-x:auto}}
+
+.ohlcv-toolbar{display:flex;justify-content:flex-end;gap:8px;margin:0 0 14px}
+.ohlcv-toolbar button{cursor:pointer;color:var(--muted);border:1px solid var(--border);border-radius:10px;background:transparent;padding:8px 14px;font-size:12px}
+.ohlcv-toolbar button[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--text)}
+.ohlcv-toolbar button:focus-visible,.ohlcv-scroll:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ohlcv-scroll{overflow-x:auto}
+.ohlcv-scroll svg{min-width:100%;max-height:none}
+.ohlcv-selected{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin:14px 0;padding:15px;border:1px solid var(--border);border-radius:14px}
+.ohlcv-selected dt{font-size:11px;color:var(--muted)}
+.ohlcv-selected dd{margin:5px 0 0;font-size:13px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+@media(max-width:760px){.ohlcv-selected{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:400px){.ohlcv-selected{grid-template-columns:repeat(2,minmax(0,1fr))}}
