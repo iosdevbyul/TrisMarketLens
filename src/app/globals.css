@@ -1269,3 +1269,11 @@ h1 {
 .operations-run strong { font-size:13px; }
 .operations-run .metric-detail { margin:6px 0 0; }
 .operations-run-summary { flex-basis:100%; }
+
+.stock-analysis-list { display:grid;gap:12px;margin-top:18px; }
+.stock-analysis-item { border:1px solid var(--border);border-radius:14px;padding:18px; }
+.stock-analysis-heading { display:flex;justify-content:space-between;align-items:flex-start;gap:12px; }
+.stock-analysis-stats { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:20px 0 12px; }
+.stock-analysis-stats dt { font-size:11px;color:var(--muted); }
+.stock-analysis-stats dd { margin:7px 0 0;font-size:14px;overflow-wrap:anywhere; }
+@media(max-width:640px){ .stock-analysis-stats { grid-template-columns:1fr; } }
