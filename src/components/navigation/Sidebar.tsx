@@ -9,6 +9,7 @@ const navigation = [
   { href: "/", label: "Overview" },
   { href: "/stocks", label: "Stocks" },
   { href: "/screener", label: "AI Screener" },
+  { href: "/history", label: "AI Analysis History" },
   { href: "/models", label: "Models" },
   { href: "/evidence", label: "Evidence" },
   { href: "/backtesting", label: "Backtesting" },
