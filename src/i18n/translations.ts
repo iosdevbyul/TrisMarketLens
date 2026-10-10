@@ -179,4 +179,23 @@ Object.assign(ko, {
   "The planned read-only operations API will provide job identifiers, queued and completed states, timestamps, latest validated trading date, scheduler information, and failure details. No market data or predictions are fabricated.": "향후 읽기 전용 운영 API에서 작업 식별자, 대기 및 완료 상태, 실행 시각, 최근 검증 거래일, 스케줄러 정보 및 실패 원인을 전달합니다. 시장 데이터나 예측값은 임의로 생성하지 않습니다.",
   "This screen will track scheduled collection, validation, model inference, and job history independently from the research dashboard.": "이 화면에서는 예약된 수집·검증·모델 추론과 실행 이력을 연구 대시보드와 독립적으로 확인할 수 있습니다."
 });
+Object.assign(ko, {
+  "Connected": "연결됨",
+  "Degraded": "연결 이상",
+  "Queued": "대기 중",
+  "Running": "실행 중",
+  "Succeeded": "성공",
+  "Failed": "실패",
+  "Demo data": "데모 데이터",
+  "API data": "API 데이터",
+  "Operations API connection state": "운영 API 연결 상태",
+  "Latest verified market date": "최근 검증된 시장 거래일",
+  "Based on recorded successful runs": "성공으로 기록된 실행 기준",
+  "Scheduler provided timestamp": "스케줄러에서 제공된 시각",
+  "Monitor market data collection, validation, inference and the operational history supplied by DonghakStockVision.": "동학비전이 제공하는 시장 데이터 수집·검증·추론 상태와 운영 이력을 확인합니다.",
+  "Demonstration mode": "데모 모드",
+  "The timestamps and run records below are examples, not actual market processing.": "아래 실행 시각과 기록은 실제 시장 분석 결과가 아닌 예시입니다.",
+  "Operations unavailable": "운영 정보를 불러올 수 없습니다",
+  "Demonstration data only": "시연용 데이터"
+});
 export function translate(locale: Locale, text: string): string { return locale === "ko" ? (ko[text] ?? ko[text.replace(/\s+/g, " ").trim()] ?? text) : text; }
