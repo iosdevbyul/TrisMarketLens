@@ -46,7 +46,7 @@ export default async function ModelDetailPage({ params }: ModelDetailPageProps) 
       <PageHeader
         badge={t(roleLabel)}
         description={t(model.note)}
-        eyebrow={model.direction + " direction"}
+        eyebrow={t(model.direction) + " " + t("direction")}
         title={model.modelName}
       />
 
@@ -78,12 +78,12 @@ export default async function ModelDetailPage({ params }: ModelDetailPageProps) 
               className="status-pill"
               data-state={model.role === "baseline_executable" ? "verified" : "not_started"}
             >
-              {roleLabel}
+              {t(roleLabel)}
             </span>
             <p>
               {model.role === "baseline_executable"
-                ? "This direction is permitted by the locked long-only baseline policy."
-                : "This model remains qualified research evidence but is not executed by the locked baseline policy."}
+                ? t("This direction is permitted by the locked long-only baseline policy.")
+                : t("This model remains qualified research evidence but is not executed by the locked baseline policy.")}
             </p>
           </div>
         </article>
@@ -158,7 +158,7 @@ export default async function ModelDetailPage({ params }: ModelDetailPageProps) 
             </div>
             <div>
               <dt>{t("Horizon")}</dt>
-              <dd>{model.provenance.horizonSessions} sessions</dd>
+              <dd>{model.provenance.horizonSessions} {t("sessions")}</dd>
             </div>
           </dl>
         </article>
@@ -197,7 +197,7 @@ export default async function ModelDetailPage({ params }: ModelDetailPageProps) 
             </div>
             <div>
               <dt>{t("Early stopping")}</dt>
-              <dd>{model.provenance.earlyStopping ? "On" : "Off"}</dd>
+              <dd>{t(model.provenance.earlyStopping ? "On" : "Off")}</dd>
             </div>
             <div>
               <dt>{t("Random seed")}</dt>
