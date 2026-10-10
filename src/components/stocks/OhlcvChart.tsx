@@ -25,8 +25,8 @@ export function OhlcvChart({ ticker, bars, locale, analyses = [], analysisIsDemo
   const selectedMarker = markers.find(marker => marker.date === selectedMarkerDate);
   const selected = visible.find(bar => bar.date === selectedDate) ?? visible[visible.length - 1];
   if (!visible.length) return null;
-  const highest = Math.max(...visible.map(b => b.high));
-  const lowest = Math.min(...visible.map(b => b.low));
+  const highest = Math.max(...visible.map(b => b.high === 0 ? b.close : b.high));
+  const lowest = Math.min(...visible.map(b => b.low === 0 ? b.close : b.low));
   const range = Math.max(highest - lowest, highest * 0.01, 0.001);
   const maxVolume = Math.max(1, ...visible.map(b => b.volume));
   const chartWidth = Math.max(W, LEFT + RIGHT + visible.length * 6);
@@ -48,15 +48,16 @@ export function OhlcvChart({ ticker, bars, locale, analyses = [], analysisIsDemo
         </g>)}
         {visible.map((b,i) => {
           const x = LEFT + step * (i + 0.5);
+          const noTrade = b.open === 0 && b.high === 0 && b.low === 0 && b.volume === 0;
           const rising = b.close >= b.open;
           const color = rising ? "var(--accent)" : "var(--danger)";
           const y1 = priceY(Math.max(b.open,b.close));
           const y2 = priceY(Math.min(b.open,b.close));
           const volumeY = VOL_BOTTOM - b.volume / maxVolume * (VOL_BOTTOM - VOL_TOP);
           return <g key={b.date}>
-            <line x1={x} y1={priceY(b.high)} x2={x} y2={priceY(b.low)} stroke={color} strokeWidth="1.5" />
-            <rect x={x-bodyWidth/2} y={y1} width={bodyWidth} height={Math.max(y2-y1,1.5)} rx="0.5" fill={color} />
-            <rect x={x-bodyWidth/2} y={volumeY} width={bodyWidth} height={VOL_BOTTOM-volumeY} fill={color} opacity="0.45" />
+            {noTrade ? <circle cx={x} cy={priceY(b.close)} r={3} fill="none" stroke="var(--muted)" strokeWidth="1.5"/> : <line x1={x} y1={priceY(b.high)} x2={x} y2={priceY(b.low)} stroke={color} strokeWidth="1.5" />}
+            {!noTrade ? <rect x={x-bodyWidth/2} y={y1} width={bodyWidth} height={Math.max(y2-y1,1.5)} rx="0.5" fill={color} /> : null}
+            {!noTrade ? <rect x={x-bodyWidth/2} y={volumeY} width={bodyWidth} height={VOL_BOTTOM-volumeY} fill={color} opacity="0.45" /> : null}
             <rect x={x-step/2} y={TOP} width={step} height={VOL_BOTTOM-TOP} fill="transparent" role="button" tabIndex={0} aria-label={`${b.date}: O ${b.open}, H ${b.high}, L ${b.low}, C ${b.close}, V ${b.volume}`} onClick={() => setSelectedDate(b.date)} onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setSelectedDate(b.date); } }} />
           </g>;
         })}
@@ -92,6 +93,7 @@ export function OhlcvChart({ ticker, bars, locale, analyses = [], analysisIsDemo
       <dl className="ohlcv-selected" aria-live="polite">
         {[[locale === "ko" ? "날짜" : "Date", selected.date], [locale === "ko" ? "시가" : "Open", number.format(selected.open)], [locale === "ko" ? "고가" : "High", number.format(selected.high)], [locale === "ko" ? "저가" : "Low", number.format(selected.low)], [locale === "ko" ? "종가" : "Close", number.format(selected.close)], [locale === "ko" ? "거래량" : "Volume", number.format(selected.volume)]].map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}
       </dl>
+      {visible.some(b => b.open === 0 && b.high === 0 && b.low === 0 && b.volume === 0) ? <p className="metric-detail">{locale === "ko" ? "빈 원은 거래가 없는 날의 기준 종가를 나타냅니다. 실제 시가·고가·저가는 0으로 기록되었습니다." : "Hollow dots show reference close on no-trade days; original OHLC values remain zero."}</p> : null}
       <div className="ohlcv-legend"><span className="ohlcv-rise">{locale === "ko" ? "상승" : "Up"}</span><span className="ohlcv-fall">{locale === "ko" ? "하락" : "Down"}</span><span>{locale === "ko" ? "일별 가격 및 거래량" : "Daily price and volume"}</span></div>
     </div>
   );
