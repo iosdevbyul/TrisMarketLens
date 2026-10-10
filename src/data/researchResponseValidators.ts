@@ -15,7 +15,7 @@ const oneOf = <T extends string>(values:readonly T[]):Check<T> => (v):v is T => 
 const state=oneOf(["verified","in_progress","blocked","not_started"] as const);
 const direction=oneOf(["up","down"] as const);
 const metric=(v:unknown):v is {label:string;value:string;detail:string}=>obj(v)&&str(v.label)&&str(v.value)&&str(v.detail);
-const checkpoint=(v:unknown)=>obj(v)&&str(v.label)&&state(v.state)&&str(v.detail);
+const checkpoint=(v:unknown):v is {label:string;state:"verified"|"in_progress"|"blocked"|"not_started";detail:string}=>obj(v)&&str(v.label)&&state(v.state)&&str(v.detail);
 export const isProjectStatus:Check<ProjectStatus>=(v):v is ProjectStatus=>obj(v)&&str(v.productName)&&str(v.sourceLabel)&&arr(metric)(v.metrics)&&arr(checkpoint)(v.evidence)&&arr(checkpoint)(v.baseline);
 export const isCoverage:Check<CoverageSummary>=(v):v is CoverageSummary=>obj(v)&&["universe","totalBars","currentIdentityVerified","historicalIdentityVerified","unresolvedSecurities","unexplainedTickerSessions"].every(k=>int(v[k]))&&str(v.startDate)&&str(v.endDate);
 export const isModelSummary:Check<ModelSummary>=(v):v is ModelSummary=>obj(v)&&direction(v.id)&&oneOf(["Up","Down"] as const)(v.direction)&&str(v.modelName)&&oneOf(["baseline_executable","research_only"] as const)(v.role)&&num(v.validationAveragePrecision)&&num(v.oosAveragePrecision)&&str(v.note);
@@ -25,7 +25,7 @@ export const isModelDetail:Check<ModelDetail>=(v):v is ModelDetail=>isModelSumma
 const layerId=oneOf(["calendar","settlement","dart","security-lifecycle","corporate-actions"] as const);
 export const isEvidenceSummary:Check<EvidenceLayerSummary>=(v):v is EvidenceLayerSummary=>obj(v)&&layerId(v.id)&&str(v.title)&&state(v.state)&&str(v.summary)&&str(v.sourceLabel);
 export const isEvidenceDetail:Check<EvidenceDetail>=(v):v is EvidenceDetail=>isEvidenceSummary(v)&&obj(v)&&arr(metric)(v.metrics)&&arr(str)(v.findings)&&nullable(str)(v.blocker)&&nullable(str)(v.fingerprint)&&str(v.sourceScope);
-const ruleGroup=(v:unknown)=>obj(v)&&str(v.title)&&arr(metric)(v.rules);
-export const isBaseline:Check<BaselineBacktestSnapshot>=(v):v is BaselineBacktestSnapshot=>obj(v)&&v.id==="baseline"&&v.state==="blocked"&&v.performanceAvailable===false&&str(v.title)&&str(v.summary)&&arr(checkpoint)(v.readiness)&&arr(metric)(v.timeline)&&arr(ruleGroup)(v.policyGroups)&&arr((x:unknown)=>obj(x)&&str(x.label)&&str(x.value))(v.fingerprints);
+const ruleGroup=(v:unknown):v is {title:string;rules:{label:string;value:string;detail:string}[]}=>obj(v)&&str(v.title)&&arr(metric)(v.rules);
+export const isBaseline:Check<BaselineBacktestSnapshot>=(v):v is BaselineBacktestSnapshot=>obj(v)&&v.id==="baseline"&&v.state==="blocked"&&v.performanceAvailable===false&&str(v.title)&&str(v.summary)&&arr(checkpoint)(v.readiness)&&arr(metric)(v.timeline)&&arr(ruleGroup)(v.policyGroups)&&arr((x:unknown):x is {label:string;value:string}=>obj(x)&&str(x.label)&&str(x.value))(v.fingerprints);
 export const isStockSummary:Check<StockSummary>=(v):v is StockSummary=>obj(v)&&str(v.ticker)&&v.market==="KOSPI"&&nullable(str)(v.name)&&nullable(str)(v.sector);
 export const isStockDetail:Check<StockDetail>=(v):v is StockDetail=>isStockSummary(v)&&obj(v)&&v.dataStatus==="api"&&str(v.availableFrom)&&str(v.latestDataDate)&&str(v.evidenceNote)&&str(v.chartNote);
