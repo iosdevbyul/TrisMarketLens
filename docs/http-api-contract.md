@@ -68,7 +68,7 @@ npm run verify:http
 ```
 
 The verifier checks backend health, project status, coverage, models, evidence,
-baseline state, stock count versus universe, one stock-detail route, and the
+baseline state, stock count versus universe, one stock-detail route, **every published model detail**, **every published evidence layer detail**, and the
 frontend health endpoint. It does not execute models, signals, evidence
 collection, or backtests.
 
@@ -98,3 +98,9 @@ DonghakStockVision owns:
 - the read-only research API snapshot
 
 The frontend must not recreate or reinterpret research logic.
+
+## Actual runtime verification boundary
+
+The GitHub CI test/build job does not start DonghakStockVision or load a local market database. Run `npm run verify:http` with **both local servers already started** and a reviewed immutable backend snapshot to establish an actual cross-repository connection. The verifier checks all currently implemented route families, including each model/evidence detail published in the snapshot, rather than merely relying on HTTP health.
+
+Keep the future seven extension modes disconnected until the corresponding backend routes exist. The audit is documented in [backend-integration-audit.md](./backend-integration-audit.md).

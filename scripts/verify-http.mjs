@@ -32,25 +32,41 @@ const [project, coverage, models, evidence, baseline, stocks] = await Promise.al
   getJson(backendBaseUrl + "/api/v1/stocks", "stocks"),
 ]);
 
-assert(typeof project.productName === "string", "Project status is missing productName.");
+assert(typeof project.productName === "string" && project.productName.length > 0, "Project status is missing productName.");
+assert(Array.isArray(project.metrics) && Array.isArray(project.evidence) && Array.isArray(project.baseline), "Project status structure is invalid.");
 assert(
   Number.isInteger(coverage.universe) && coverage.universe > 0,
   "Coverage universe must be a positive integer.",
 );
 assert(Array.isArray(models) && models.length > 0, "Models endpoint returned no models.");
+assert(models.every(model => ["up","down"].includes(model?.id) && typeof model.modelName === "string"), "Models response does not match summary contract.");
 assert(
   Array.isArray(evidence) && evidence.length > 0,
   "Evidence endpoint returned no evidence layers.",
 );
+assert(evidence.every(layer => typeof layer?.id === "string" && typeof layer?.title === "string"), "Evidence response does not match summary contract.");
 assert(
   baseline.id === "baseline" && baseline.performanceAvailable === false,
   "Baseline endpoint does not match the blocked pre-performance contract.",
 );
 assert(Array.isArray(stocks), "Stocks endpoint did not return an array.");
+assert(stocks.every(stock => typeof stock?.ticker === "string" && (stock.name === null || typeof stock.name === "string") && (stock.sector === null || typeof stock.sector === "string")), "Stocks response does not match nullable metadata contract.");
 assert(
   stocks.length === coverage.universe,
   `Stock count ${stocks.length} does not match coverage universe ${coverage.universe}.`,
 );
+
+const modelDetails = await Promise.all(models.map(async model => {
+  const detail = await getJson(backendBaseUrl + "/api/v1/models/" + encodeURIComponent(model.id), `model detail ${model.id}`);
+  assert(detail.id === model.id && detail.provenance && detail.validation && detail.oos, `Model detail contract mismatch: ${model.id}`);
+  return detail;
+}));
+
+const evidenceDetails = await Promise.all(evidence.map(async layer => {
+  const detail = await getJson(backendBaseUrl + "/api/v1/evidence/" + encodeURIComponent(layer.id), `evidence detail ${layer.id}`);
+  assert(detail.id === layer.id && Array.isArray(detail.metrics) && Array.isArray(detail.findings), `Evidence detail contract mismatch: ${layer.id}`);
+  return detail;
+}));
 
 if (stocks.length > 0) {
   const firstTicker = stocks[0]?.ticker;
@@ -59,7 +75,8 @@ if (stocks.length > 0) {
     backendBaseUrl + "/api/v1/stocks/" + encodeURIComponent(firstTicker),
     "stock detail",
   );
-  assert(detail.ticker === firstTicker, "Stock detail ticker does not match stock summary.");
+  assert(detail.ticker === firstTicker && detail.dataStatus === "api", "Stock detail does not match stock contract.");
+  assert(typeof detail.availableFrom === "string" && typeof detail.latestDataDate === "string", "Stock detail is missing date coverage.");
 }
 
 const frontendHealth = await getJson(
@@ -80,6 +97,8 @@ console.log(`Universe: ${coverage.universe}`);
 console.log(`Stocks:   ${stocks.length}`);
 console.log(`Models:   ${models.length}`);
 console.log(`Evidence: ${evidence.length}`);
+console.log(`Model details verified: ${modelDetails.length}`);
+console.log(`Evidence details verified: ${evidenceDetails.length}`);
 
 function normalize(value) {
   return value?.trim().replace(/\/+$/, "") ?? "";
