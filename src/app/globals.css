@@ -1254,3 +1254,8 @@ h1 {
   .model-link, .evidence-card, .backtest-card { transition: none; }
   .model-link:hover, .evidence-card:hover, .backtest-card:hover { transform: none; }
 }
+
+.language-switcher { display:flex; gap:8px; margin-top:28px; padding:0 8px; }
+.language-switcher button { flex:1; cursor:pointer; padding:8px; color:var(--muted); border:1px solid var(--border); border-radius:10px; background:transparent; font-size:12px; }
+.language-switcher button[aria-pressed="true"] { color:var(--text); border-color:var(--accent); background:var(--accent-soft); }
+.language-switcher button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
