@@ -1375,3 +1375,11 @@ h1 {
 .pipeline-stage dd{margin:5px 0 0;font-size:12px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
 @media(max-width:900px){.pipeline-stage-grid{grid-template-columns:1fr}}
 @media(max-width:480px){.pipeline-health-summary{grid-template-columns:1fr}}
+
+.freshness-panel{margin-top:24px}
+.freshness-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:18px 0}
+.freshness-grid>div{border:1px solid var(--border);border-radius:14px;padding:16px;min-width:0}
+.freshness-grid dt{color:var(--muted);font-size:11px}
+.freshness-grid dd{margin:10px 0 0;font-size:14px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+@media(max-width:920px){.freshness-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.freshness-grid{grid-template-columns:1fr}}

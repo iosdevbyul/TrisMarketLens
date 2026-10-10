@@ -287,4 +287,18 @@ Object.assign(ko, {
   "Successful data through": "성공 작업의 데이터 기준일",
   "Pipeline status uses fictional demonstration runs.": "파이프라인 상태는 가상의 데모 실행 기록을 사용합니다."
 });
+Object.assign(ko, {
+  "Exchange calendar": "거래소 달력",
+  "Data freshness": "데이터 최신성",
+  "Current": "최신",
+  "Delayed": "지연",
+  "Calendar dates and freshness status are fictional demo data.": "달력 날짜와 최신성 상태는 가상의 데모 데이터입니다.",
+  "Freshness unavailable": "최신성 정보를 불러올 수 없습니다",
+  "No verified exchange calendar assessment is available.": "검증된 거래소 달력 기준 최신성 평가가 없습니다.",
+  "Calendar source": "달력 출처",
+  "Expected completed session": "완료된 것으로 예상되는 거래일",
+  "Validated data through": "검증 데이터 기준일",
+  "Assessed at": "평가 시각",
+  "Trading holidays and completion cutoffs are defined by the backend, never inferred from weekdays in the web app.": "휴장일과 거래일 종료 기준은 백엔드에서 정의하며 웹이 요일만으로 추측하지 않습니다."
+});
 export function translate(locale: Locale, text: string): string { return locale === "ko" ? (ko[text] ?? ko[text.replace(/\s+/g, " ").trim()] ?? text) : text; }
