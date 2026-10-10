@@ -11,6 +11,7 @@ const navigation = [
   { href: "/models", label: "Models" },
   { href: "/evidence", label: "Evidence" },
   { href: "/backtesting", label: "Backtesting" },
+  { href: "/operations", label: "Operations" },
 ];
 
 export function Sidebar({ locale }: { locale: Locale }) {

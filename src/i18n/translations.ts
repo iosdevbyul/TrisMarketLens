@@ -156,4 +156,27 @@ Object.assign(ko, {
   "This model remains qualified research evidence but is not executed by the locked baseline policy.": "이 모델은 검증된 연구 자료지만 고정된 기준 전략에서는 실행하지 않습니다.",
   "direction": "방향", "Up": "상승", "Down": "하락", "sessions": "거래일", "checks": "개 점검"
 });
+Object.assign(ko, {
+  "Operations": "운영 현황",
+  "Analysis operations": "자동 분석 운영 현황",
+  "Frontend ready": "웹 화면 준비 완료",
+  "Engine connection": "분석 엔진 연결",
+  "Not connected": "미연결",
+  "No operations API is configured yet.": "운영 상태 API가 아직 연결되지 않았습니다.",
+  "Latest validated market data": "최근 검증된 시장 데이터",
+  "Available after a verified collection run.": "검증된 수집 작업 완료 후 표시됩니다.",
+  "Last completed analysis": "최근 완료된 분석",
+  "Available after a recorded analysis run.": "분석 실행 기록이 생성된 후 표시됩니다.",
+  "Next scheduled analysis": "다음 예약 분석",
+  "Available after scheduler integration.": "스케줄러 연동 후 표시됩니다.",
+  "Analysis run history": "분석 실행 이력",
+  "Run history": "실행 이력",
+  "runs": "개 실행",
+  "No analysis runs available": "분석 실행 기록이 없습니다",
+  "TrisMarketLens does not execute or simulate analysis. Run history will be displayed only when DonghakStockVision provides verified operational records.": "TrisMarketLens는 분석을 실행하거나 모의 실행하지 않습니다. 동학비전에서 검증된 운영 기록이 제공될 때만 실행 이력을 표시합니다.",
+  "Integration contract": "연동 계약",
+  "Backend integration pending": "백엔드 연동 대기 중",
+  "The planned read-only operations API will provide job identifiers, queued and completed states, timestamps, latest validated trading date, scheduler information, and failure details. No market data or predictions are fabricated.": "향후 읽기 전용 운영 API에서 작업 식별자, 대기 및 완료 상태, 실행 시각, 최근 검증 거래일, 스케줄러 정보 및 실패 원인을 전달합니다. 시장 데이터나 예측값은 임의로 생성하지 않습니다.",
+  "This screen will track scheduled collection, validation, model inference, and job history independently from the research dashboard.": "이 화면에서는 예약된 수집·검증·모델 추론과 실행 이력을 연구 대시보드와 독립적으로 확인할 수 있습니다."
+});
 export function translate(locale: Locale, text: string): string { return locale === "ko" ? (ko[text] ?? ko[text.replace(/\s+/g, " ").trim()] ?? text) : text; }
