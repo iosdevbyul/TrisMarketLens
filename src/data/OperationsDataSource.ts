@@ -1,4 +1,4 @@
-import { disconnectedOperations, validateOperationsSnapshot, type OperationsSnapshot } from "@/domain/operations";
+import { disconnectedOperations, validateOperationsSnapshot, type OperationsSnapshot } from "../domain/operations";
 
 export type OperationsSourceMode = "disconnected" | "mock" | "http";
 export interface OperationsSourceOptions {
