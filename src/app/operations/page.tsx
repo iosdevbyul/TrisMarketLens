@@ -5,12 +5,14 @@ import type { AnalysisRunState } from "@/domain/operations";
 import { PipelineHealthPanel } from "@/components/operations/PipelineHealthPanel";
 import { FreshnessPanel } from "@/components/operations/FreshnessPanel";
 import { getFreshness } from "@/data/FreshnessDataSource";
+import { getOperationalAlerts } from "@/data/OperationalAlertsDataSource";
+import { OperationalAlertsPanel } from "@/components/operations/OperationalAlertsPanel";
 
 const stateLabels: Record<AnalysisRunState,string> = {
   queued: "Queued", running: "Running", succeeded: "Succeeded", failed: "Failed", blocked: "Blocked",
 };
 export default async function OperationsPage() {
-  const [t, locale, result, freshness] = await Promise.all([getTranslator(), getLocale(), getOperations(), getFreshness()]);
+  const [t, locale, result, freshness, alerts] = await Promise.all([getTranslator(), getLocale(), getOperations(), getFreshness(), getOperationalAlerts()]);
   const { snapshot, source, error } = result;
   const formatTime = (value: string | null) => value ? new Intl.DateTimeFormat(locale === "ko" ? "ko-KR" : "en-US", {
     dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Seoul",
@@ -32,6 +34,7 @@ export default async function OperationsPage() {
       {error ? <div className="run-lock" role="alert"><p>{t("Operations unavailable")}</p><span>{error}</span></div> : null}
       <PipelineHealthPanel result={result} locale={locale}/>
       <FreshnessPanel result={freshness} locale={locale}/>
+      <OperationalAlertsPanel result={alerts} locale={locale}/>
       <section className="operations-grid" aria-label={t("Analysis operations")}>
         {fields.map(field => <article className="metric-card" key={field.label}>
           <p className="metric-label">{t(field.label)}</p><p className="metric-value operations-value">{field.value}</p>

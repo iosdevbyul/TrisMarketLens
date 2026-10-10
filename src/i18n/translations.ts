@@ -301,4 +301,24 @@ Object.assign(ko, {
   "Assessed at": "평가 시각",
   "Trading holidays and completion cutoffs are defined by the backend, never inferred from weekdays in the web app.": "휴장일과 거래일 종료 기준은 백엔드에서 정의하며 웹이 요일만으로 추측하지 않습니다."
 });
+Object.assign(ko, {
+  "Operational alerts": "운영 이상 알림",
+  "alerts": "개 알림",
+  "These alerts are fictional examples, not live incidents.": "이 알림들은 실제 장애가 아닌 가상의 예시입니다.",
+  "Alerts unavailable": "알림 정보를 불러올 수 없습니다",
+  "Alerts are read-only backend records. This screen does not send notifications or resolve incidents.": "알림은 백엔드의 읽기 전용 기록이며 이 화면에서 알림을 발송하거나 장애를 해결 처리하지 않습니다.",
+  "Alert status": "알림 상태",
+  "Open": "미해결",
+  "Resolved": "해결",
+  "Severity": "심각도",
+  "All severities": "전체 심각도",
+  "Info": "정보",
+  "Warning": "경고",
+  "Critical": "심각",
+  "No alert records match this view.": "해당 조건의 알림 기록이 없습니다.",
+  "Other": "기타",
+  "Related run": "연관 실행",
+  "Resolved at": "해결 시각",
+  "Fictional demonstration alert only.": "가상 데모 알림입니다."
+});
 export function translate(locale: Locale, text: string): string { return locale === "ko" ? (ko[text] ?? ko[text.replace(/\s+/g, " ").trim()] ?? text) : text; }
