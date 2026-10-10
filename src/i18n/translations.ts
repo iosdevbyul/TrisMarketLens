@@ -230,4 +230,23 @@ Object.assign(ko, {
 "Demonstration evaluation only; no policy decision has been made.":"가상 평가 기록이며 정책상 판정이 내려지지 않았습니다.",
 "Demonstration evaluation only; no verified success verdict.":"가상 평가 기록이며 검증된 성공 판정이 아닙니다."
 });
+Object.assign(ko, {
+  "AI Screener": "AI 종목 탐색기",
+  "AI research": "AI 연구",
+  "Explore model analyses across securities. Scores are not investment recommendations.": "여러 종목의 모델 분석을 탐색합니다. 점수는 투자 권고가 아닙니다.",
+  "All screener records are fictional examples, not market predictions.": "모든 탐색기 기록은 가상 예시이며 실제 시장 예측이 아닙니다.",
+  "Screener unavailable": "종목 탐색기를 사용할 수 없습니다",
+  "Search ticker, name or model": "종목 코드, 이름 또는 모델 검색",
+  "Search analyses": "분석 검색",
+  "All directions": "모든 방향",
+  "Validation": "검증 상태",
+  "All states": "모든 상태",
+  "Sort by": "정렬 기준",
+  "Latest analysis": "최근 분석",
+  "Ticker": "종목 코드",
+  "Model": "모델",
+  "Data through": "데이터 기준일",
+  "matching analyses": "개 분석 결과",
+  "No analyses match your filters.": "조건에 맞는 분석 결과가 없습니다."
+});
 export function translate(locale: Locale, text: string): string { return locale === "ko" ? (ko[text] ?? ko[text.replace(/\s+/g, " ").trim()] ?? text) : text; }
