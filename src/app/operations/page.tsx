@@ -1,48 +1,49 @@
 import { PageHeader } from "@/components/common/PageHeader";
-import { getTranslator } from "@/i18n/server";
-import { disconnectedOperations as operations } from "@/domain/operations";
+import { getTranslator, getLocale } from "@/i18n/server";
+import { getOperations } from "@/data/OperationsDataSource";
+import type { AnalysisRunState } from "@/domain/operations";
 
-/**
- * Frontend-only first phase. The backend will supply a validated snapshot through
- * a dedicated read-only endpoint; never synthesize live run history in the UI.
- */
+const stateLabels: Record<AnalysisRunState,string> = {
+  queued: "Queued", running: "Running", succeeded: "Succeeded", failed: "Failed", blocked: "Blocked",
+};
 export default async function OperationsPage() {
-  const t = await getTranslator();
+  const [t, locale, result] = await Promise.all([getTranslator(), getLocale(), getOperations()]);
+  const { snapshot, source, error } = result;
+  const formatTime = (value: string | null) => value ? new Intl.DateTimeFormat(locale === "ko" ? "ko-KR" : "en-US", {
+    dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Seoul",
+  }).format(new Date(value)) : "—";
+  const lastCompleted = snapshot.runs.filter(run => run.state === "succeeded" && run.finishedAt)
+    .sort((a,b) => Date.parse(b.finishedAt!) - Date.parse(a.finishedAt!))[0];
   const fields = [
-    { label: "Engine connection", value: t("Not connected"), detail: "No operations API is configured yet." },
-    { label: "Latest validated market data", value: "—", detail: "Available after a verified collection run." },
-    { label: "Last completed analysis", value: "—", detail: "Available after a recorded analysis run." },
-    { label: "Next scheduled analysis", value: "—", detail: "Available after scheduler integration." },
+    { label: "Engine connection", value: t(snapshot.connection === "connected" ? "Connected" : snapshot.connection === "degraded" ? "Degraded" : "Not connected"), detail: t("Operations API connection state") },
+    { label: "Latest validated market data", value: snapshot.latestDataThrough ?? "—", detail: t("Latest verified market date") },
+    { label: "Last completed analysis", value: formatTime(lastCompleted?.finishedAt ?? null), detail: t("Based on recorded successful runs") },
+    { label: "Next scheduled analysis", value: formatTime(snapshot.nextScheduledRun), detail: t("Scheduler provided timestamp") },
   ];
   return (
     <>
-      <PageHeader eyebrow={t("Operations")} title={t("Analysis operations")} badge={t("Frontend ready")}
-        description={t("This screen will track scheduled collection, validation, model inference, and job history independently from the research dashboard.")} />
+      <PageHeader eyebrow={t("Operations")} title={t("Analysis operations")}
+        badge={source === "mock" ? t("Demo data") : source === "http" ? t("API data") : t("Not connected")}
+        description={t("Monitor market data collection, validation, inference and the operational history supplied by DonghakStockVision.")} />
+      {source === "mock" ? <div className="run-lock" role="status"><p>{t("Demonstration mode")}</p><span>{t("The timestamps and run records below are examples, not actual market processing.")}</span></div> : null}
+      {error ? <div className="run-lock" role="alert"><p>{t("Operations unavailable")}</p><span>{error}</span></div> : null}
       <section className="operations-grid" aria-label={t("Analysis operations")}>
-        {fields.map(field => (
-          <article className="metric-card" key={field.label}>
-            <p className="metric-label">{t(field.label)}</p>
-            <p className="metric-value">{field.value}</p>
-            <p className="metric-detail">{t(field.detail)}</p>
-          </article>
-        ))}
-      </section>
-      <section className="panel single-panel" aria-label={t("Analysis run history")}>
-        <div className="panel-heading">
-          <div><p className="eyebrow">{t("Run history")}</p><h2>{t("Analysis run history")}</h2></div>
-          <span className="panel-count">{operations.runs.length} {t("runs")}</span>
-        </div>
-        {operations.runs.length === 0 ? (
-          <div className="run-lock">
-            <p>{t("No analysis runs available")}</p>
-            <span>{t("TrisMarketLens does not execute or simulate analysis. Run history will be displayed only when DonghakStockVision provides verified operational records.")}</span>
-          </div>
-        ) : null}
+        {fields.map(field => <article className="metric-card" key={field.label}>
+          <p className="metric-label">{t(field.label)}</p><p className="metric-value operations-value">{field.value}</p>
+          <p className="metric-detail">{field.detail}</p>
+        </article>)}
       </section>
       <section className="panel single-panel">
-        <p className="eyebrow">{t("Integration contract")}</p>
-        <h2>{t("Backend integration pending")}</h2>
-        <p className="section-copy">{t("The planned read-only operations API will provide job identifiers, queued and completed states, timestamps, latest validated trading date, scheduler information, and failure details. No market data or predictions are fabricated.")}</p>
+        <div className="panel-heading">
+          <div><p className="eyebrow">{t("Run history")}</p><h2>{t("Analysis run history")}</h2></div>
+          <span className="panel-count">{snapshot.runs.length} {t("runs")}</span>
+        </div>
+        {snapshot.runs.length === 0 ? <p className="section-copy">{t("No analysis runs available")}</p> :
+          <div className="operations-runs">{snapshot.runs.map(run => <article className="operations-run" key={run.id}>
+            <div><strong>{run.pipeline}</strong><p className="metric-detail">{run.id} · {run.dataThrough ?? "—"}</p></div>
+            <div><span className="status-pill" data-state={run.state === "succeeded" ? "verified" : run.state === "running" || run.state === "queued" ? "in_progress" : "blocked"}>{t(stateLabels[run.state])}</span><p className="metric-detail">{formatTime(run.startedAt)}</p></div>
+            {run.summary ? <p className="metric-detail operations-run-summary">{t(run.summary)}</p> : null}
+          </article>)}</div>}
       </section>
     </>
   );
