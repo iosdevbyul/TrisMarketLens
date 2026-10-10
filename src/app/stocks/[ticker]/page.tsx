@@ -3,7 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { PageHeader } from "@/components/common/PageHeader";
-import { ChartPlaceholder } from "@/components/stocks/ChartPlaceholder";
+import { OhlcvChart } from "@/components/stocks/OhlcvChart";
+import { getOhlcv } from "@/data/OhlcvDataSource";
+import { getLocale } from "@/i18n/server";
 import { getDataSource } from "@/data/getDataSource";
 import { getStockAnalysis } from "@/data/StockAnalysisDataSource";
 import { stockDisplayName, stockSectorLabel } from "@/domain/stock";
@@ -16,7 +18,7 @@ export default async function StockDetailPage({ params }: StockDetailPageProps) 
   const t = await getTranslator();
   const dataSource = getDataSource();
   const { ticker } = await params;
-  const [stock, analysis] = await Promise.all([dataSource.getStock(ticker), getStockAnalysis(ticker)]);
+  const [stock, analysis, prices, locale] = await Promise.all([dataSource.getStock(ticker), getStockAnalysis(ticker), getOhlcv(ticker), getLocale()]);
 
   if (!stock) {
     notFound();
@@ -96,12 +98,10 @@ export default async function StockDetailPage({ params }: StockDetailPageProps) 
       </section>
 
       <section className="panel single-panel">
-        <ChartPlaceholder
-          availableFrom={stock.availableFrom}
-          latestDataDate={stock.latestDataDate}
-          ticker={stock.ticker}
-        />
-        <p className="chart-note">{t(stock.chartNote)}</p>
+        <div className="panel-heading"><div><p className="eyebrow">{t("OHLC history")}</p><h2>{t("Price and volume")}</h2></div><span className="panel-count">{prices.source === "mock" ? t("Demo data") : prices.source === "http" ? t("API data") : t("Not connected")}</span></div>
+        {prices.source === "mock" ? <div className="run-lock" role="status"><p>{t("Artificial OHLCV demo")}</p><span>{t("Example candles are not historical market prices.")}</span></div> : null}
+        {prices.error ? <div className="run-lock" role="alert"><p>{t("Price data unavailable")}</p><span>{prices.error}</span></div> : null}
+        {prices.data.bars.length ? <OhlcvChart ticker={ticker} bars={prices.data.bars} locale={locale} /> : <p className="section-copy">{t("No validated price bars available yet.")}</p>}
       </section>
     </>
   );
