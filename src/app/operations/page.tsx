@@ -2,6 +2,7 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { getTranslator, getLocale } from "@/i18n/server";
 import { getOperations } from "@/data/OperationsDataSource";
 import type { AnalysisRunState } from "@/domain/operations";
+import { PipelineHealthPanel } from "@/components/operations/PipelineHealthPanel";
 
 const stateLabels: Record<AnalysisRunState,string> = {
   queued: "Queued", running: "Running", succeeded: "Succeeded", failed: "Failed", blocked: "Blocked",
@@ -27,6 +28,7 @@ export default async function OperationsPage() {
         description={t("Monitor market data collection, validation, inference and the operational history supplied by DonghakStockVision.")} />
       {source === "mock" ? <div className="run-lock" role="status"><p>{t("Demonstration mode")}</p><span>{t("The timestamps and run records below are examples, not actual market processing.")}</span></div> : null}
       {error ? <div className="run-lock" role="alert"><p>{t("Operations unavailable")}</p><span>{error}</span></div> : null}
+      <PipelineHealthPanel result={result} locale={locale}/>
       <section className="operations-grid" aria-label={t("Analysis operations")}>
         {fields.map(field => <article className="metric-card" key={field.label}>
           <p className="metric-label">{t(field.label)}</p><p className="metric-value operations-value">{field.value}</p>
