@@ -12,7 +12,7 @@ export function isOperationalAlertSnapshot(value:unknown):value is OperationalAl
   if(!entry||typeof entry!=="object")return false;
   const a=entry as Record<string,unknown>;
   if(typeof a.id!=="string"||!a.id||ids.has(a.id))return false;ids.add(a.id);
-  if(!["freshness","pipeline","inference","other"].includes(String(a.category))||!["info","warning","critical"].includes(String(a.severity))||!["open","resolved"].includes(String(a.status)))return false;
+  if(!["freshness","pipeline","inference","other"].includes(String(a.category))||!["info","warning","critical"].includes(String(a.severity))||!["open","resolved","advisory"].includes(String(a.status)))return false;
   if(typeof a.title!=="string"||!a.title||typeof a.description!=="string")return false;
   if(a.occurredAt!==null&&!isTime(a.occurredAt)||a.resolvedAt!==null&&!isTime(a.resolvedAt))return false;
   if(a.status!=="resolved"&&a.resolvedAt!==null||a.status==="resolved"&&(a.resolvedAt===null||a.occurredAt===null||Date.parse(a.resolvedAt as string)<Date.parse(a.occurredAt as string)))return false;
