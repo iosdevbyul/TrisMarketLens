@@ -39,7 +39,7 @@ export async function loadFreshness({mode="disconnected",apiBaseUrl,fetcher=fetc
  if(mode!=="http")return {source:"disconnected",report:null,error:"Unsupported freshness mode"};
  if(!apiBaseUrl?.trim())return {source:"http",report:null,error:"Freshness API base URL not configured"};
  try{
-  const response=await fetcher(apiBaseUrl.trim().replace(/\\/+$/,"")+"/api/v1/operations/freshness",{headers:{Accept:"application/json"},cache:"no-store",signal:AbortSignal.timeout(5000)});
+  const response=await fetcher(apiBaseUrl.trim().replace(new RegExp("/+$"), "")+"/api/v1/operations/freshness",{headers:{Accept:"application/json"},cache:"no-store",signal:AbortSignal.timeout(5000)});
   if(!response.ok)return {source:"http",report:null,error:`Freshness API returned HTTP ${response.status}`};
   const body:unknown=await response.json();
   if(!validPayload(body))return {source:"http",report:null,error:"Freshness API returned an invalid operations_v1 payload"};
