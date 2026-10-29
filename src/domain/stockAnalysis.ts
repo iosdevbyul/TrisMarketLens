@@ -31,7 +31,7 @@ export function isStockAnalysisSnapshot(value: unknown, ticker: string): value i
     if (typeof r.dataThrough !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(r.dataThrough) || !Number.isFinite(Date.parse(r.dataThrough))) return false;
     if (!["up", "down", "neutral"].includes(String(r.direction))) return false;
     if (!["verified", "blocked", "pending"].includes(String(r.validation))) return false;
-    if (r.score !== null && (typeof r.score !== "number" || !Number.isFinite(r.score) || r.score < 0 || r.score > 1)) return false;
+    if (r.score !== null && (typeof r.score !== "number" || !Number.isFinite(r.score) || r.score < 0 || r.score > 1 || r.validation !== "verified")) return false;
     return r.explanation === null || typeof r.explanation === "string";
   });
 }
