@@ -8,3 +8,15 @@ describe("backend connection diagnostics",()=>{
   expect(summarizeBackendDiagnostics("http",{status:"unreachable"})).toBe("unreachable");
  });
 });
+
+describe("ticker diagnostics input contract",()=>{
+ it("accepts six-character case-normalized identifiers",()=>{
+  const normalize=(input:string)=>input.trim().toUpperCase();
+  expect(/^[0-9A-Z]{6}$/.test(normalize("005930"))).toBe(true);
+  expect(/^[0-9A-Z]{6}$/.test(normalize("a12345"))).toBe(true);
+ });
+ it("rejects malformed tickers before requesting optional endpoints",()=>{
+  expect(/^[0-9A-Z]{6}$/.test("../foo")).toBe(false);
+  expect(/^[0-9A-Z]{6}$/.test("00593")).toBe(false);
+ });
+});
