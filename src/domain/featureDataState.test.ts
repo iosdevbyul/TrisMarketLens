@@ -14,3 +14,17 @@ describe("feature data presentation states", () => {
     expect(getFeatureDataState("mock", null, 2)).toBe("demo");
   });
 });
+
+describe("stock-detail API state distinctions", () => {
+  it("does not treat stock analysis request failures as empty publications", () => {
+    expect(getFeatureDataState("http", "Invalid analysis payload", 0)).toBe("error");
+    expect(getFeatureDataState("http", null, 0)).toBe("empty");
+  });
+  it("keeps absent evaluation endpoints explicitly disconnected", () => {
+    expect(getFeatureDataState("disconnected", null, 0)).toBe("disconnected");
+  });
+  it("distinguishes missing OHLCV bars from valid loaded candles", () => {
+    expect(getFeatureDataState("http", null, 0)).toBe("empty");
+    expect(getFeatureDataState("http", null, 25)).toBe("available");
+  });
+});
