@@ -45,7 +45,13 @@ export default async function OperationsPage() {
         <div className="panel-heading"><h2>Collected KRX observations</h2><span className="panel-count">{operational.data ? operational.data.total.toLocaleString() + " observed tickers" : "Unavailable"}</span></div>
         <p className="section-copy">Separate, unreviewed operational SQLite snapshot. This count is not the approved research universe, and collection does not establish market completeness.</p>
         {operational.error ? <p className="metric-detail" role="status">Operational catalog: {operational.error}</p> : null}
-        {operational.data?.items.length ? <p className="metric-detail">Sample from the first page: {operational.data.items.slice(0,5).map(item => item.ticker).join(", ")}</p> : null}
+        {operational.data?.items.length ? <div className="operations-runs" aria-label="Collected KRX ticker preview">
+          {operational.data.items.slice(0,5).map(item => <article className="operations-run" key={item.ticker}>
+            <div><strong><Link href={"/operational-market/"+item.ticker}>{item.ticker}</Link></strong>
+            <p className="metric-detail">Latest observed trading date: {item.latestDataDate}</p></div>
+            <span className="status-pill" data-state="in_progress">Unreviewed</span>
+          </article>)}
+        </div> : operational.data ? <p className="section-copy">The operational snapshot returned no observed tickers.</p> : null}
         <Link href="/operational-market">Browse collected tickers and OHLCV</Link>
       </section>
       <OperationsOverviewPanel overview={summarizeOperationsOverview(result,freshness,alerts)} locale={locale} demonstration={[result.source,freshness.source,alerts.source].includes("mock")}/>
