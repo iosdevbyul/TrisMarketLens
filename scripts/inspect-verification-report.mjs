@@ -1,0 +1,21 @@
+// Inspect operator-supplied verification statuses without executing any network checks.
+import {readFileSync} from "node:fs";
+const filename=process.argv[2];
+if(!filename||!/^[-_a-zA-Z0-9.]+\.json$/.test(filename))throw Error("Provide a local .json filename without directory traversal");
+const report=JSON.parse(readFileSync(filename,"utf8"));
+const gates=["ci","http","extensions","evidence"];
+const values=["passed","failed","not_run"];
+if(report?.schemaVersion!=="web_verification_v1"||!report.statuses||typeof report.statuses!=="object")throw Error("Unsupported verification report");
+for(const gate of gates)if(!values.includes(report.statuses[gate]))throw Error("Invalid status for "+gate);
+const pending=gates.filter(gate=>report.statuses[gate]==="not_run");
+const failed=gates.filter(gate=>report.statuses[gate]==="failed");
+const expected=gates.filter(gate=>report.statuses[gate]!=="passed");
+if(!Array.isArray(report.unverified)||JSON.stringify(report.unverified)!==JSON.stringify(expected))throw Error("Inconsistent unverified gate list");
+console.log("Verification report:",filename);
+for(const gate of gates)console.log(gate+": "+report.statuses[gate]);
+console.log("Failed:",failed.length?failed.join(", "):"none");
+console.log("Not run:",pending.length?pending.join(", "):"none");
+console.log("Verification complete:",expected.length===0?"All gates marked passed by operator (not independently certified)":"No");
+console.log("No backend checks or research approvals were performed by this command.");
+if(failed.length)process.exitCode=2;
+else if(pending.length)process.exitCode=3;
