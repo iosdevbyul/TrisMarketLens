@@ -10,6 +10,7 @@ import { getDataSource } from "@/data/getDataSource";
 import { getStockAnalysis } from "@/data/StockAnalysisDataSource";
 import { getPredictionEvaluations } from "@/data/PredictionEvaluationDataSource";
 import { stockDisplayName, stockSectorLabel } from "@/domain/stock";
+import { getFeatureDataState, type FeatureDataState } from "@/domain/featureDataState";
 
 interface StockDetailPageProps {
   params: Promise<{ ticker: string }>;
@@ -20,6 +21,11 @@ export default async function StockDetailPage({ params }: StockDetailPageProps) 
   const dataSource = getDataSource();
   const { ticker } = await params;
   const [stock, analysis, prices, locale, evaluation] = await Promise.all([dataSource.getStock(ticker), getStockAnalysis(ticker), getOhlcv(ticker), getLocale(), getPredictionEvaluations(ticker)]);
+
+  const analysisState = getFeatureDataState(analysis.source, analysis.error, analysis.data.records.length);
+  const priceState = getFeatureDataState(prices.source, prices.error, prices.data.bars.length);
+  const evaluationState = getFeatureDataState(evaluation.source, evaluation.error, evaluation.data.evaluations.length);
+  const stateLabel = (state: FeatureDataState) => t(state === "demo" ? "Demo data" : state === "available" ? "API data" : state === "error" ? "Unavailable" : state === "empty" ? "No data available" : "Not connected");
 
   if (!stock) {
     notFound();
@@ -41,11 +47,11 @@ export default async function StockDetailPage({ params }: StockDetailPageProps) 
       <section className="panel single-panel stock-analysis-panel" aria-label={t("AI analysis")}>
         <div className="panel-heading">
           <div><p className="eyebrow">{t("AI analysis")}</p><h2>{t("Model analysis history")}</h2></div>
-          <span className="panel-count">{analysis.source === "mock" ? t("Demo data") : analysis.source === "http" ? t("API data") : t("Not connected")}</span>
+          <span className="panel-count">{stateLabel(analysisState)}</span>
         </div>
         {analysis.source === "mock" ? <div className="run-lock" role="status"><p>{t("Demonstration predictions")}</p><span>{t("These scores are examples and must not be used for investment decisions.")}</span></div> : null}
         {analysis.error ? <div className="run-lock" role="alert"><p>{t("Analysis unavailable")}</p><span>{analysis.error}</span></div> : null}
-        {analysis.data.records.length === 0 ? <p className="section-copy">{t("No verified model analysis is available for this ticker.")}</p> :
+        {analysisState === "disconnected" ? <p className="section-copy">{t("Not connected")}</p> : analysisState === "empty" ? <p className="section-copy">{t("No verified model analysis is available for this ticker.")}</p> : analysisState === "error" ? null :
           <div className="stock-analysis-list">{analysis.data.records.map(record => <article className="stock-analysis-item" key={record.id}>
             <div className="stock-analysis-heading">
               <div><strong>{record.modelId}</strong><p className="metric-detail">{record.modelVersion} · {record.dataThrough}</p></div>
@@ -62,12 +68,12 @@ export default async function StockDetailPage({ params }: StockDetailPageProps) 
 
       <section className="panel single-panel" aria-label={t("Prediction evaluation")}>
         <div className="panel-heading"><div><p className="eyebrow">{t("Research evaluation")}</p><h2>{t("Prediction evaluation")}</h2></div>
-          <span className="panel-count">{evaluation.source === "mock" ? t("Demo data") : evaluation.source === "http" ? t("API data") : t("Not connected")}</span>
+          <span className="panel-count">{stateLabel(evaluationState)}</span>
         </div>
         <p className="section-copy">{t("Evaluation outcomes are supplied by the research backend, not inferred by the web interface.")}</p>
         {evaluation.source === "mock" ? <div className="run-lock" role="status"><p>{t("Demonstration evaluations")}</p><span>{t("All evaluation prices and returns below are fictional examples.")}</span></div> : null}
         {evaluation.error ? <div className="run-lock" role="alert"><p>{t("Evaluation unavailable")}</p><span>{evaluation.error}</span></div> : null}
-        {evaluation.data.evaluations.length === 0 ? <p className="section-copy">{t("No evaluated predictions available.")}</p> :
+        {evaluationState === "disconnected" ? <p className="section-copy">{t("Not connected")}</p> : evaluationState === "empty" ? <p className="section-copy">{t("No evaluated predictions available.")}</p> : evaluationState === "error" ? null :
           <div className="evaluation-list">{evaluation.data.evaluations.map(item => <article className="evaluation-item" key={item.id}>
             <div className="stock-analysis-heading"><div><strong>{item.analysisId}</strong><p className="metric-detail">{item.policyId} · {item.referenceDate}</p></div>
             <span className="status-pill" data-state={item.verdict === "correct" ? "verified" : item.verdict === "incorrect" ? "blocked" : "in_progress"}>{t(({correct:"Correct",incorrect:"Incorrect",inconclusive:"Inconclusive",pending:"Pending"} as const)[item.verdict])}</span></div>
@@ -116,10 +122,10 @@ export default async function StockDetailPage({ params }: StockDetailPageProps) 
       </section>
 
       <section className="panel single-panel">
-        <div className="panel-heading"><div><p className="eyebrow">{t("OHLC history")}</p><h2>{t("Price and volume")}</h2></div><span className="panel-count">{prices.source === "mock" ? t("Demo data") : prices.source === "http" ? t("API data") : t("Not connected")}</span></div>
+        <div className="panel-heading"><div><p className="eyebrow">{t("OHLC history")}</p><h2>{t("Price and volume")}</h2></div><span className="panel-count">{stateLabel(priceState)}</span></div>
         {prices.source === "mock" ? <div className="run-lock" role="status"><p>{t("Artificial OHLCV demo")}</p><span>{t("Example candles are not historical market prices.")}</span></div> : null}
         {prices.error ? <div className="run-lock" role="alert"><p>{t("Price data unavailable")}</p><span>{prices.error}</span></div> : null}
-        {prices.data.bars.length ? <OhlcvChart ticker={ticker} bars={prices.data.bars} locale={locale} analyses={analysis.data.records} analysisIsDemo={analysis.source === "mock"} /> : <p className="section-copy">{t("No validated price bars available yet.")}</p>}
+        {priceState === "available" || priceState === "demo" ? <OhlcvChart ticker={ticker} bars={prices.data.bars} locale={locale} analyses={analysis.data.records} analysisIsDemo={analysis.source === "mock"} /> : priceState === "error" ? null : <p className="section-copy">{t(priceState === "disconnected" ? "Not connected" : "No validated price bars available yet.")}</p>}
       </section>
     </>
   );
