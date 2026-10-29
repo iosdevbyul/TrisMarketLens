@@ -7,6 +7,11 @@ export const demoScreener:ScreenerSnapshot={entries:[
  {ticker:"000660",name:"Example B",analysisId:"demo-b1",modelId:"EXAMPLE-MODEL",modelVersion:"demo-v1",direction:"down",score:0.58,validation:"blocked",dataThrough:"2026-09-30",analyzedAt:"2026-09-30T18:30:00+09:00"},
  {ticker:"035420",name:"Example C",analysisId:"demo-c1",modelId:"EXAMPLE-MODEL",modelVersion:"demo-v1",direction:"neutral",score:null,validation:"pending",dataThrough:"2026-09-29",analyzedAt:"2026-09-29T18:30:00+09:00"}
 ]};
+/** Backend publication permits numeric scores only on verified analyses. */
+function isReviewedPublication(value: unknown): value is ScreenerSnapshot {
+ if (!isScreenerSnapshot(value)) return false;
+ return value.entries.every(entry => entry.score === null || entry.validation === "verified");
+}
 export async function loadScreener({mode="disconnected",apiBaseUrl,fetcher=fetch}:ScreenerOptions={}):Promise<ScreenerResult>{
  const empty:ScreenerSnapshot={entries:[]};
  if(mode==="disconnected")return {source:"disconnected",data:empty,error:null};
@@ -17,7 +22,7 @@ export async function loadScreener({mode="disconnected",apiBaseUrl,fetcher=fetch
  const r=await fetcher(apiBaseUrl.trim().replace(/\/+$/,"")+"/api/v1/analysis/screener",{headers:{Accept:"application/json"},cache:"no-store",signal:AbortSignal.timeout(5000)});
  if(!r.ok)return {source:"http",data:empty,error:`Screener API returned HTTP ${r.status}`};
  const data:unknown=await r.json();
- if(!isScreenerSnapshot(data))return {source:"http",data:empty,error:"Screener API returned invalid data"};
+ if(!isReviewedPublication(data))return {source:"http",data:empty,error:"Screener API returned invalid data"};
  return {source:"http",data,error:null};
  }catch{return {source:"http",data:empty,error:"Screener API is unreachable"};}
 }
