@@ -1,3 +1,4 @@
+import { resolveFeatureSourceMode } from "./resolveFeatureSourceMode";
 import {validateFreshnessReport,type FreshnessReport} from "../domain/dataFreshness";
 export type FreshnessMode="disconnected"|"mock"|"http";
 export interface FreshnessResult {source:FreshnessMode; report:FreshnessReport|null; error:string|null}
@@ -47,4 +48,4 @@ export async function loadFreshness({mode="disconnected",apiBaseUrl,fetcher=fetc
   return validateFreshnessReport(report)?{source:"http",report,error:null}:{source:"http",report:null,error:"Freshness API returned an invalid report"};
  }catch{return {source:"http",report:null,error:"Freshness API is unreachable"};}
 }
-export function getFreshness():Promise<FreshnessResult>{return loadFreshness({mode:process.env.MARKET_LENS_FRESHNESS_SOURCE??"disconnected",apiBaseUrl:process.env.DONGHAK_API_BASE_URL});}
+export function getFreshness():Promise<FreshnessResult>{return loadFreshness({mode:resolveFeatureSourceMode(process.env.MARKET_LENS_FRESHNESS_SOURCE, process.env.MARKET_LENS_DATA_SOURCE),apiBaseUrl:process.env.DONGHAK_API_BASE_URL});}

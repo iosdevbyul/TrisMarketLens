@@ -1,3 +1,4 @@
+import { resolveFeatureSourceMode } from "./resolveFeatureSourceMode";
 import {isOperationalAlertSnapshot,type OperationalAlertSnapshot,type OperationalAlert} from "../domain/operationalAlerts";
 export type AlertMode="disconnected"|"mock"|"http";
 export interface AlertResult{source:AlertMode;data:OperationalAlertSnapshot;error:string|null}
@@ -45,4 +46,4 @@ export async function loadOperationalAlerts({mode="disconnected",apiBaseUrl,fetc
   return isOperationalAlertSnapshot(data)?{source:"http",data,error:null}:{source:"http",data:empty,error:"Alerts API returned invalid data"};
  }catch{return {source:"http",data:empty,error:"Alerts API is unreachable"};}
 }
-export function getOperationalAlerts(){return loadOperationalAlerts({mode:process.env.MARKET_LENS_ALERTS_SOURCE??"disconnected",apiBaseUrl:process.env.DONGHAK_API_BASE_URL});}
+export function getOperationalAlerts(){return loadOperationalAlerts({mode:resolveFeatureSourceMode(process.env.MARKET_LENS_ALERTS_SOURCE, process.env.MARKET_LENS_DATA_SOURCE),apiBaseUrl:process.env.DONGHAK_API_BASE_URL});}

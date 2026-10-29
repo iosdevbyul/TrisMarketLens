@@ -1,3 +1,4 @@
+import { resolveFeatureSourceMode } from "./resolveFeatureSourceMode";
 import { isOhlcvSeries, type OhlcvSeries } from "../domain/ohlcv";
 export type OhlcvMode = "disconnected" | "mock" | "http";
 export interface OhlcvResult { source: OhlcvMode; data: OhlcvSeries; error: string | null }
@@ -32,5 +33,5 @@ export async function loadOhlcv(ticker: string, { mode = "disconnected", apiBase
   }
 }
 export function getOhlcv(ticker: string): Promise<OhlcvResult> {
-  return loadOhlcv(ticker, { mode: process.env.MARKET_LENS_OHLCV_SOURCE ?? "disconnected", apiBaseUrl: process.env.DONGHAK_API_BASE_URL });
+  return loadOhlcv(ticker, { mode: resolveFeatureSourceMode(process.env.MARKET_LENS_OHLCV_SOURCE, process.env.MARKET_LENS_DATA_SOURCE), apiBaseUrl: process.env.DONGHAK_API_BASE_URL });
 }

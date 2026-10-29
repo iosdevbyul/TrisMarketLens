@@ -1,3 +1,4 @@
+import { resolveFeatureSourceMode } from "./resolveFeatureSourceMode";
 import { isStockAnalysisSnapshot, type StockAnalysisSnapshot } from "../domain/stockAnalysis";
 
 export type StockAnalysisMode = "disconnected" | "mock" | "http";
@@ -38,5 +39,5 @@ export async function loadStockAnalysis(ticker: string, { mode = "disconnected",
   }
 }
 export function getStockAnalysis(ticker: string): Promise<StockAnalysisResult> {
-  return loadStockAnalysis(ticker, { mode: process.env.MARKET_LENS_STOCK_ANALYSIS_SOURCE ?? "disconnected", apiBaseUrl: process.env.DONGHAK_API_BASE_URL });
+  return loadStockAnalysis(ticker, { mode: resolveFeatureSourceMode(process.env.MARKET_LENS_STOCK_ANALYSIS_SOURCE, process.env.MARKET_LENS_DATA_SOURCE), apiBaseUrl: process.env.DONGHAK_API_BASE_URL });
 }

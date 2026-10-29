@@ -1,3 +1,4 @@
+import { resolveFeatureSourceMode } from "./resolveFeatureSourceMode";
 import { isScreenerSnapshot, type ScreenerSnapshot } from "../domain/screener";
 export type ScreenerMode="disconnected"|"mock"|"http";
 export interface ScreenerResult { source:ScreenerMode; data:ScreenerSnapshot; error:string|null }
@@ -26,4 +27,4 @@ export async function loadScreener({mode="disconnected",apiBaseUrl,fetcher=fetch
  return {source:"http",data,error:null};
  }catch{return {source:"http",data:empty,error:"Screener API is unreachable"};}
 }
-export function getScreener(){return loadScreener({mode:process.env.MARKET_LENS_SCREENER_SOURCE??"disconnected",apiBaseUrl:process.env.DONGHAK_API_BASE_URL});}
+export function getScreener(){return loadScreener({mode:resolveFeatureSourceMode(process.env.MARKET_LENS_SCREENER_SOURCE, process.env.MARKET_LENS_DATA_SOURCE),apiBaseUrl:process.env.DONGHAK_API_BASE_URL});}

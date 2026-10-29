@@ -1,3 +1,4 @@
+import { resolveFeatureSourceMode } from "./resolveFeatureSourceMode";
 import { disconnectedOperations, validateOperationsSnapshot, type OperationsSnapshot } from "../domain/operations";
 
 export type OperationsSourceMode = "disconnected" | "mock" | "http";
@@ -115,5 +116,5 @@ export async function loadOperations({ mode = "disconnected", apiBaseUrl, fetche
   }
 }
 export function getOperations(): Promise<OperationsResult> {
-  return loadOperations({ mode: process.env.MARKET_LENS_OPERATIONS_SOURCE ?? "disconnected", apiBaseUrl: process.env.DONGHAK_API_BASE_URL });
+  return loadOperations({ mode: resolveFeatureSourceMode(process.env.MARKET_LENS_OPERATIONS_SOURCE, process.env.MARKET_LENS_DATA_SOURCE), apiBaseUrl: process.env.DONGHAK_API_BASE_URL });
 }
