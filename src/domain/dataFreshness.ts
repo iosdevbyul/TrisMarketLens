@@ -3,7 +3,7 @@ export interface FreshnessReport {
   calendarId: string;
   expectedSession: string | null;
   validatedThrough: string | null;
-  assessedAt: string;
+  assessedAt: string | null;
   state: FreshnessState;
   reason: string | null;
 }
@@ -13,7 +13,7 @@ const validTime=(v:unknown):v is string=>typeof v==="string"&&/(Z|[+-]\d{2}:\d{2
 export function validateFreshnessReport(v:unknown):v is FreshnessReport{
  if(!v||typeof v!=="object")return false;
  const r=v as Record<string,unknown>;
- if(typeof r.calendarId!=="string"||!r.calendarId.trim()||!validTime(r.assessedAt))return false;
+ if(typeof r.calendarId!=="string"||!r.calendarId.trim()||(r.assessedAt!==null&&!validTime(r.assessedAt)))return false;
  if(r.expectedSession!==null&&!validDay(r.expectedSession))return false;
  if(r.validatedThrough!==null&&!validDay(r.validatedThrough))return false;
  if(!["current","delayed","unknown"].includes(String(r.state)))return false;
