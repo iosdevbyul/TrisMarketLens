@@ -9,6 +9,7 @@ Start the approved backend locally on `127.0.0.1:8000`. Configure a reviewed sna
 In `.env.local`:
 
 ```dotenv
+MARKET_LENS_DATA_SOURCE=http
 DONGHAK_API_BASE_URL=http://127.0.0.1:8000
 MARKET_LENS_VERIFY_TICKER=005930
 ```
@@ -20,6 +21,6 @@ npm ci
 npm run verify:extensions
 ```
 
-The script requires a loopback backend and checks the actual read-only routes for Operations runs/freshness/alerts, Screener, OHLCV and stock analysis. It checks the expected envelope shapes, pagination and verified-only numeric score requirements. It does **not** invent price observations or infer healthy market freshness from an HTTP 200.
+The script requires a loopback backend and checks the actual read-only routes for Operations runs/freshness/alerts, Screener, OHLCV and stock analysis. It checks the expected envelope shapes, pagination and verified-only numeric score requirements. It also verifies chronological, calendar-valid OHLCV bars with integer KRX prices and consistent high/low boundaries. The required HTTP mode prevents accidental demonstration-mode verification. It does **not** invent price observations or infer healthy market freshness from an HTTP 200.
 
 A successful run confirms only a limited HTTP smoke test with the backend instance used. It does not replace source provenance, snapshot integrity, end-to-end frontend rendering checks, completeness or risk approval. A 404/503 fails the check rather than substituting mock data.
