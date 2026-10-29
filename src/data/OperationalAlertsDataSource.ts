@@ -37,7 +37,7 @@ export async function loadOperationalAlerts({mode="disconnected",apiBaseUrl,fetc
  if(mode!=="http")return {source:"disconnected",data:empty,error:"Unsupported alerts mode"};
  if(!apiBaseUrl?.trim())return {source:"http",data:empty,error:"Alerts API base URL not configured"};
  try{
-  const response=await fetcher(apiBaseUrl.trim().replace(/\\/+$/,"")+"/api/v1/operations/alerts?offset=0&limit=25",{headers:{Accept:"application/json"},cache:"no-store",signal:AbortSignal.timeout(5000)});
+  const response=await fetcher(apiBaseUrl.trim().replace(new RegExp("/+$"), "")+"/api/v1/operations/alerts?offset=0&limit=25",{headers:{Accept:"application/json"},cache:"no-store",signal:AbortSignal.timeout(5000)});
   if(!response.ok)return {source:"http",data:empty,error:`Alerts API returned HTTP ${response.status}`};
   const body:unknown=await response.json();
   if(!validPayload(body))return {source:"http",data:empty,error:"Alerts API returned invalid operations_v1 data"};
