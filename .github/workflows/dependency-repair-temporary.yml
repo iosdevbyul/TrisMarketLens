@@ -1,0 +1,33 @@
+name: Dependency repair (temporary)
+on:
+  push:
+    branches:
+      - chore/audit-backend-api-integration
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chore/audit-backend-api-integration
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Update Next.js and dependency lock
+        run: npm install next@16.4.3 --save-exact
+      - name: Verify production dependencies
+        run: npm audit --omit=dev --audit-level=high
+      - name: Verify application
+        run: npm run check
+      - name: Commit dependency update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json
+          git commit -m "fix - update Next.js to address critical vulnerabilities"
+          git push origin HEAD:chore/audit-backend-api-integration
