@@ -19,7 +19,7 @@ function validPayload(v:unknown):v is {schemaVersion:"operations_v1";items:Backe
   ids.add(a.id);
   return categories.includes(String(a.category))&&["warning","error"].includes(String(a.severity))&&["recorded","advisory"].includes(String(a.basis))&&
     typeof a.sourceId==="string"&&!!a.sourceId&&typeof a.diagnostic==="string"&&
-    (a.occurredAt===null||(typeof a.occurredAt==="string"&&/(Z|[+-]\\d{2}:\\d{2})$/.test(a.occurredAt)&&Number.isFinite(Date.parse(a.occurredAt))))&&
+    (a.occurredAt===null||(typeof a.occurredAt==="string"&&/(Z|[+-]\d{2}:\d{2})$/.test(a.occurredAt)&&Number.isFinite(Date.parse(a.occurredAt))))&&
     (a.blockingStatus===null||["blocked","unknown"].includes(String(a.blockingStatus)))&&
     [a.verifiedCount,a.requiredCount].every(n=>n===null||(Number.isInteger(n)&&(n as number)>=0));
  });
