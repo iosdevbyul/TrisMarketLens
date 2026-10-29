@@ -19,6 +19,11 @@ describe("operational snapshot display adapter",()=>{
   const r=await loadOperationalBars("005930",base,(async()=>Response.json(raw)) as typeof fetch);
   expect(r.data).toEqual(raw);
  });
+ it("identifies missing ticker separately from unavailable server",async()=>{
+  const missing=await loadOperationalBars("005930",base,(async()=>new Response(null,{status:404})) as typeof fetch);
+  expect(missing.data).toBeNull();
+  expect(missing.error).toContain("No collected observations");
+ });
  it("keeps unavailable API results explicit",async()=>{
   const r=await loadOperationalBars("005930",base,(async()=>new Response(null,{status:503})) as typeof fetch);
   expect(r.data).toBeNull();
