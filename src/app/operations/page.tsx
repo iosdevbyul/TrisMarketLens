@@ -1,3 +1,4 @@
+import { getFeatureDataState } from "@/domain/featureDataState";
 import { PageHeader } from "@/components/common/PageHeader";
 import { getTranslator, getLocale } from "@/i18n/server";
 import { getOperations } from "@/data/OperationsDataSource";
@@ -16,6 +17,7 @@ const stateLabels: Record<AnalysisRunState,string> = {
 export default async function OperationsPage() {
   const [t, locale, result, freshness, alerts] = await Promise.all([getTranslator(), getLocale(), getOperations(), getFreshness(), getOperationalAlerts()]);
   const { snapshot, source, error } = result;
+  const state=getFeatureDataState(source,error,snapshot.runs.length);
   const formatTime = (value: string | null) => value ? new Intl.DateTimeFormat(locale === "ko" ? "ko-KR" : "en-US", {
     dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Seoul",
   }).format(new Date(value)) : "—";
@@ -30,7 +32,7 @@ export default async function OperationsPage() {
   return (
     <>
       <PageHeader eyebrow={t("Operations")} title={t("Analysis operations")}
-        badge={source === "mock" ? t("Demo data") : source === "http" ? t("API data") : t("Not connected")}
+        badge={t(state === "demo" ? "Demo data" : state === "available" ? "API data" : state === "error" ? "Operations unavailable" : state === "empty" ? "No analysis runs available" : "Not connected")}
         description={t("Monitor market data collection, validation, inference and the operational history supplied by DonghakStockVision.")} />
       {source === "mock" ? <div className="run-lock" role="status"><p>{t("Demonstration mode")}</p><span>{t("The timestamps and run records below are examples, not actual market processing.")}</span></div> : null}
       {error ? <div className="run-lock" role="alert"><p>{t("Operations unavailable")}</p><span>{error}</span></div> : null}
@@ -49,7 +51,7 @@ export default async function OperationsPage() {
           <div><p className="eyebrow">{t("Run history")}</p><h2>{t("Analysis run history")}</h2></div>
           <span className="panel-count">{snapshot.runs.length} {t("runs")}</span>
         </div>
-        {snapshot.runs.length === 0 ? <p className="section-copy">{t("No analysis runs available")}</p> :
+        {snapshot.runs.length === 0 ? <p className="section-copy">{t(state==="error"?"Operations unavailable":state==="disconnected"?"Not connected":"No analysis runs available")}</p> :
           <div className="operations-runs">{snapshot.runs.map(run => <article className="operations-run" key={run.id}>
             <div><strong>{run.pipeline}</strong><p className="metric-detail">{run.id} · {run.dataThrough ?? "—"}</p></div>
             <div><span className="status-pill" data-state={run.state === "succeeded" ? "verified" : run.state === "running" || run.state === "queued" ? "in_progress" : "blocked"}>{t(stateLabels[run.state])}</span><p className="metric-detail">{formatTime(run.startedAt)}</p></div>
