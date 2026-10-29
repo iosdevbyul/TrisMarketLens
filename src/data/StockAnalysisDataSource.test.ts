@@ -32,6 +32,23 @@ describe("Stock analysis read-only adapter", () => {
     expect(isStockAnalysisSnapshot(snapshot, "000660")).toBe(false);
     expect(isStockAnalysisSnapshot({ ...snapshot, records: [{ ...snapshot.records[0], score: 1.7 }] }, "005930")).toBe(false);
   });
+  it("rejects scores from unverified analysis, while allowing verified scores", async () => {
+    const approved = demoStockAnalysis("005930");
+    expect(isStockAnalysisSnapshot(approved, "005930")).toBe(true);
+    for (const validation of ["pending", "blocked"] as const) {
+      const altered = { ...approved, records: [{ ...approved.records[0], validation }] };
+      expect(isStockAnalysisSnapshot(altered, "005930")).toBe(false);
+      const result = await loadStockAnalysis("005930", {mode: "http", apiBaseUrl: "http://localhost:8000", fetcher: (async () => Response.json(altered)) as typeof fetch});
+      expect(result.error).toContain("invalid");
+      expect(result.data.records).toEqual([]);
+    }
+  });
+  it("accepts pending analysis only when score is absent", async () => {
+    const record = { ...demoStockAnalysis("005930").records[0], validation: "pending", score: null };
+    const result = await loadStockAnalysis("005930",{mode:"http",apiBaseUrl:"http://localhost:8000",fetcher:(async()=>Response.json({ticker:"005930",records:[record]})) as typeof fetch});
+    expect(result.error).toBeNull();
+    expect(result.data.records[0].score).toBeNull();
+  });
   it("does not fallback to fabricated data on HTTP error", async () => {
     const r = await loadStockAnalysis("005930", { mode: "http", apiBaseUrl: "http://localhost:8000", fetcher: (async () => new Response(null, { status: 503 })) as typeof fetch });
     expect(r.data.records).toEqual([]);
