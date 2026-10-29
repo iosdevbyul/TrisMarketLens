@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "check": "npm run lint && npm run typecheck && npm run test && npm run build",
-    "verify:http": "node --env-file=.env.local scripts/verify-http.mjs"
+    "verify:http": "node --env-file=.env.local scripts/verify-http.mjs",
+    "verify:extensions": "node --env-file=.env.local scripts/verify-extensions-http.mjs"
   },
   "dependencies": {
     "next": "16.4.3",
