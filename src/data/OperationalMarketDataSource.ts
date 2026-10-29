@@ -19,7 +19,12 @@ export function validCatalog(value:unknown):value is OperationalCatalog {
 }
 async function request(url:string,fetcher:typeof fetch):Promise<unknown>{
  const response=await fetcher(url,{headers:{Accept:"application/json"},cache:"no-store",signal:AbortSignal.timeout(5000)});
- if(!response.ok)throw Error("Operational API returned HTTP "+response.status);
+ if(!response.ok){
+  if(response.status===503)throw Error("Operational market snapshot is not configured on the server (HTTP 503).");
+  if(response.status===404)throw Error("No collected observations for this ticker (HTTP 404).");
+  if(response.status===422)throw Error("The backend rejected this ticker or query (HTTP 422).");
+  throw Error("Operational API returned HTTP "+response.status);
+ }
  return response.json();
 }
 export async function loadOperationalCatalog(apiBaseUrl:string|undefined,offset=0,fetcher:typeof fetch=fetch):Promise<OperationalResult<OperationalCatalog>>{
