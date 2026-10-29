@@ -7,9 +7,9 @@ export function demoOhlcv(ticker: string): OhlcvSeries {
   const bars = Array.from({ length: 48 }, (_, i) => {
     const d = new Date(Date.UTC(2026, 7, 21 + i));
     const base = 100 + i * 0.35 + Math.sin(i * 0.6) * 5;
-    const open = Math.round((base - Math.sin(i) * 1.6) * 100) / 100;
-    const close = Math.round((base + Math.cos(i * 0.7) * 1.8) * 100) / 100;
-    return { date: d.toISOString().slice(0, 10), open, close, high: Math.round((Math.max(open, close) + 2) * 100) / 100, low: Math.round((Math.min(open, close) - 2) * 100) / 100, volume: 50000 + ((i * 7919) % 90000) };
+    const open = Math.round(base - Math.sin(i) * 1.6);
+    const close = Math.round(base + Math.cos(i * 0.7) * 1.8);
+    return { date: d.toISOString().slice(0, 10), open, close, high: Math.round(Math.max(open, close) + 2), low: Math.round(Math.min(open, close) - 2), volume: 50000 + ((i * 7919) % 90000) };
   }).filter(b => { const day = new Date(b.date + "T00:00:00Z").getUTCDay(); return day !== 0 && day !== 6; });
   return { ticker, bars };
 }
