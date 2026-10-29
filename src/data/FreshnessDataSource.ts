@@ -5,8 +5,8 @@ export interface FreshnessOptions {mode?:string;apiBaseUrl?:string;fetcher?:type
 export const exampleFreshness:FreshnessReport={calendarId:"EXAMPLE-KRX-CALENDAR",expectedSession:"2026-10-01",validatedThrough:"2026-09-30",assessedAt:"2026-10-01T19:00:00+09:00",state:"delayed",reason:"Fictional demonstration only"};
 type Evidence="validated"|"partial"|"invalid"|"unavailable";
 interface SourceFreshness {sourceId:string;latestVerifiedDataAt:string|null;latestSuccessfulIngestionAt:string|null;latestDataDate:string|null;recordCount:number|null;thresholdSeconds:number|null;blockingReason:string|null;freshnessBasis:"acquisition_age"|"unavailable";freshnessStatus:"fresh"|"stale"|"unknown"|"blocked";evidenceStatus:Evidence}
-const timestamp=(v:unknown)=>typeof v==="string"&&/(Z|[+-]\\d{2}:\\d{2})$/.test(v)&&Number.isFinite(Date.parse(v));
-const day=(v:unknown)=>typeof v==="string"&&/^\\d{4}-\\d{2}-\\d{2}$/.test(v)&&Number.isFinite(Date.parse(v));
+const timestamp=(v:unknown)=>typeof v==="string"&&/(Z|[+-]\d{2}:\d{2})$/.test(v)&&Number.isFinite(Date.parse(v));
+const day=(v:unknown)=>typeof v==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(v)&&Number.isFinite(Date.parse(v));
 function validPayload(v:unknown):v is {schemaVersion:"operations_v1";items:SourceFreshness[]} {
  if(!v||typeof v!=="object")return false;
  const r=v as Record<string,unknown>;
