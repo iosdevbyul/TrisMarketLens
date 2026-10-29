@@ -1,3 +1,5 @@
+import Link from "next/link";
+import {loadOperationalCatalog} from "@/data/OperationalMarketDataSource";
 import { getFeatureDataState } from "@/domain/featureDataState";
 import { PageHeader } from "@/components/common/PageHeader";
 import { getTranslator, getLocale } from "@/i18n/server";
@@ -17,6 +19,9 @@ const stateLabels: Record<AnalysisRunState,string> = {
 export default async function OperationsPage() {
   const [t, locale, result, freshness, alerts] = await Promise.all([getTranslator(), getLocale(), getOperations(), getFreshness(), getOperationalAlerts()]);
   const { snapshot, source, error } = result;
+  const operational = process.env.MARKET_LENS_DATA_SOURCE === "http"
+    ? await loadOperationalCatalog(process.env.DONGHAK_API_BASE_URL)
+    : {data:null,error:"HTTP operational source is not enabled"};
   const state=getFeatureDataState(source,error,snapshot.runs.length);
   const formatTime = (value: string | null) => value ? new Intl.DateTimeFormat(locale === "ko" ? "ko-KR" : "en-US", {
     dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Seoul",
@@ -36,6 +41,13 @@ export default async function OperationsPage() {
         description={t("Monitor market data collection, validation, inference and the operational history supplied by DonghakStockVision.")} />
       {source === "mock" ? <div className="run-lock" role="status"><p>{t("Demonstration mode")}</p><span>{t("The timestamps and run records below are examples, not actual market processing.")}</span></div> : null}
       {error ? <div className="run-lock" role="alert"><p>{t("Operations unavailable")}</p><span>{error}</span></div> : null}
+      <section className="panel single-panel" aria-label="Collected market observations">
+        <div className="panel-heading"><h2>Collected KRX observations</h2><span className="panel-count">{operational.data ? operational.data.total.toLocaleString() + " observed tickers" : "Unavailable"}</span></div>
+        <p className="section-copy">Separate, unreviewed operational SQLite snapshot. This count is not the approved research universe, and collection does not establish market completeness.</p>
+        {operational.error ? <p className="metric-detail" role="status">Operational catalog: {operational.error}</p> : null}
+        {operational.data?.items.length ? <p className="metric-detail">Sample from the first page: {operational.data.items.slice(0,5).map(item => item.ticker).join(", ")}</p> : null}
+        <Link href="/operational-market">Browse collected tickers and OHLCV</Link>
+      </section>
       <OperationsOverviewPanel overview={summarizeOperationsOverview(result,freshness,alerts)} locale={locale} demonstration={[result.source,freshness.source,alerts.source].includes("mock")}/>
       <PipelineHealthPanel result={result} locale={locale}/>
       <FreshnessPanel result={freshness} locale={locale}/>
