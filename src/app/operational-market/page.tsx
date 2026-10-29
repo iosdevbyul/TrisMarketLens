@@ -10,11 +10,11 @@ export default async function OperationalMarketPage({searchParams}:{searchParams
  const result=enabled?await loadOperationalCatalog(process.env.DONGHAK_API_BASE_URL,offset):{data:null,error:"Enable MARKET_LENS_DATA_SOURCE=http to view actual operational observations."};
  return <>
   <PageHeader eyebrow="Market data" title="Collected KRX observations" badge="Unreviewed operational data" description="Read-only KOSPI observations from an operator-pinned operational SQLite snapshot. These records are not research-approved predictions or the research stock universe."/>
+  <section className="panel single-panel" aria-label="Direct collected ticker lookup"><h2>Find collected OHLCV</h2><OperationalTickerSearch /><p className="section-copy">If the operational backend is not configured, the detail page will report that error instead of showing fictional bars.</p></section>
   {result.error?<div className="run-lock" role="alert"><p>Operational collection unavailable</p><span>{result.error}</span></div>:null}
   {result.data?<section className="panel single-panel">
    <div className="panel-heading"><h2>Collected tickers</h2><span className="panel-count">{result.data.total} observed tickers</span></div>
    <p className="section-copy">Observed universe count is from the configured snapshot, not a guarantee of 940 securities or market completeness.</p>
-   <OperationalTickerSearch />
    <form action="/operational-market" method="get" aria-label="Jump to catalog page"><label htmlFor="catalog-offset">Catalog offset</label> <input id="catalog-offset" type="number" name="offset" min="0" max="100000" step="25" defaultValue={offset} required/> <button type="submit">Go to page</button></form>
    <p className="metric-detail">Showing {result.data.items.length?offset+1:0}–{offset+result.data.items.length} of {result.data.total} observed tickers.</p>
    <p className="section-copy">Select a listed ticker to view its collected OHLCV history. Data comes from the configured operational snapshot, not the research universe.</p>
