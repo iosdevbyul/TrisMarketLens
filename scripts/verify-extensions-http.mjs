@@ -1,6 +1,7 @@
 // Live read-only HTTP smoke verification. Requires a running backend and an explicitly chosen ticker.
 // This script never executes model inference, collection, backtesting, trading or repairs.
 const base=(process.env.DONGHAK_API_BASE_URL??"").trim().replace(/\/+$/,"");
+if(process.env.MARKET_LENS_DATA_SOURCE!=="http")throw Error("MARKET_LENS_DATA_SOURCE must be http for real-data verification");
 const ticker=(process.env.MARKET_LENS_VERIFY_TICKER??"").trim();
 if(!/^https?:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(base)) throw Error("Only an explicit loopback DONGHAK_API_BASE_URL is permitted");
 if(!/^[0-9A-Z]{6}$/.test(ticker)) throw Error("MARKET_LENS_VERIFY_TICKER must be a six-character ticker");
@@ -27,9 +28,19 @@ for(const [name,payload] of [["runs",runs],["alerts",alerts]]){
  check(payload.offset===0&&payload.limit===25&&Number.isInteger(payload.total)&&payload.total>=payload.items.length,name+" pagination mismatch");
 }
 check(Array.isArray(screener?.entries),"Screener response shape invalid");
+check(screener.entries.every(e=>e&&typeof e.ticker==="string"&&["verified","pending","blocked"].includes(e.validation)),"Screener record contract mismatch");
 check(screener.entries.every(e=>e.score===null||e.validation==="verified"),"Unreviewed numeric screener score");
-check(ohlcv?.ticker===ticker&&Array.isArray(ohlcv.bars),"OHLCV contract mismatch");
-check(analysis?.ticker===ticker&&Array.isArray(analysis.records),"Stock analysis contract mismatch");
+check(ohlcv?.ticker===ticker&&Array.isArray(ohlcv.bars)&&ohlcv.bars.length<=2500,"OHLCV contract mismatch");
+let previous="";
+for(const bar of ohlcv.bars){
+ check(typeof bar.date==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(bar.date)&&bar.date>previous&&new Date(bar.date+"T00:00:00Z").toISOString().slice(0,10)===bar.date,"OHLCV trading date contract mismatch");
+ previous=bar.date;
+ check(["open","high","low","close","volume"].every(key=>Number.isSafeInteger(bar[key])&&bar[key]>=0),"OHLCV values must be nonnegative integers");
+ const noTrade=bar.open===0&&bar.high===0&&bar.low===0&&bar.close>0&&bar.volume===0;
+ check(noTrade||(bar.open>0&&bar.close>0&&bar.low>0&&bar.high>=Math.max(bar.open,bar.close,bar.low)&&bar.low<=Math.min(bar.open,bar.close)),"OHLCV price range contract mismatch");
+}
+check(analysis?.ticker===ticker&&Array.isArray(analysis.records)&&analysis.records.length<=500,"Stock analysis contract mismatch");
+check(analysis.records.every(e=>e&&e.ticker===ticker&&typeof e.id==="string"&&["verified","blocked","pending"].includes(e.validation)),"Stock analysis record contract mismatch");
 check(analysis.records.every(e=>e.score===null||e.validation==="verified"),"Unreviewed numeric stock score");
 console.log("Extended read-only HTTP smoke verification passed.");
 console.log("Selected ticker:",ticker);
