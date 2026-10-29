@@ -1,3 +1,5 @@
+import Link from "next/link";
+import {loadOperationalCatalog,loadOperationalBars} from "@/data/OperationalMarketDataSource";
 import {getOhlcv} from "@/data/OhlcvDataSource";
 import {getStockAnalysis} from "@/data/StockAnalysisDataSource";
 import {PageHeader} from "@/components/common/PageHeader";
@@ -19,6 +21,8 @@ export default async function DiagnosticsPage({searchParams}:{searchParams:Promi
   getOperations(),getFreshness(),getOperationalAlerts(),getScreener()
  ]);
  const status=summarizeBackendDiagnostics(mode,health);
+ const operational=mode==="http"?await loadOperationalCatalog(process.env.DONGHAK_API_BASE_URL):{data:null,error:"HTTP mode is not enabled"};
+ const operationalBars=validTicker&&mode==="http"?await loadOperationalBars(requested,process.env.DONGHAK_API_BASE_URL):null;
  const selected=validTicker?await Promise.all([getOhlcv(requested),getStockAnalysis(requested)]):null;
  const selectedSources=selected?[
   {name:"OHLCV",state:getFeatureDataState(selected[0].source,selected[0].error,selected[0].data.bars.length),error:selected[0].error,count:selected[0].data.bars.length},
@@ -55,6 +59,17 @@ export default async function DiagnosticsPage({searchParams}:{searchParams:Promi
     <span className="status-pill" data-state={item.state==="error"?"blocked":item.state==="available"?"verified":"in_progress"}>{item.state}</span>
    </article>)}
    <p className="section-copy">Empty means a valid response with no records. Disconnected means no configured source. An HTTP error is never replaced with demo data.</p>
+  </section>
+  <section className="panel single-panel" aria-label="Collected operational market data">
+   <div className="panel-heading"><h2>Collected KRX data</h2><span className="panel-count">{operational.data?operational.data.total+" observed tickers":"Unavailable"}</span></div>
+   <p className="section-copy">Unreviewed operational snapshot, separate from the research market universe. A successful backend health response does not guarantee these endpoints are configured.</p>
+   {operational.error?<p className="metric-detail" role="status">Catalog: {operational.error}</p>:null}
+   {operational.data?<p className="metric-detail">API returned {operational.data.items.length} tickers on the first page. <Link href="/operational-market">Browse collected tickers</Link></p>:null}
+   {validTicker?<article className="operations-run"><div><strong>Collected OHLCV: {requested}</strong>
+    {operationalBars?.error?<p className="metric-detail" role="alert">{operationalBars.error}</p>:null}
+    {operationalBars?.data?<p className="metric-detail">Observed bars: {operationalBars.data.bars.length}. Last date: {operationalBars.data.bars.at(-1)?.date??"—"}. <Link href={"/operational-market/"+requested}>View collected chart</Link></p>:null}
+    {mode!=="http"?<p className="metric-detail">Requires HTTP mode</p>:null}
+   </div></article>:null}
   </section>
   <section className="panel single-panel" aria-label="Ticker diagnostics"><h2>Ticker diagnostics</h2>
    <p className="section-copy">Enter an exact six-character ticker to check the read-only OHLCV and stock analysis endpoints.</p>
