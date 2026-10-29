@@ -1,4 +1,4 @@
-export type AnalysisRunState = "queued" | "running" | "succeeded" | "failed" | "blocked";
+export type AnalysisRunState = "queued" | "running" | "succeeded" | "failed" | "blocked" | "unknown";
 export type OperationsConnectionState = "not_connected" | "connected" | "degraded";
 export interface AnalysisRun {
   id: string;
@@ -28,7 +28,7 @@ export function validateOperationsSnapshot(value: OperationsSnapshot): boolean {
   if (!["not_connected", "connected", "degraded"].includes(value.connection)) return false;
   const ids = new Set<string>();
   return value.runs.every(run => {
-    if (!run.id || ids.has(run.id) || !["queued","running","succeeded","failed","blocked"].includes(run.state)) return false;
+    if (!run.id || ids.has(run.id) || !["queued","running","succeeded","failed","blocked","unknown"].includes(run.state)) return false;
     ids.add(run.id);
     if (run.startedAt !== null && !Number.isFinite(Date.parse(run.startedAt))) return false;
     if (run.finishedAt !== null && !Number.isFinite(Date.parse(run.finishedAt))) return false;

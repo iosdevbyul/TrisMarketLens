@@ -11,7 +11,7 @@ import { OperationsOverviewPanel } from "@/components/operations/OperationsOverv
 import { summarizeOperationsOverview } from "@/domain/operationsOverview";
 
 const stateLabels: Record<AnalysisRunState,string> = {
-  queued: "Queued", running: "Running", succeeded: "Succeeded", failed: "Failed", blocked: "Blocked",
+  queued: "Queued", running: "Running", succeeded: "Succeeded", failed: "Failed", blocked: "Blocked", unknown: "Unknown",
 };
 export default async function OperationsPage() {
   const [t, locale, result, freshness, alerts] = await Promise.all([getTranslator(), getLocale(), getOperations(), getFreshness(), getOperationalAlerts()]);

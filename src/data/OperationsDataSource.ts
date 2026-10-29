@@ -29,6 +29,49 @@ function isIsoDate(value: unknown): value is string {
 function isTimestamp(value: unknown): value is string {
   return typeof value === "string" && /(?:Z|[+-]\d{2}:\d{2})$/.test(value) && Number.isFinite(Date.parse(value));
 }
+type EvidenceStatus = "validated" | "partial" | "invalid" | "unavailable";
+interface BackendRun { id: string; operationType: "dart_batch_acquisition" | "dart_session" | "market_ingestion"; startedAt: string | null; completedAt: string | null; executionStatus: "completed" | "incomplete" | "failed" | "interrupted" | "not_started"; evidenceStatus: EvidenceStatus; recordCount: number | null; sourceType: "dart_ledger" | "sqlite_collection_audit"; semanticApproval: false; blockingStatus: "blocked" | "unknown" | null; diagnostic: string | null }
+interface RunsPayload { schemaVersion: "operations_v1"; items: BackendRun[]; total: number; offset: number; limit: number; evidenceStatus: EvidenceStatus; diagnostic: string | null }
+function isNullableTimestamp(v: unknown): boolean { return v === null || isTimestamp(v); }
+function isBackendPayload(value: unknown): value is RunsPayload {
+ if (!value || typeof value !== "object") return false;
+ const p = value as Record<string, unknown>;
+ const evidence = ["validated","partial","invalid","unavailable"];
+ if (p.schemaVersion !== "operations_v1" || !Array.isArray(p.items) || p.items.length > 100 ||
+     !Number.isInteger(p.total) || (p.total as number) < 0 || !Number.isInteger(p.offset) || p.offset !== 0 ||
+     !Number.isInteger(p.limit) || p.limit !== 25 || p.items.length > (p.limit as number) ||
+     !evidence.includes(String(p.evidenceStatus)) || (p.diagnostic !== null && typeof p.diagnostic !== "string")) return false;
+ if ((p.total as number) < p.items.length) return false;
+ const ids = new Set<string>();
+ return p.items.every((candidate: unknown) => {
+  if (!candidate || typeof candidate !== "object") return false;
+  const r = candidate as Record<string, unknown>;
+  if (typeof r.id !== "string" || !r.id || ids.has(r.id)) return false;
+  ids.add(r.id);
+  return ["dart_batch_acquisition","dart_session","market_ingestion"].includes(String(r.operationType)) &&
+   ["completed","incomplete","failed","interrupted","not_started"].includes(String(r.executionStatus)) &&
+   evidence.includes(String(r.evidenceStatus)) &&
+   ["dart_ledger","sqlite_collection_audit"].includes(String(r.sourceType)) &&
+   r.semanticApproval === false && isNullableTimestamp(r.startedAt) && isNullableTimestamp(r.completedAt) &&
+   (r.recordCount === null || (Number.isInteger(r.recordCount) && (r.recordCount as number) >= 0)) &&
+   (r.blockingStatus === null || ["blocked","unknown"].includes(String(r.blockingStatus))) &&
+   (r.diagnostic === null || typeof r.diagnostic === "string");
+ });
+}
+function adaptBackendPayload(payload: RunsPayload): OperationsSnapshot {
+ return {
+  connection: payload.evidenceStatus === "invalid" ? "degraded" : "connected",
+  checkedAt: null, latestDataThrough: null, nextScheduledRun: null,
+  runs: payload.items.map(run => ({
+   id: run.id,
+   pipeline: run.operationType === "market_ingestion" ? "Market collection" : run.operationType === "dart_session" ? "DART session" : "DART batch acquisition",
+   // Completion proves only that an execution outcome was recorded; it does not prove semantic success.
+   state: run.executionStatus === "failed" ? "failed" : run.blockingStatus === "blocked" ? "blocked" : "unknown",
+   startedAt: run.startedAt, finishedAt: run.completedAt, dataThrough: null,
+   summary: [`Recorded status: ${run.executionStatus}`, `Evidence: ${run.evidenceStatus}`, run.diagnostic].filter(Boolean).join(" · "),
+  })),
+ };
+}
 function isValidSnapshot(value: unknown): value is OperationsSnapshot {
   if (!value || typeof value !== "object") return false;
   const record = value as Record<string, unknown>;
@@ -41,7 +84,7 @@ function isValidSnapshot(value: unknown): value is OperationsSnapshot {
     if (!candidate || typeof candidate !== "object") return false;
     const run = candidate as Record<string, unknown>;
     if (typeof run.id !== "string" || typeof run.pipeline !== "string" || !run.pipeline) return false;
-    if (!["queued", "running", "succeeded", "failed", "blocked"].includes(String(run.state))) return false;
+    if (!["queued", "running", "succeeded", "failed", "blocked", "unknown"].includes(String(run.state))) return false;
     if (run.startedAt !== null && !isTimestamp(run.startedAt)) return false;
     if (run.finishedAt !== null && !isTimestamp(run.finishedAt)) return false;
     if (run.dataThrough !== null && !isIsoDate(run.dataThrough)) return false;
@@ -58,13 +101,15 @@ export async function loadOperations({ mode = "disconnected", apiBaseUrl, fetche
   if (mode !== "http") return unavailable("disconnected", "Unsupported operations mode");
   if (!apiBaseUrl?.trim()) return unavailable("http", "Operations API base URL is not configured");
   try {
-    const response = await fetcher(apiBaseUrl.trim().replace(/\/+$/, "") + "/api/v1/operations", {
+    const response = await fetcher(apiBaseUrl.trim().replace(/\/+$/, "") + "/api/v1/operations/runs?offset=0&limit=25", {
       headers: { Accept: "application/json" }, cache: "no-store", signal: AbortSignal.timeout(5000),
     });
     if (!response.ok) return unavailable("http", `Operations API returned HTTP ${response.status}`);
     const body: unknown = await response.json();
-    if (!isValidSnapshot(body)) return unavailable("http", "Operations API returned an invalid snapshot");
-    return { source: "http", snapshot: body, error: null };
+    if (!isBackendPayload(body)) return unavailable("http", "Operations API returned an invalid operations_v1 payload");
+    const snapshot = adaptBackendPayload(body);
+    if (!isValidSnapshot(snapshot)) return unavailable("http", "Operations API returned an invalid snapshot");
+    return { source: "http", snapshot, error: null };
   } catch {
     return unavailable("http", "Operations API is unreachable");
   }
