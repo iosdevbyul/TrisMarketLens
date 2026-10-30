@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { loadOperationalCatalog } from "@/data/OperationalMarketDataSource";
 import { checkBackendHealth } from "@/data/backendHealth";
 
 export async function GET() {
@@ -13,11 +14,18 @@ export async function GET() {
       backend: {
         status: "not_required",
       },
+      operationalMarket: { status: "not_configured", observedTickers: null },
     });
   }
 
-  const backend = await checkBackendHealth(process.env.DONGHAK_API_BASE_URL);
+  const [backend, operational] = await Promise.all([
+    checkBackendHealth(process.env.DONGHAK_API_BASE_URL),
+    loadOperationalCatalog(process.env.DONGHAK_API_BASE_URL),
+  ]);
   const healthy = backend.status === "ok";
+  const operationalMarket = operational.data
+    ? { status: operational.data.total > 0 ? "available" : "empty", observedTickers: operational.data.total, evidenceStatus: "unreviewed" }
+    : { status: "unavailable", observedTickers: null, detail: operational.error };
 
   return NextResponse.json(
     {
@@ -25,6 +33,7 @@ export async function GET() {
       app: "TrisMarketLens",
       dataSource,
       backend,
+      operationalMarket,
     },
     { status: healthy ? 200 : 503 },
   );
