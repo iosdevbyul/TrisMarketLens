@@ -22,6 +22,7 @@ export default async function DiagnosticsPage({searchParams}:{searchParams:Promi
  ]);
  const status=summarizeBackendDiagnostics(mode,health);
  const operational=mode==="http"?await loadOperationalCatalog(process.env.DONGHAK_API_BASE_URL):{data:null,error:"HTTP mode is not enabled"};
+ const operationalState=mode!=="http"?"not_configured":operational.data?(operational.data.total>0?"available":"empty"):"unavailable";
  const operationalBars=validTicker&&mode==="http"?await loadOperationalBars(requested,process.env.DONGHAK_API_BASE_URL):null;
  const selected=validTicker?await Promise.all([getOhlcv(requested),getStockAnalysis(requested)]):null;
  const selectedSources=selected?[
@@ -61,7 +62,9 @@ export default async function DiagnosticsPage({searchParams}:{searchParams:Promi
    <p className="section-copy">Empty means a valid response with no records. Disconnected means no configured source. An HTTP error is never replaced with demo data.</p>
   </section>
   <section className="panel single-panel" aria-label="Collected operational market data">
-   <div className="panel-heading"><h2>Collected KRX data</h2><span className="panel-count">{operational.data?operational.data.total+" observed tickers":"Unavailable"}</span></div>
+   <div className="panel-heading"><h2>Collected KRX data</h2><span className="panel-count">{operationalState}</span></div>
+   <p className="metric-detail">Read-only backend health: {health?.status??"not_required"} · Operational catalog: {operationalState} · Observed tickers: {operational.data?.total??"unknown"}</p>
+   <p className="metric-detail">These correspond to the backend and operationalMarket statuses exposed by <Link href="/api/health">the web health endpoint</Link>. An available catalog is not evidence of validated research data.</p>
    <p className="section-copy">Unreviewed operational snapshot, separate from the research market universe. A successful backend health response does not guarantee these endpoints are configured.</p>
    {operational.error?<p className="metric-detail" role="status">Catalog: {operational.error}</p>:null}
    {operational.data?<p className="metric-detail">API returned {operational.data.items.length} tickers on the first page. <Link href="/operational-market">Browse collected tickers</Link></p>:null}
