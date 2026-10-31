@@ -4,6 +4,8 @@
 
 Source-code review of the `main` branches of `iosdevbyul/TrisMarketLens` and `iosdevbyul/DonghakStockVision` on 2026-10-30. This document supersedes the endpoint inventory (not the historical record) in `backend-integration-audit.md` dated 2026-10-10.
 
+**Historical audit with follow-up as of 2026-11-01.** The original 2026-10-30 findings are retained for provenance; the Operations path mismatch below was resolved in current `main`. This follow-up checks source code only, not a live API.
+
 **This is a static contract comparison.** It does not establish local server availability, a valid published snapshot, fresh production data, browser rendering, or successful cross-repository E2E tests. No live KRX or broker request is needed for this review.
 
 ## Confirmed routes in the backend FastAPI app
@@ -27,11 +29,11 @@ Backend source: `src/donghak_stock_vision/api/app.py`. Frontend adapters are und
 | `/api/v1/analysis/screener` | `ScreenerDataSource` feature contract | Route present; verify response schema and data availability |
 | `/api/v1/stocks/{ticker}/ohlcv` | `OhlcvDataSource` | Matching route; verify response schema and provenance |
 | `/api/v1/stocks/{ticker}/analysis` | `StockAnalysisDataSource` | Matching route; verify response schema and publication status |
-| `/api/v1/operations/runs` | Existing `OperationsDataSource` calls `/api/v1/operations` | **Path mismatch**; design a dedicated runs adapter |
+| `/api/v1/operations/runs` | Current `OperationsDataSource` calls `/api/v1/operations/runs?offset=0&limit=25` | **Resolved in code** (2026-11-01 review); live HTTP verification outstanding |
 | `/api/v1/operations/freshness` | `FreshnessDataSource` feature contract | Route present; verify response schema |
 | `/api/v1/operations/alerts` | `OperationalAlertsDataSource` feature contract | Route present; verify response schema |
 
-No `GET /api/v1/operations` route was found in the reviewed backend `app.py`. The web Operations overview must not be assumed operational in HTTP mode because a similarly named API family exists.
+The original 2026-10-30 audit correctly identified that the backend does not publish `GET /api/v1/operations`, but its claim that the frontend still calls this obsolete route is no longer current. The frontend now requests `/api/v1/operations/runs?offset=0&limit=25`, checks `operations_v1`, and exposes errors instead of substituting mock data. Runtime availability and UI rendering remain to be independently checked.
 
 The frontend's proposed `/api/v1/stocks/{ticker}/evaluations` endpoint is **not** among the reviewed `app.py` GET routes; keep evaluation presentation disconnected unless a verified provider is introduced.
 
@@ -45,7 +47,7 @@ The frontend's proposed `/api/v1/stocks/{ticker}/evaluations` endpoint is **not*
 
 ## Delivery plan (independent PRs)
 
-1. **P0 — Operations contract alignment:** replace the obsolete `/api/v1/operations` expectation with `/runs`, preserving `operations_v1` payload semantics and pagination. Add DTO/adapter tests and explicit disconnected/empty/error states. Do not mark this done before test evidence.
+1. **P0 — Operations contract alignment (path corrected):** the frontend now requests `/api/v1/operations/runs?offset=0&limit=25` and validates `operations_v1`. **Code-level path mismatch resolved; end-to-end HTTP/UI verification pending.** Confirm response semantics, pagination, empty/error handling and evidence policy against the running backend before declaring the entire integration complete.
 2. **P0 — Contract verification:** reconcile `FreshnessDataSource`, `OperationalAlertsDataSource`, `ScreenerDataSource`, `OhlcvDataSource` and `StockAnalysisDataSource` with current backend response models; add deterministic fixture contract tests. Route existence alone is insufficient.
 3. **P1 — Security metadata:** examine DTOs and coverage quality before adding lookup/search UI; unknown names/sectors remain unknown.
 4. **P1 — Evaluation gating:** retain disconnected state until a reviewed backend route or alternative publication contract exists.
@@ -60,6 +62,16 @@ The frontend's proposed `/api/v1/stocks/{ticker}/evaluations` endpoint is **not*
 - Confirm unavailable/missing/corrupt evidence produces explicit unknown/error states, never silent mock fallback.
 - Record the backend revision and snapshot fingerprint for live E2E evidence.
 
-## No runtime verification performed
+## Follow-up runtime verification pending (2026-11-01)
+
+The current adapter's source path was verified in `src/data/OperationsDataSource.ts`; this is **not** evidence of a live API or rendered Operations page. With the operator's local read-only API running, execute:
+
+```sh
+curl -sS -i 'http://127.0.0.1:8000/api/v1/operations/runs?offset=0&limit=25'
+```
+
+Check HTTP status, `schemaVersion: operations_v1`, `items`, `total`, `offset`, `limit`, `evidenceStatus`, and `diagnostic`; then inspect `http://127.0.0.1:3000/operations` in HTTP mode. Record timestamp, backend revision, snapshot identity and results before marking live verification complete. This repository review has no access to the operator's localhost and has not run that request.
+
+## Original audit runtime verification
 
 This audit only records verified code-level route differences. It does **not** assert a successful runtime integration, CI result, stock data freshness, or operation execution.
