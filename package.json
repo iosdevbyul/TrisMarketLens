@@ -12,11 +12,12 @@
     "check": "npm run lint && npm run typecheck && npm run test && npm run build",
     "verify:http": "node --env-file=.env.local scripts/verify-http.mjs",
     "verify:extensions": "node --env-file=.env.local scripts/verify-extensions-http.mjs",
-    "verify:scripts": "node --check scripts/verify-http.mjs && node --check scripts/verify-extensions-http.mjs && node --check scripts/create-verification-report.mjs && node --check scripts/inspect-verification-report.mjs && node --check scripts/verify-operational-http.mjs && node --check scripts/verify-operational-web-e2e.mjs",
+    "verify:scripts": "node --check scripts/verify-http.mjs && node --check scripts/verify-extensions-http.mjs && node --check scripts/create-verification-report.mjs && node --check scripts/inspect-verification-report.mjs && node --check scripts/verify-operational-http.mjs && node --check scripts/verify-operational-web-e2e.mjs && node --check scripts/verify-krx-scheduler-web-http.mjs",
     "verify:report": "node scripts/create-verification-report.mjs",
     "verify:inspect": "node scripts/inspect-verification-report.mjs",
     "verify:operational": "node --env-file=.env.local scripts/verify-operational-http.mjs",
-    "verify:operational:web": "node --env-file=.env.local scripts/verify-operational-web-e2e.mjs"
+    "verify:operational:web": "node --env-file=.env.local scripts/verify-operational-web-e2e.mjs",
+    "verify:krx-scheduler:web": "node --env-file=.env.local scripts/verify-krx-scheduler-web-http.mjs"
   },
   "dependencies": {
     "next": "16.4.3",
