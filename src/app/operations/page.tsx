@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {RecordedRunExplorer} from "@/components/operations/RecordedRunExplorer";
 import {loadOperationalCatalog} from "@/data/OperationalMarketDataSource";
 import {loadOperationalDateDistribution} from "@/data/OperationalDateDistributionDataSource";
 import {OperationalDateDrilldown} from "@/components/operations/OperationalDateDrilldown";
@@ -9,7 +10,6 @@ import { getTranslator, getLocale } from "@/i18n/server";
 import { getOperations } from "@/data/OperationsDataSource";
 import { getSchedulerDiagnostics } from "@/data/KrxSchedulerDiagnosticsDataSource";
 import { KrxSchedulerDiagnosticsPanel } from "@/components/operations/KrxSchedulerDiagnosticsPanel";
-import type { AnalysisRunState } from "@/domain/operations";
 import { PipelineHealthPanel } from "@/components/operations/PipelineHealthPanel";
 import { FreshnessPanel } from "@/components/operations/FreshnessPanel";
 import { getFreshness } from "@/data/FreshnessDataSource";
@@ -18,9 +18,6 @@ import { OperationalAlertsPanel } from "@/components/operations/OperationalAlert
 import { OperationsOverviewPanel } from "@/components/operations/OperationsOverviewPanel";
 import { summarizeOperationsOverview } from "@/domain/operationsOverview";
 
-const stateLabels: Record<AnalysisRunState,string> = {
-  queued: "Queued", running: "Running", succeeded: "Succeeded", failed: "Failed", blocked: "Blocked", unknown: "Unknown",
-};
 export default async function OperationsPage() {
   const [t, locale, result, freshness, alerts, scheduler] = await Promise.all([getTranslator(), getLocale(), getOperations(), getFreshness(), getOperationalAlerts(), getSchedulerDiagnostics()]);
   const { snapshot, source, error } = result;
@@ -98,12 +95,8 @@ export default async function OperationsPage() {
           <div><p className="eyebrow">{t("Run history")}</p><h2>{t("Recorded execution history")}</h2></div>
           <span className="panel-count">{snapshot.runs.length} {t("runs")}</span>
         </div>
-        {snapshot.runs.length === 0 ? <p className="section-copy">{t(state==="error"?"Operations unavailable":state==="disconnected"?"Not connected":"No recorded operations available")}</p> :
-          <div className="operations-runs">{snapshot.runs.map(run => <article className="operations-run" key={run.id}>
-            <div><strong>{run.pipeline}</strong><p className="metric-detail">{run.id} · {run.dataThrough ?? "—"}</p></div>
-            <div><span className="status-pill" data-state={run.state === "succeeded" ? "verified" : run.state === "running" || run.state === "queued" ? "in_progress" : "blocked"}>{t(stateLabels[run.state])}</span><p className="metric-detail">{formatTime(run.startedAt)}</p></div>
-            {run.summary ? <p className="metric-detail operations-run-summary">{t(run.summary)}</p> : null}
-          </article>)}</div>}
+        {snapshot.runs.length===0?<p className="section-copy">{t(state==="error"?"Operations unavailable":state==="disconnected"?"Not connected":"No recorded operations available")}</p>:<RecordedRunExplorer runs={snapshot.runs} locale={locale}/>}
+
       </section>
     </>
   );
