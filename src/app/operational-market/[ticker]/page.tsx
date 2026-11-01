@@ -1,3 +1,4 @@
+import {MarketDataBoundary} from "@/components/stocks/MarketDataBoundary";
 import Link from "next/link";
 import {PageHeader} from "@/components/common/PageHeader";
 import {OperationalOhlcvExport} from "@/components/stocks/OperationalOhlcvExport";
@@ -22,5 +23,6 @@ export default async function OperationalTickerPage({params}:{params:Promise<{ti
    {latest?<dl className="ohlcv-selected"><div><dt>Last observed date</dt><dd>{latest.date}</dd></div><div><dt>Last collected close</dt><dd>{latest.close.toLocaleString(locale==="ko"?"ko-KR":"en-US")}</dd></div><div><dt>Last collected volume</dt><dd>{latest.volume.toLocaleString(locale==="ko"?"ko-KR":"en-US")}</dd></div></dl>:null}
    {result.data?.bars.length?<OhlcvChart ticker={ticker} bars={result.data.bars} locale={locale}/>:result.data?<p className="section-copy">No collected bars in this operational snapshot.</p>:null}
   </section>
+  <MarketDataBoundary ticker={ticker}/>
  </>;
 }
