@@ -4,6 +4,8 @@ import { getFeatureDataState } from "@/domain/featureDataState";
 import { PageHeader } from "@/components/common/PageHeader";
 import { getTranslator, getLocale } from "@/i18n/server";
 import { getOperations } from "@/data/OperationsDataSource";
+import { getSchedulerDiagnostics } from "@/data/KrxSchedulerDiagnosticsDataSource";
+import { KrxSchedulerDiagnosticsPanel } from "@/components/operations/KrxSchedulerDiagnosticsPanel";
 import type { AnalysisRunState } from "@/domain/operations";
 import { PipelineHealthPanel } from "@/components/operations/PipelineHealthPanel";
 import { FreshnessPanel } from "@/components/operations/FreshnessPanel";
@@ -17,7 +19,7 @@ const stateLabels: Record<AnalysisRunState,string> = {
   queued: "Queued", running: "Running", succeeded: "Succeeded", failed: "Failed", blocked: "Blocked", unknown: "Unknown",
 };
 export default async function OperationsPage() {
-  const [t, locale, result, freshness, alerts] = await Promise.all([getTranslator(), getLocale(), getOperations(), getFreshness(), getOperationalAlerts()]);
+  const [t, locale, result, freshness, alerts, scheduler] = await Promise.all([getTranslator(), getLocale(), getOperations(), getFreshness(), getOperationalAlerts(), getSchedulerDiagnostics()]);
   const { snapshot, source, error } = result;
   const operational = process.env.MARKET_LENS_DATA_SOURCE === "http"
     ? await loadOperationalCatalog(process.env.DONGHAK_API_BASE_URL)
@@ -54,6 +56,7 @@ export default async function OperationsPage() {
         </div> : operational.data ? <p className="section-copy">The operational snapshot returned no observed tickers.</p> : null}
         <Link href="/operational-market">Browse collected tickers and OHLCV</Link>
       </section>
+      <KrxSchedulerDiagnosticsPanel result={scheduler}/>
       <OperationsOverviewPanel overview={summarizeOperationsOverview(result,freshness,alerts)} locale={locale} demonstration={[result.source,freshness.source,alerts.source].includes("mock")}/>
       <PipelineHealthPanel result={result} locale={locale}/>
       <FreshnessPanel result={freshness} locale={locale}/>
