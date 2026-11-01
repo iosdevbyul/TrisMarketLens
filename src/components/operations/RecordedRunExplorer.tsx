@@ -3,17 +3,20 @@ import {useState} from "react";
 import type {AnalysisRun,AnalysisRunState} from "@/domain/operations";
 
 export type RunFilter="all"|"Market collection"|"DART session"|"DART batch acquisition"|"other";
-export function filterRecordedRuns(runs:readonly AnalysisRun[],pipeline:RunFilter,state:"all"|AnalysisRunState){
- return runs.filter(run=>(pipeline==="all"||(pipeline==="other"?!["Market collection","DART session","DART batch acquisition"].includes(run.pipeline):run.pipeline===pipeline))&&(state==="all"||run.state===state));
+export function filterRecordedRuns(runs:readonly AnalysisRun[],pipeline:RunFilter,state:"all"|AnalysisRunState,query=""){
+ const needle=query.trim().toLocaleLowerCase();
+ return runs.filter(run=>(!needle||[run.id,run.pipeline,run.summary??""].some(value=>value.toLocaleLowerCase().includes(needle)))&&(pipeline==="all"||(pipeline==="other"?!["Market collection","DART session","DART batch acquisition"].includes(run.pipeline):run.pipeline===pipeline))&&(state==="all"||run.state===state));
 }
 const states:AnalysisRunState[]=["queued","running","succeeded","failed","blocked","unknown"];
 export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko"|"en"}){
  const [pipeline,setPipeline]=useState<RunFilter>("all");
+ const [query,setQuery]=useState("");
  const [state,setState]=useState<"all"|AnalysisRunState>("all");
- const visible=filterRecordedRuns(runs,pipeline,state);
+ const visible=filterRecordedRuns(runs,pipeline,state,query);
  const formatTime=(value:string|null)=>value?new Intl.DateTimeFormat(locale==="ko"?"ko-KR":"en-US",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Seoul"}).format(new Date(value)):"—";
  return <div className="recorded-run-explorer">
   <div className="recorded-run-filters">
+   <label>Search recorded execution<input type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Run ID, source, diagnostic" autoComplete="off" /></label>
    <label>Pipeline<select value={pipeline} onChange={e=>setPipeline(e.target.value as RunFilter)}>
     <option value="all">All pipelines</option><option value="Market collection">Market collection</option>
     <option value="DART session">DART session</option><option value="DART batch acquisition">DART batch acquisition</option>
