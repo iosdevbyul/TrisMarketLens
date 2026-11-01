@@ -10,4 +10,11 @@ describe("recorded operation filters",()=>{
   expect(filterRecordedRuns(runs,"DART session","unknown")).toEqual([]);
   expect(filterRecordedRuns(runs,"other","blocked")).toEqual([runs[2]]);
  });
+ it("searches recorded IDs and diagnostics case-insensitively within existing filters",()=>{
+  const detailed=runs.map((run,i)=>({...run,summary:i===0?"Source: sqlite_collection_audit":i===1?"Evidence: partial":null}));
+  expect(filterRecordedRuns(detailed,"all","all","COLLECTION")).toEqual([detailed[0]]);
+  expect(filterRecordedRuns(detailed,"all","all","partial")).toEqual([detailed[1]]);
+  expect(filterRecordedRuns(detailed,"DART session","failed"," PARTIAL ")).toEqual([detailed[1]]);
+  expect(filterRecordedRuns(detailed,"Market collection","failed","collection")).toEqual([]);
+ });
 });

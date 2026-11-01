@@ -1438,3 +1438,6 @@ h1 {
 .recorded-run-filters select{min-height:42px;background:var(--surface-strong);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px;font:inherit}
 .recorded-run-filters select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 @media(max-width:480px){.recorded-run-filters{display:grid}.recorded-run-filters label{min-width:0}}
+
+.recorded-run-filters input{min-height:42px;background:var(--surface-strong);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px;font:inherit;min-width:210px}
+.recorded-run-filters input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
