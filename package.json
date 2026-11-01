@@ -18,7 +18,7 @@
     "verify:operational": "node --env-file=.env.local scripts/verify-operational-http.mjs",
     "verify:operational:web": "node --env-file=.env.local scripts/verify-operational-web-e2e.mjs",
     "verify:krx-scheduler:web": "node --env-file=.env.local scripts/verify-krx-scheduler-web-http.mjs",
-    "verify:next-queue": "node --test scripts/select-approved-next-task.test.mjs"
+    "verify:next-queue": "node --test scripts/select-approved-next-task.node-check.mjs"
   },
   "dependencies": {
     "next": "16.4.3",
