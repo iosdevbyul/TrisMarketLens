@@ -6,6 +6,7 @@ export interface DateDistribution {
   newestDate:string|null;
   oldestDate:string|null;
   complete:true;
+  tickersByDate:{date:string;tickers:string[]}[];
 }
 const MAX_TICKERS=2500;
 export async function loadOperationalDateDistribution(baseUrl:string|undefined,fetcher:typeof fetch=fetch):Promise<OperationalResult<DateDistribution>>{
@@ -26,8 +27,9 @@ export async function loadOperationalDateDistribution(baseUrl:string|undefined,f
    }
  }
  if(items.length!==total)return {data:null,error:"Incomplete catalog; distribution not calculated."};
- const counts=new Map<string,number>();
- for(const item of items)counts.set(item.latestDataDate,(counts.get(item.latestDataDate)??0)+1);
+ const byDate=new Map<string,string[]>();
+ for(const item of items)byDate.set(item.latestDataDate,[...(byDate.get(item.latestDataDate)??[]),item.ticker]);
+ const counts=new Map([...byDate].map(([date,tickers])=>[date,tickers.length]));
  const latestDates=[...counts].sort(([a],[b])=>b.localeCompare(a)).map(([date,count])=>({date,count}));
- return {data:{observedTickers:total,latestDates,newestDate:latestDates[0]?.date??null,oldestDate:latestDates.at(-1)?.date??null,complete:true},error:null};
+ return {data:{observedTickers:total,latestDates,newestDate:latestDates[0]?.date??null,oldestDate:latestDates.at(-1)?.date??null,complete:true,tickersByDate:[...byDate].sort(([a],[b])=>b.localeCompare(a)).map(([date,tickers])=>({date,tickers:tickers.sort()}))},error:null};
 }

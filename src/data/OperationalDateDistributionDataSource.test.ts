@@ -8,6 +8,8 @@ describe("complete operational date distribution",()=>{
   const r=await loadOperationalDateDistribution(base,fetcher);
   expect(r.error).toBeNull();expect(r.data?.observedTickers).toBe(26);
   expect(r.data?.latestDates).toEqual([{date:"2026-10-30",count:1},{date:"2026-10-29",count:25}]);
+  expect(r.data?.tickersByDate[0]).toEqual({date:"2026-10-30",tickers:["000025"]});
+  expect(r.data?.tickersByDate[1].tickers).toHaveLength(25);
  });
  it("fails closed on changed total between pages",async()=>{
   const fetcher=(async(url:string)=>Response.json(url.includes("offset=25")?make(25,27,["2026-10-30"]):make(0,26,Array.from({length:25},()=> "2026-10-29")))) as typeof fetch;
