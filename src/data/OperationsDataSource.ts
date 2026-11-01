@@ -69,7 +69,7 @@ function adaptBackendPayload(payload: RunsPayload): OperationsSnapshot {
    // Completion proves only that an execution outcome was recorded; it does not prove semantic success.
    state: run.executionStatus === "failed" ? "failed" : run.blockingStatus === "blocked" ? "blocked" : "unknown",
    startedAt: run.startedAt, finishedAt: run.completedAt, dataThrough: null,
-   summary: [`Recorded status: ${run.executionStatus}`, `Evidence: ${run.evidenceStatus}`, run.diagnostic].filter(Boolean).join(" · "),
+   summary: [`Recorded status: ${run.executionStatus}`, `Evidence: ${run.evidenceStatus}`, `Source: ${run.sourceType}`, run.recordCount === null ? "Recorded rows: unavailable" : `Recorded rows: ${run.recordCount}`, "Semantic approval: not granted", run.diagnostic].filter(Boolean).join(" · "),
   })),
  };
 }
