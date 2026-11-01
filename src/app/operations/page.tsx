@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {loadOperationalCatalog} from "@/data/OperationalMarketDataSource";
 import {loadOperationalDateDistribution} from "@/data/OperationalDateDistributionDataSource";
+import {OperationalDateDrilldown} from "@/components/operations/OperationalDateDrilldown";
 import {summarizeCollectionPreview} from "@/domain/collectionPreviewSummary";
 import { getFeatureDataState } from "@/domain/featureDataState";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -79,6 +80,7 @@ export default async function OperationsPage() {
           <p className="metric-detail">Newest date: {distribution.data.newestDate??"—"} · Oldest latest date: {distribution.data.oldestDate??"—"}</p>
           {distribution.data.latestDates.length===0?<p className="section-copy">No collected tickers in the snapshot.</p>:distribution.data.latestDates.map(item=><div className="operations-run" key={item.date}><strong>{item.date}</strong><span className="metric-detail">{item.count.toLocaleString()} tickers ({(item.count/distribution.data!.observedTickers*100).toFixed(1)}%)</span></div>)}
         </div>:null}
+        {distribution.data?.tickersByDate.length ? <OperationalDateDrilldown distribution={distribution.data}/> : null}
       </section>
       <KrxSchedulerDiagnosticsPanel result={scheduler}/>
       <OperationsOverviewPanel overview={summarizeOperationsOverview(result,freshness,alerts)} locale={locale} demonstration={[result.source,freshness.source,alerts.source].includes("mock")}/>
