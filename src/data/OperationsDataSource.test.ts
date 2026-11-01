@@ -13,6 +13,9 @@ describe("OperationsDataSource", () => {
   expect(fetcher).toHaveBeenCalledWith("http://localhost:8000/api/v1/operations/runs?offset=0&limit=25",expect.objectContaining({cache:"no-store"}));
   expect(r.error).toBeNull();expect(r.snapshot.runs[0].state).toBe("unknown");expect(r.snapshot.runs[0].dataThrough).toBeNull();
   expect(r.snapshot.checkedAt).toBeNull();expect(r.snapshot.runs[0].summary).toContain("Evidence: partial");
+  expect(r.snapshot.runs[0].summary).toContain("Source: sqlite_collection_audit");
+  expect(r.snapshot.runs[0].summary).toContain("Recorded rows: 20");
+  expect(r.snapshot.runs[0].summary).toContain("Semantic approval: not granted");
  });
  it("fails closed on HTTP errors",async()=>{const r=await loadOperations({mode:"http",apiBaseUrl:"http://localhost:8000",fetcher:(async()=>new Response(null,{status:404})) as typeof fetch});expect(r.error).toContain("404");expect(r.snapshot.runs).toEqual([]);});
  it("rejects legacy and malformed payloads",async()=>{
