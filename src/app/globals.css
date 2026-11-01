@@ -1423,3 +1423,11 @@ h1 {
 .operational-date-tickers{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;max-height:300px;overflow-y:auto;margin-top:12px;padding:4px}
 .operational-date-tickers a{padding:10px;border:1px solid var(--border);border-radius:9px;color:var(--text);background:var(--surface-strong);text-align:center;font-variant-numeric:tabular-nums}
 .operational-date-tickers a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+
+.observation-timeline{display:grid;gap:12px;margin-top:20px}
+.observation-timeline-row{display:grid;grid-template-columns:80px minmax(80px,1fr) 90px minmax(160px,1.3fr);gap:12px;align-items:center;font-size:12px}
+.observation-timeline-row strong{font-size:12px}
+.observation-timeline-track{height:12px;background:var(--surface-strong);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.observation-timeline-track span{display:block;height:100%;background:var(--accent);border-radius:8px}
+@media(max-width:700px){.observation-timeline-row{grid-template-columns:75px 1fr 80px}.observation-timeline-row .metric-detail{grid-column:2 / -1}}

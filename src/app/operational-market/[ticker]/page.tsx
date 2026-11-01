@@ -6,6 +6,7 @@ import {OhlcvChart} from "@/components/stocks/OhlcvChart";
 import {getLocale} from "@/i18n/server";
 import {loadOperationalBars} from "@/data/OperationalMarketDataSource";
 import {summarizeObservationCoverage} from "@/domain/observationCoverage";
+import {groupObservationMonths} from "@/domain/observationTimeline";
 
 export default async function OperationalTickerPage({params}:{params:Promise<{ticker:string}>}){
  const {ticker}=await params;
@@ -15,6 +16,8 @@ export default async function OperationalTickerPage({params}:{params:Promise<{ti
  const locale=await getLocale();
  const latest=result.data?.bars.at(-1);
  const coverage=summarizeObservationCoverage(result.data?.bars??[]);
+ const months=groupObservationMonths(result.data?.bars??[]);
+ const highestMonth=Math.max(1,...months.map(month=>month.observed));
  return <>
   <Link className="back-link" href="/operational-market">Back to collected tickers</Link>
   <PageHeader eyebrow="KRX operational collection" title={ticker} badge="Unreviewed operational observations" description="Original unadjusted observations from a pinned operational SQLite snapshot. No fabricated bars, trade signals or research validation."/>
@@ -35,6 +38,18 @@ export default async function OperationalTickerPage({params}:{params:Promise<{ti
    {latest?<dl className="ohlcv-selected"><div><dt>Last observed date</dt><dd>{latest.date}</dd></div><div><dt>Last collected close</dt><dd>{latest.close.toLocaleString(locale==="ko"?"ko-KR":"en-US")}</dd></div><div><dt>Last collected volume</dt><dd>{latest.volume.toLocaleString(locale==="ko"?"ko-KR":"en-US")}</dd></div></dl>:null}
    {result.data?.bars.length?<OhlcvChart ticker={ticker} bars={result.data.bars} locale={locale}/>:result.data?<p className="section-copy">No collected bars in this operational snapshot.</p>:null}
   </section>
+  {months.length>0?<section className="panel single-panel" aria-label="Monthly collected observation timeline">
+   <div className="panel-heading"><div><p className="eyebrow">Collection coverage</p><h2>Recorded dates by month</h2></div><span className="panel-count">{months.length} recorded months</span></div>
+   <p className="section-copy">Bars show only OHLCV dates present in the pinned snapshot. Missing months are not zero-activity claims, and this does not prove ingestion freshness or market-session completeness.</p>
+   <div className="observation-timeline">{months.map(month=><div className="observation-timeline-row" key={month.month}>
+    <strong>{month.month}</strong>
+    <div className="observation-timeline-track" role="img" aria-label={month.month+": "+month.observed+" recorded dates"}>
+     <span style={{width:(100*month.observed/highestMonth)+"%"}}/>
+    </div>
+    <span>{month.observed} dates</span>
+    <span className="metric-detail">{month.noTrade} no-trade · {month.firstDate} to {month.lastDate}</span>
+   </div>)}</div>
+  </section>:null}
   <MarketDataBoundary ticker={ticker}/>
  </>;
 }
