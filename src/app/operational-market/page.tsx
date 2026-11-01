@@ -1,3 +1,4 @@
+import {MarketDataBoundary} from "@/components/stocks/MarketDataBoundary";
 import Link from "next/link";
 import {PageHeader} from "@/components/common/PageHeader";
 import {OperationalTickerSearch} from "@/components/stocks/OperationalTickerSearch";
@@ -28,5 +29,6 @@ export default async function OperationalMarketPage({searchParams}:{searchParams
     {result.data.items.length>0&&offset+result.data.items.length<result.data.total?<Link href={"/operational-market?offset="+(offset+25)}>Next page</Link>:null}
    </nav>
   </section>:null}
+  <MarketDataBoundary/>
  </>;
 }
