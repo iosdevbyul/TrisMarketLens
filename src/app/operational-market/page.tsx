@@ -19,7 +19,7 @@ export default async function OperationalMarketPage({searchParams}:{searchParams
   {result.data?<section className="panel single-panel">
    <div className="panel-heading"><h2>Collected tickers</h2><span className="panel-count">{result.data.total} observed tickers</span></div>
    <p className="section-copy">Observed universe count is from the configured snapshot, not a guarantee of 940 securities or market completeness.</p>
-   <form action="/operational-market" method="get" aria-label="Jump to catalog page"><label htmlFor="catalog-offset">Catalog offset</label> <input id="catalog-offset" type="number" name="offset" min="0" max="100000" step="25" defaultValue={offset} required/> <button type="submit">Go to page</button></form>
+   <form className="operational-controls" action="/operational-market" method="get" aria-label="Jump to catalog page"><label htmlFor="catalog-offset">Catalog offset</label> <input id="catalog-offset" type="number" name="offset" min="0" max="100000" step="25" defaultValue={offset} required/> <button type="submit">Go to page</button></form>
    {outOfRange?<div className="run-lock" role="status"><p>Requested page is beyond the available catalog.</p><Link href={"/operational-market?offset="+lastPage}>Go to the last available page</Link></div>:null}
    <p className="metric-detail">Showing {result.data.items.length?offset+1:0}–{result.data.items.length?offset+result.data.items.length:0} of {result.data.total} observed tickers.</p>
    <p className="section-copy">Select a listed ticker to view its collected OHLCV history. Data comes from the configured operational snapshot, not the research universe.</p>
