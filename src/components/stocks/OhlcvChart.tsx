@@ -35,6 +35,7 @@ export function OhlcvChart({ ticker, bars, locale, analyses = [], analysisIsDemo
   const priceY = (n: number) => TOP + ((highest + range * 0.06 - n) / (range * 1.12)) * (PRICE_BOTTOM - TOP);
   const number = new Intl.NumberFormat(locale === "ko" ? "ko-KR" : "en-US", { maximumFractionDigits: 2 });
   const ticks = Array.from({ length: 5 }, (_, i) => lowest + (range * i / 4));
+  const dateTickIndices = Array.from(new Set([0, Math.floor((visible.length - 1) / 2), visible.length - 1]));
   return (
     <div className="ohlcv-chart">
       <div className="ohlcv-toolbar" aria-label={locale === "ko" ? "차트 기간" : "Chart period"}>
@@ -71,7 +72,7 @@ export function OhlcvChart({ ticker, bars, locale, analyses = [], analysisIsDemo
           </g>;
         })}
         <line x1={LEFT} x2={chartWidth-RIGHT} y1={VOL_BOTTOM} y2={VOL_BOTTOM} stroke="var(--border)" />
-        {[0,Math.floor((visible.length-1)/2),visible.length-1].map(i => <text key={i} x={LEFT + step*(i+0.5)} y={H-12} textAnchor="middle" fontSize="12" fill="var(--muted)">{visible[i].date.slice(5)}</text>)}
+        {dateTickIndices.map(i => <text key={i} x={LEFT + step*(i+0.5)} y={H-12} textAnchor="middle" fontSize="12" fill="var(--muted)">{visible[i].date.slice(5)}</text>)}
         <text x={LEFT-12} y={VOL_TOP+8} textAnchor="end" fontSize="11" fill="var(--muted)">{locale === "ko" ? "거래량" : "Volume"}</text>
       </svg>
       </div>
