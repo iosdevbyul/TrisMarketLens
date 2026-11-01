@@ -8,6 +8,7 @@ import { getOhlcv } from "@/data/OhlcvDataSource";
 import { getLocale } from "@/i18n/server";
 import { getDataSource } from "@/data/getDataSource";
 import { getStockAnalysis } from "@/data/StockAnalysisDataSource";
+import { getSecurityMetadata } from "@/data/SecurityMetadataDataSource";
 import { getPredictionEvaluations } from "@/data/PredictionEvaluationDataSource";
 import { stockDisplayName, stockSectorLabel } from "@/domain/stock";
 import { getFeatureDataState, type FeatureDataState } from "@/domain/featureDataState";
@@ -20,7 +21,7 @@ export default async function StockDetailPage({ params }: StockDetailPageProps) 
   const t = await getTranslator();
   const dataSource = getDataSource();
   const { ticker } = await params;
-  const [stock, analysis, prices, locale, evaluation] = await Promise.all([dataSource.getStock(ticker), getStockAnalysis(ticker), getOhlcv(ticker), getLocale(), getPredictionEvaluations(ticker)]);
+  const [stock, analysis, prices, locale, evaluation, metadata] = await Promise.all([dataSource.getStock(ticker), getStockAnalysis(ticker), getOhlcv(ticker), getLocale(), getPredictionEvaluations(ticker), getSecurityMetadata(ticker)]);
 
   const analysisState = getFeatureDataState(analysis.source, analysis.error, analysis.data.records.length);
   const priceState = getFeatureDataState(prices.source, prices.error, prices.data.bars.length);
@@ -44,6 +45,22 @@ export default async function StockDetailPage({ params }: StockDetailPageProps) 
         title={stockDisplayName(stock)}
       />
 
+      <section className="panel single-panel" aria-label="Security identity evidence">
+        <div className="panel-heading"><div><p className="eyebrow">Research evidence</p><h2>Security identity metadata</h2></div><span className="panel-count">{metadata.data ? "Source snapshot" : "Unavailable"}</span></div>
+        <p className="section-copy">Current source-snapshot display metadata only. It does not establish a current listing, security type, point-in-time identity, or historical continuity.</p>
+        {metadata.error ? <p className="metric-detail" role="status">{metadata.error}</p> : null}
+        {metadata.data ? <div className="operations-overview-grid">
+          {[
+            ["Corporation",metadata.data.corporation?.koreanName ?? "Unknown"],
+            ["Corporation English name",metadata.data.corporation?.englishName ?? "Unknown"],
+            ["Security name",metadata.data.security.securityName ?? "Unavailable"],
+            ["Security type",metadata.data.security.securityType === "unknown" ? "Unknown" : metadata.data.security.securityType],
+            ["DART corporation ID",metadata.data.security.corporationId ?? "Unavailable"],
+            ["Historical identity", "Not verified"],
+          ].map(([label,value]) => <div className="operations-overview-stat" key={label}><span>{label}</span><strong>{value}</strong></div>)}
+        </div> : null}
+        {metadata.data?.security.unavailableReasons.length ? <p className="metric-detail">Source limitations: {metadata.data.security.unavailableReasons.join(", ")}</p> : null}
+      </section>
       <section className="panel single-panel stock-analysis-panel" aria-label={t("AI analysis")}>
         <div className="panel-heading">
           <div><p className="eyebrow">{t("AI analysis")}</p><h2>{t("Model analysis history")}</h2></div>
