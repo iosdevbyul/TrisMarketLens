@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {loadOperationalCatalog} from "@/data/OperationalMarketDataSource";
+import {loadOperationalDateDistribution} from "@/data/OperationalDateDistributionDataSource";
 import {summarizeCollectionPreview} from "@/domain/collectionPreviewSummary";
 import { getFeatureDataState } from "@/domain/featureDataState";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -26,6 +27,9 @@ export default async function OperationsPage() {
     ? await loadOperationalCatalog(process.env.DONGHAK_API_BASE_URL)
     : {data:null,error:"HTTP operational source is not enabled"};
   const collectionSummary=operational.data?summarizeCollectionPreview(operational.data):null;
+  const distribution=process.env.MARKET_LENS_DATA_SOURCE==="http"
+    ?await loadOperationalDateDistribution(process.env.DONGHAK_API_BASE_URL)
+    :{data:null,error:"HTTP operational source is not enabled"};
   const state=getFeatureDataState(source,error,snapshot.runs.length);
   const formatTime = (value: string | null) => value ? new Intl.DateTimeFormat(locale === "ko" ? "ko-KR" : "en-US", {
     dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Seoul",
@@ -66,6 +70,15 @@ export default async function OperationsPage() {
           </article>)}
         </div> : operational.data ? <p className="section-copy">The operational snapshot returned no observed tickers.</p> : null}
         <Link href="/operational-market">Browse collected tickers and OHLCV</Link>
+      </section>
+      <section className="panel single-panel" aria-label="Full operational catalog date distribution">
+        <div className="panel-heading"><div><p className="eyebrow">Observed coverage</p><h2>Latest collection date distribution</h2></div><span className="panel-count">{distribution.data ? distribution.data.observedTickers+" catalog tickers" : "Unavailable"}</span></div>
+        <p className="section-copy">Counts each ticker once by its latest stored observation date across the complete paginated operational catalog. This is not a trading-calendar gap audit, market-wide listing check, or research validation.</p>
+        {distribution.error?<p role="status" className="metric-detail">{distribution.error}</p>:null}
+        {distribution.data?<div className="operations-runs">
+          <p className="metric-detail">Newest date: {distribution.data.newestDate??"—"} · Oldest latest date: {distribution.data.oldestDate??"—"}</p>
+          {distribution.data.latestDates.length===0?<p className="section-copy">No collected tickers in the snapshot.</p>:distribution.data.latestDates.map(item=><div className="operations-run" key={item.date}><strong>{item.date}</strong><span className="metric-detail">{item.count.toLocaleString()} tickers ({(item.count/distribution.data!.observedTickers*100).toFixed(1)}%)</span></div>)}
+        </div>:null}
       </section>
       <KrxSchedulerDiagnosticsPanel result={scheduler}/>
       <OperationsOverviewPanel overview={summarizeOperationsOverview(result,freshness,alerts)} locale={locale} demonstration={[result.source,freshness.source,alerts.source].includes("mock")}/>
