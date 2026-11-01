@@ -16,7 +16,7 @@ export function OperationalOhlcvExport({ticker,bars,locale}:{ticker:string;bars:
    link.remove();
   }finally{URL.revokeObjectURL(url);}
  }
- return <button type="button" onClick={download}>
+ return <button className="operational-export-button" type="button" onClick={download} aria-label={locale==="ko"?"수집된 KRX OHLCV 데이터를 CSV로 내보내기":"Export collected KRX OHLCV data as CSV"}>
   {locale==="ko"?"수집 데이터 CSV 내보내기":"Export collected OHLCV as CSV"}
  </button>;
 }

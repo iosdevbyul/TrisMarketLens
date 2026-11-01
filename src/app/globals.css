@@ -1410,3 +1410,9 @@ h1 {
 .operational-controls :is(input,button):focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .operational-controls button:hover{filter:brightness(1.08)}
 @media(max-width:480px){.operational-controls{align-items:stretch;flex-direction:column}.operational-controls label,.operational-controls input,.operational-controls button{width:100%}}
+
+
+.operational-export-button{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:10px 16px;margin:8px 0 14px;border:1px solid var(--border);border-radius:10px;background:var(--surface-strong);color:var(--text);font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.operational-export-button:hover{border-color:var(--accent);background:var(--accent-soft)}
+.operational-export-button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+@media(max-width:480px){.operational-export-button{width:100%}}
