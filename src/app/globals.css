@@ -1431,3 +1431,10 @@ h1 {
 .observation-timeline-track{height:12px;background:var(--surface-strong);border:1px solid var(--border);border-radius:8px;overflow:hidden}
 .observation-timeline-track span{display:block;height:100%;background:var(--accent);border-radius:8px}
 @media(max-width:700px){.observation-timeline-row{grid-template-columns:75px 1fr 80px}.observation-timeline-row .metric-detail{grid-column:2 / -1}}
+
+
+.recorded-run-filters{display:flex;flex-wrap:wrap;gap:12px;margin:16px 0}
+.recorded-run-filters label{display:grid;gap:7px;color:var(--muted);font-size:12px;min-width:180px}
+.recorded-run-filters select{min-height:42px;background:var(--surface-strong);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px;font:inherit}
+.recorded-run-filters select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media(max-width:480px){.recorded-run-filters{display:grid}.recorded-run-filters label{min-width:0}}
