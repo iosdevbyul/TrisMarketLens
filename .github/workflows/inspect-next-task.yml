@@ -1,0 +1,26 @@
+name: Inspect next approved web task
+
+on:
+  workflow_run:
+    workflows: ["Approved PR auto-merge"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Inspect approved Trello Next task (read-only)
+        env:
+          TRELLO_KEY: ${{ secrets.TRELLO_KEY }}
+          TRELLO_TOKEN: ${{ secrets.TRELLO_TOKEN }}
+          TRELLO_NEXT_LIST_ID: ${{ vars.TRELLO_NEXT_LIST_ID }}
+        run: node scripts/inspect-approved-next-task.mjs
