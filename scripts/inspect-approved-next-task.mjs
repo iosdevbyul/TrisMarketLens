@@ -4,8 +4,9 @@ const key=process.env.TRELLO_KEY;
 const token=process.env.TRELLO_TOKEN;
 const list=process.env.TRELLO_NEXT_LIST_ID;
 if (!key || !token || !list) {
-  console.log("Trello Next queue not configured; no task dispatched.");
-  process.exit(0);
+  console.error("Trello Next queue NOT configured. Add TRELLO_KEY and TRELLO_TOKEN repository secrets and TRELLO_NEXT_LIST_ID repository variable.");
+  process.exitCode=1;
+  throw new Error("Approved Next task inspection cannot run without Trello configuration.");
 }
 const url=new URL("https://api.trello.com/1/lists/"+encodeURIComponent(list)+"/cards");
 url.searchParams.set("key",key);
