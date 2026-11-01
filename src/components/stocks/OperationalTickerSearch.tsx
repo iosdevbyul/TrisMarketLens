@@ -9,7 +9,7 @@ export function OperationalTickerSearch(){
  const router=useRouter();
  const [ticker,setTicker]=useState("");
  const [error,setError]=useState(false);
- return <form onSubmit={event=>{
+ return <form className="operational-controls" onSubmit={event=>{
   event.preventDefault();
   const normalized=normalizeOperationalTicker(ticker);
   if(!normalized){setError(true);return;}
