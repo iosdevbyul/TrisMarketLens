@@ -2,12 +2,23 @@
 import {useMemo,useState} from "react";
 import Link from "next/link";
 import type {DateDistribution} from "@/data/OperationalDateDistributionDataSource";
+import {operationalDateTickersCsv} from "@/domain/operationalDateTickersCsv";
 
 export function OperationalDateDrilldown({distribution}:{distribution:DateDistribution}){
  const [selected,setSelected]=useState(distribution.tickersByDate[0]?.date??"");
  const [query,setQuery]=useState("");
  const tickers=useMemo(()=>distribution.tickersByDate.find(group=>group.date===selected)?.tickers??[],[distribution,selected]);
  const filtered=tickers.filter(ticker=>ticker.includes(query.trim().toUpperCase()));
+ function exportVisible(){
+  if(!filtered.length)return;
+  const csv=operationalDateTickersCsv(selected,filtered);
+  const url=URL.createObjectURL(new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}));
+  try{
+   const link=document.createElement("a");
+   link.href=url;link.download="operational-krx-tickers-"+selected+".csv";
+   document.body.appendChild(link);link.click();link.remove();
+  }finally{URL.revokeObjectURL(url);}
+ }
  return <div className="operational-date-drilldown">
   <div className="operational-controls">
    <label htmlFor="observed-date-filter">Latest collected date
@@ -19,6 +30,7 @@ export function OperationalDateDrilldown({distribution}:{distribution:DateDistri
     <input id="observed-ticker-filter" value={query} maxLength={6} placeholder="005930" onChange={event=>setQuery(event.target.value)} />
    </label>
   </div>
+  <button className="operational-export-button" type="button" disabled={filtered.length===0} onClick={exportVisible}>Export {filtered.length} displayed tickers as CSV</button>
   <p className="metric-detail" role="status">{filtered.length} of {tickers.length} tickers with latest collected date {selected||"—"}. These are operational observations only.</p>
   {filtered.length===0?<p className="section-copy">No matching observed tickers.</p>:<div className="operational-date-tickers" aria-label="Tickers last observed on selected date">{filtered.map(ticker=><Link href={"/operational-market/"+ticker} key={ticker}>{ticker}</Link>)}</div>}
  </div>;
