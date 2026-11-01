@@ -1399,3 +1399,14 @@ h1 {
 .operations-overview-stat strong{font-size:18px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
 @media(max-width:900px){.operations-overview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:480px){.operations-overview-grid{grid-template-columns:1fr}}
+
+
+/* Collected market form controls: explicit contrast in both light and dark themes. */
+.operational-controls{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin:18px 0}
+.operational-controls label{display:grid;gap:7px;color:var(--muted);font-size:12px}
+.operational-controls input{box-sizing:border-box;min-height:42px;width:160px;max-width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface-strong);color:var(--text);font:inherit;font-size:14px}
+.operational-controls input::placeholder{color:var(--muted);opacity:1}
+.operational-controls button{min-height:42px;padding:10px 16px;border:1px solid var(--accent);border-radius:10px;background:var(--accent);color:var(--background,#101827);font:inherit;font-size:13px;font-weight:650;cursor:pointer}
+.operational-controls :is(input,button):focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.operational-controls button:hover{filter:brightness(1.08)}
+@media(max-width:480px){.operational-controls{align-items:stretch;flex-direction:column}.operational-controls label,.operational-controls input,.operational-controls button{width:100%}}
