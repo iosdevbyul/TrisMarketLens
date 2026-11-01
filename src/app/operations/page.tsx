@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {loadOperationalCatalog} from "@/data/OperationalMarketDataSource";
+import {summarizeCollectionPreview} from "@/domain/collectionPreviewSummary";
 import { getFeatureDataState } from "@/domain/featureDataState";
 import { PageHeader } from "@/components/common/PageHeader";
 import { getTranslator, getLocale } from "@/i18n/server";
@@ -24,6 +25,7 @@ export default async function OperationsPage() {
   const operational = process.env.MARKET_LENS_DATA_SOURCE === "http"
     ? await loadOperationalCatalog(process.env.DONGHAK_API_BASE_URL)
     : {data:null,error:"HTTP operational source is not enabled"};
+  const collectionSummary=operational.data?summarizeCollectionPreview(operational.data):null;
   const state=getFeatureDataState(source,error,snapshot.runs.length);
   const formatTime = (value: string | null) => value ? new Intl.DateTimeFormat(locale === "ko" ? "ko-KR" : "en-US", {
     dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Seoul",
@@ -46,6 +48,15 @@ export default async function OperationsPage() {
       <section className="panel single-panel" aria-label="Collected market observations">
         <div className="panel-heading"><h2>Collected KRX observations</h2><span className="panel-count">{operational.data ? operational.data.total.toLocaleString() + " observed tickers" : "Unavailable"}</span></div>
         <p className="section-copy">Separate, unreviewed operational SQLite snapshot. This count is not the approved research universe, and collection does not establish market completeness.</p>
+        {collectionSummary ? <>
+          <div className="operations-overview-grid" aria-label="Collection date summary for returned catalog page">
+            <div className="operations-overview-stat"><span>Newest observed date (preview)</span><strong>{collectionSummary.newestDate ?? "—"}</strong></div>
+            <div className="operations-overview-stat"><span>Oldest observed date (preview)</span><strong>{collectionSummary.oldestDate ?? "—"}</strong></div>
+            <div className="operations-overview-stat"><span>Tickers at newest date (preview)</span><strong>{collectionSummary.matchingNewest} / {collectionSummary.previewCount}</strong></div>
+            <div className="operations-overview-stat"><span>Distinct latest dates (preview)</span><strong>{collectionSummary.distinctDates}</strong></div>
+          </div>
+          <p className="metric-detail">Date comparisons cover only {collectionSummary.previewCount} returned catalog rows of {collectionSummary.observedCount} observed tickers{collectionSummary.isPartial ? "; not a market-wide freshness or missing-data audit." : "; not a missing-data audit."} No live trading calendar or completeness threshold was assumed.</p>
+        </> : null}
         {operational.error ? <p className="metric-detail" role="status">Operational catalog: {operational.error}</p> : null}
         {operational.data?.items.length ? <div className="operations-runs" aria-label="Collected KRX ticker preview">
           {operational.data.items.slice(0,5).map(item => <article className="operations-run" key={item.ticker}>
