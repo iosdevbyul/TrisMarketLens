@@ -10,5 +10,11 @@ describe("operations CSV export",()=>{
   expect(csv).toContain('"unknown"');
   expect(csv).not.toContain("succeeded");
  });
+ it("prevents untrusted diagnostic formula execution",()=>{
+  const row:AnalysisRun={id:"=HYPERLINK(1)",pipeline:"Market collection",state:"unknown",startedAt:null,finishedAt:null,dataThrough:null,summary:" @SUM(1)"};
+  const csv=exportRecordedRunsCsv([row]);
+  expect(csv).toContain('"\'=HYPERLINK(1)"');
+  expect(csv).toContain('"\' @SUM(1)"');
+ });
  it("includes only header if filtered selection is empty",()=>expect(exportRecordedRunsCsv([]).split("\r\n").length).toBe(2));
 });
