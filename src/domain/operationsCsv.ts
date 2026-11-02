@@ -1,7 +1,7 @@
 import type {AnalysisRun} from "@/domain/operations";
 const columns=["Run ID","Pipeline","Recorded status","Started at","Finished at","Data through","Recorded diagnostic"];
 function cell(value:string):string{
- const safe=/^[\\s\\u0000-\\u001f]*[=+@-]/.test(value)?"'"+value:value;
+ const safe=/^\s*[=+@-]/.test(value)?"'"+value:value;
  return '"'+safe.replaceAll('"','""')+'"';
 }
 export function exportRecordedRunsCsv(runs:readonly AnalysisRun[]):string{
