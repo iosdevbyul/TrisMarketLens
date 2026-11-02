@@ -63,7 +63,18 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
    <div className="operations-runs">{visible.map(run=><article className="operations-run" key={run.id}>
     <div><strong>{run.pipeline}</strong><p className="metric-detail">{run.id} · {run.dataThrough??"—"}</p><button className="recorded-run-copy" type="button" onClick={()=>void copyRunId(run.id)} aria-label={"Copy run ID "+run.id}>Copy run ID</button>{copiedRunId===run.id?<span className="metric-detail" role="status">Copied</span>:null}{copyError===run.id?<span className="metric-detail" role="alert">Copy unavailable</span>:null}</div>
     <div><span className="status-pill" data-state={run.state==="succeeded"?"verified":run.state==="running"||run.state==="queued"?"in_progress":"blocked"}>{run.state}</span><p className="metric-detail">{formatTime(run.startedAt)}</p></div>
-    {run.summary?<p className="metric-detail operations-run-summary">{run.summary}</p>:null}
+    <details className="recorded-run-details"><summary>Inspect recorded details</summary>
+      <dl>
+        <div><dt>Run ID</dt><dd>{run.id}</dd></div>
+        <div><dt>Pipeline</dt><dd>{run.pipeline}</dd></div>
+        <div><dt>Recorded status</dt><dd>{run.state}</dd></div>
+        <div><dt>Started at</dt><dd>{formatTime(run.startedAt)}</dd></div>
+        <div><dt>Finished at</dt><dd>{formatTime(run.finishedAt)}</dd></div>
+        <div><dt>Data through</dt><dd>{run.dataThrough??"Not verified"}</dd></div>
+        <div><dt>Recorded evidence and diagnostics</dt><dd>{run.summary??"No diagnostic supplied"}</dd></div>
+      </dl>
+      <p className="metric-detail">Recorded execution status is not proof of approved acquisition or research validation.</p>
+    </details>
    </article>)}</div>}
  </div>;
 }
