@@ -1,6 +1,6 @@
 "use client";
 import {useEffect,useState} from "react";
-import {attentionReasons,summarizeAttentionReasons} from "../../domain/attentionReasonSummary";
+import {filterByAttentionReason,type AttentionReason,attentionReasons,summarizeAttentionReasons} from "../../domain/attentionReasonSummary";
 import {filterRunsRequiringAttention} from "../../domain/operationsAttention";
 import {parseSharedRunFilters,serializeSharedRunFilters} from "../../domain/sharedRunFilters";
 import {evidenceCategories,summarizeRecordedEvidence} from "../../domain/recordedEvidenceSummary";
@@ -54,6 +54,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  const [from,setFrom]=useState("");
  const [to,setTo]=useState("");
  const [attentionOnly,setAttentionOnly]=useState(false);
+ const [attentionReason,setAttentionReason]=useState<AttentionReason|null>(null);
  const [copiedRunId,setCopiedRunId]=useState<string|null>(null);
  const [copyError,setCopyError]=useState<string|null>(null);
  const [shareStatus,setShareStatus]=useState<string|null>(null);
@@ -86,7 +87,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  const counts=summarizeReturnedRunStates(runs);
  const evidenceCounts=summarizeRecordedEvidence(runs);
  const attentionCounts=summarizeAttentionReasons(runs);
- const visible=sortRecordedRuns(filterRunsRequiringAttention(filterByRecordedEvidence(filterRunsByStartDate(filterRecordedRuns(runs,pipeline,state,query),from,to),evidence),attentionOnly),sort);
+ const visible=sortRecordedRuns(filterByAttentionReason(filterRunsRequiringAttention(filterByRecordedEvidence(filterRunsByStartDate(filterRecordedRuns(runs,pipeline,state,query),from,to),evidence),attentionOnly),attentionReason),sort);
  const downloadCsv=()=>{
   const csv=exportRecordedRunsCsv(visible);
   const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
@@ -109,9 +110,9 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   <section aria-label="Reasons requiring attention">
    <h3>Recorded attention reasons</h3>
    <div className="recorded-run-summary">
-    {attentionReasons.map(reason=><div key={reason}><span>{reason.replaceAll("-"," ")}</span><strong>{attentionCounts[reason]}</strong></div>)}
+    {attentionReasons.map(reason=><button type="button" key={reason} aria-pressed={attentionReason===reason} onClick={()=>setAttentionReason(current=>current===reason?null:reason)} aria-label={`Filter attention reason ${reason} (${attentionCounts[reason]})`}><span>{reason.replaceAll("-"," ")}</span><strong>{attentionCounts[reason]}</strong></button>)}
    </div>
-   <p className="metric-detail">Counts cover only returned records. A single run may have multiple recorded reasons, so counts must not be added to estimate distinct affected executions.</p>
+   <p className="metric-detail">Select a reason to inspect matching records; select it again to clear. Counts cover only returned records. A single run may have multiple recorded reasons, so counts must not be added to estimate distinct affected executions.</p>
   </section>
   <div className="recorded-run-filters">
    <label className="recorded-run-attention"><input type="checkbox" checked={attentionOnly} onChange={e=>setAttentionOnly(e.target.checked)} /> Needs attention only</label>
@@ -134,7 +135,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
    </select></label>
    <button type="button" className="recorded-run-reset" onClick={()=>void shareFilters()}>Copy filter link</button>
    <button type="button" className="recorded-run-reset" onClick={downloadCsv} disabled={visible.length===0}>Export filtered CSV</button>
-   <button type="button" className="recorded-run-reset" onClick={()=>{setQuery("");setPipeline("all");setState("all");setSort("newest");setFrom("");setTo("");setEvidence("all");setAttentionOnly(false);}} disabled={!query&&!from&&!to&&pipeline==="all"&&state==="all"&&sort==="newest"&&evidence==="all"&&!attentionOnly}>Reset filters</button>
+   <button type="button" className="recorded-run-reset" onClick={()=>{setQuery("");setPipeline("all");setState("all");setSort("newest");setFrom("");setTo("");setEvidence("all");setAttentionOnly(false);setAttentionReason(null);}} disabled={!query&&!from&&!to&&pipeline==="all"&&state==="all"&&sort==="newest"&&evidence==="all"&&!attentionOnly&&attentionReason===null}>Reset filters</button>
   </div>
   {shareStatus?<p role="status" className="metric-detail">{shareStatus}</p>:null}
   <p className="metric-detail" role="status">Showing {visible.length} of {runs.length} returned execution records. Needs attention includes recorded failures, blocked executions, invalid evidence or unavailable evidence; it does not imply a complete history. Evidence classifications are parsed only from explicitly recorded backend diagnostics; missing evidence is not treated as valid. Date filters use UTC dates of recorded start times. Records without start times are excluded when a date range is selected. Filters and CSV export apply only to returned records; the API may contain additional records beyond its first 25.</p>
