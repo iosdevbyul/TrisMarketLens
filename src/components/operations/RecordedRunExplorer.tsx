@@ -1,5 +1,6 @@
 "use client";
 import {useEffect,useState} from "react";
+import {attentionReasons,summarizeAttentionReasons} from "../../domain/attentionReasonSummary";
 import {filterRunsRequiringAttention} from "../../domain/operationsAttention";
 import {parseSharedRunFilters,serializeSharedRunFilters} from "../../domain/sharedRunFilters";
 import {evidenceCategories,summarizeRecordedEvidence} from "../../domain/recordedEvidenceSummary";
@@ -84,6 +85,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  };
  const counts=summarizeReturnedRunStates(runs);
  const evidenceCounts=summarizeRecordedEvidence(runs);
+ const attentionCounts=summarizeAttentionReasons(runs);
  const visible=sortRecordedRuns(filterRunsRequiringAttention(filterByRecordedEvidence(filterRunsByStartDate(filterRecordedRuns(runs,pipeline,state,query),from,to),evidence),attentionOnly),sort);
  const downloadCsv=()=>{
   const csv=exportRecordedRunsCsv(visible);
@@ -104,6 +106,13 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
    {evidenceCategories.map(item=><button type="button" key={item} aria-pressed={evidence===item} aria-label={`Filter ${item} evidence records (${evidenceCounts[item]})`} onClick={()=>setEvidence(current=>current===item?"all":item)}><span>{item}</span><strong>{evidenceCounts[item]}</strong></button>)}
   </div>
   <p className="metric-detail">Evidence totals describe only the {runs.length} returned executions. Missing or malformed evidence labels are counted as not recorded, not validated. Select a count to filter; select again to clear.</p>
+  <section aria-label="Reasons requiring attention">
+   <h3>Recorded attention reasons</h3>
+   <div className="recorded-run-summary">
+    {attentionReasons.map(reason=><div key={reason}><span>{reason.replaceAll("-"," ")}</span><strong>{attentionCounts[reason]}</strong></div>)}
+   </div>
+   <p className="metric-detail">Counts cover only returned records. A single run may have multiple recorded reasons, so counts must not be added to estimate distinct affected executions.</p>
+  </section>
   <div className="recorded-run-filters">
    <label className="recorded-run-attention"><input type="checkbox" checked={attentionOnly} onChange={e=>setAttentionOnly(e.target.checked)} /> Needs attention only</label>
    <label>Start date from (UTC)<input type="date" value={from} max={to||undefined} onChange={e=>setFrom(e.target.value)} /></label>
