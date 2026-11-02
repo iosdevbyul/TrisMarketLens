@@ -12,3 +12,7 @@ export function summarizeAttentionReasons(runs:readonly AnalysisRun[]):Record<At
  for(const run of runs)for(const reason of attentionReasons)if(hasAttentionReason(run,reason))result[reason]++;
  return result;
 }
+
+export function filterByAttentionReason(runs:readonly AnalysisRun[],reason:AttentionReason|null):AnalysisRun[]{
+ return reason===null?[...runs]:runs.filter(run=>hasAttentionReason(run,reason));
+}
