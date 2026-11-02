@@ -1,5 +1,6 @@
 "use client";
 import {useState} from "react";
+import {filterByRecordedEvidence,type RecordedEvidence} from "../../domain/recordedEvidence";
 import {recordedStates,summarizeReturnedRunStates} from "../../domain/recordedRunSummary";
 import {recordedRunDuration} from "../../domain/recordedRunDuration";
 import {exportRecordedRunsCsv} from "../../domain/operationsCsv";
@@ -45,6 +46,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  const [query,setQuery]=useState("");
  const [state,setState]=useState<"all"|AnalysisRunState>("all");
  const [sort,setSort]=useState<RunSort>("newest");
+ const [evidence,setEvidence]=useState<RecordedEvidence|"all">("all");
  const [from,setFrom]=useState("");
  const [to,setTo]=useState("");
  const [copiedRunId,setCopiedRunId]=useState<string|null>(null);
@@ -82,13 +84,16 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
    <label>Recorded status<select value={state} onChange={e=>setState(e.target.value as AnalysisRunState|"all")}>
     <option value="all">All statuses</option>{states.map(item=><option key={item} value={item}>{item}</option>)}
    </select></label>
+   <label>Recorded evidence<select value={evidence} onChange={e=>setEvidence(e.target.value as RecordedEvidence|"all")}>
+    <option value="all">All evidence</option><option value="validated">Validated</option><option value="partial">Partial</option><option value="invalid">Invalid</option><option value="unavailable">Unavailable</option><option value="not-recorded">Not recorded</option>
+   </select></label>
    <label>Sort execution records<select value={sort} onChange={e=>setSort(e.target.value as RunSort)}>
     <option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="duration-longest">Longest duration first</option><option value="duration-shortest">Shortest duration first</option>
    </select></label>
    <button type="button" className="recorded-run-reset" onClick={downloadCsv} disabled={visible.length===0}>Export filtered CSV</button>
    <button type="button" className="recorded-run-reset" onClick={()=>{setQuery("");setPipeline("all");setState("all");setSort("newest");setFrom("");setTo("");}} disabled={!query&&!from&&!to&&pipeline==="all"&&state==="all"&&sort==="newest"}>Reset filters</button>
   </div>
-  <p className="metric-detail" role="status">Showing {visible.length} of {runs.length} returned execution records. Date filters use UTC dates of recorded start times. Records without start times are excluded when a date range is selected. Filters and CSV export apply only to returned records; the API may contain additional records beyond its first 25.</p>
+  <p className="metric-detail" role="status">Showing {visible.length} of {runs.length} returned execution records. Evidence classifications are parsed only from explicitly recorded backend diagnostics; missing evidence is not treated as valid. Date filters use UTC dates of recorded start times. Records without start times are excluded when a date range is selected. Filters and CSV export apply only to returned records; the API may contain additional records beyond its first 25.</p>
   {visible.length===0?<p className="section-copy">No recorded executions match these filters.</p>:
    <div className="operations-runs">{visible.map(run=><article className="operations-run" key={run.id}>
     <div><strong>{run.pipeline}</strong><p className="metric-detail">{run.id} · {run.dataThrough??"—"}</p><button className="recorded-run-copy" type="button" onClick={()=>void copyRunId(run.id)} aria-label={"Copy run ID "+run.id}>Copy run ID</button>{copiedRunId===run.id?<span className="metric-detail" role="status">Copied</span>:null}{copyError===run.id?<span className="metric-detail" role="alert">Copy unavailable</span>:null}</div>
