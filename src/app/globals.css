@@ -1441,3 +1441,7 @@ h1 {
 
 .recorded-run-filters input{min-height:42px;background:var(--surface-strong);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px;font:inherit;min-width:210px}
 .recorded-run-filters input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.recorded-run-reset{min-height:42px;align-self:end;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--surface-strong);color:var(--text);font:inherit;font-size:12px;cursor:pointer}
+.recorded-run-reset:disabled{opacity:.5;cursor:default}
+.recorded-run-reset:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
