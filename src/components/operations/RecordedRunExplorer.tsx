@@ -1,5 +1,6 @@
 "use client";
-import {useState} from "react";
+import {useEffect,useState} from "react";
+import {parseSharedRunFilters,serializeSharedRunFilters} from "../../domain/sharedRunFilters";
 import {evidenceCategories,summarizeRecordedEvidence} from "../../domain/recordedEvidenceSummary";
 import {filterByRecordedEvidence,type RecordedEvidence} from "../../domain/recordedEvidence";
 import {recordedStates,summarizeReturnedRunStates} from "../../domain/recordedRunSummary";
@@ -52,6 +53,25 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  const [to,setTo]=useState("");
  const [copiedRunId,setCopiedRunId]=useState<string|null>(null);
  const [copyError,setCopyError]=useState<string|null>(null);
+ const [shareStatus,setShareStatus]=useState<string|null>(null);
+ useEffect(()=>{
+  const saved=parseSharedRunFilters(window.location.search);
+  setPipeline(saved.pipeline as RunFilter);
+  setQuery(saved.query);
+  setState(saved.state as AnalysisRunState|"all");
+  setSort(saved.sort as RunSort);
+  setEvidence(saved.evidence as RecordedEvidence|"all");
+  setFrom(saved.from);
+  setTo(saved.to);
+ },[]);
+ const shareFilters=async()=>{
+  const queryString=serializeSharedRunFilters(window.location.search,{query,pipeline,state,sort,evidence,from,to});
+  const url=new URL(window.location.href);
+  url.search=queryString;
+  window.history.replaceState(window.history.state,"",url.toString());
+  try{await navigator.clipboard.writeText(url.toString());setShareStatus("Link copied");}
+  catch{setShareStatus("Link updated in address bar; clipboard unavailable");}
+ };
  const copyRunId=async(id:string)=>{
   try{await navigator.clipboard.writeText(id);setCopiedRunId(id);setCopyError(null);}
   catch{setCopyError(id);setCopiedRunId(null);}
@@ -96,9 +116,11 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
    <label>Sort execution records<select value={sort} onChange={e=>setSort(e.target.value as RunSort)}>
     <option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="duration-longest">Longest duration first</option><option value="duration-shortest">Shortest duration first</option>
    </select></label>
+   <button type="button" className="recorded-run-reset" onClick={()=>void shareFilters()}>Copy filter link</button>
    <button type="button" className="recorded-run-reset" onClick={downloadCsv} disabled={visible.length===0}>Export filtered CSV</button>
    <button type="button" className="recorded-run-reset" onClick={()=>{setQuery("");setPipeline("all");setState("all");setSort("newest");setFrom("");setTo("");setEvidence("all");}} disabled={!query&&!from&&!to&&pipeline==="all"&&state==="all"&&sort==="newest"&&evidence==="all"}>Reset filters</button>
   </div>
+  {shareStatus?<p role="status" className="metric-detail">{shareStatus}</p>:null}
   <p className="metric-detail" role="status">Showing {visible.length} of {runs.length} returned execution records. Evidence classifications are parsed only from explicitly recorded backend diagnostics; missing evidence is not treated as valid. Date filters use UTC dates of recorded start times. Records without start times are excluded when a date range is selected. Filters and CSV export apply only to returned records; the API may contain additional records beyond its first 25.</p>
   {visible.length===0?<p className="section-copy">No recorded executions match these filters.</p>:
    <div className="operations-runs">{visible.map(run=><article className="operations-run" key={run.id}>
