@@ -55,7 +55,8 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  const [copyError,setCopyError]=useState<string|null>(null);
  const [shareStatus,setShareStatus]=useState<string|null>(null);
  useEffect(()=>{
-  const saved=parseSharedRunFilters(window.location.search);
+  const timer=window.setTimeout(()=>{
+   const saved=parseSharedRunFilters(window.location.search);
   setPipeline(saved.pipeline as RunFilter);
   setQuery(saved.query);
   setState(saved.state as AnalysisRunState|"all");
@@ -63,6 +64,8 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   setEvidence(saved.evidence as RecordedEvidence|"all");
   setFrom(saved.from);
   setTo(saved.to);
+  },0);
+  return ()=>window.clearTimeout(timer);
  },[]);
  const shareFilters=async()=>{
   const queryString=serializeSharedRunFilters(window.location.search,{query,pipeline,state,sort,evidence,from,to});
