@@ -1,5 +1,6 @@
 "use client";
 import {useState} from "react";
+import {evidenceCategories,summarizeRecordedEvidence} from "../../domain/recordedEvidenceSummary";
 import {filterByRecordedEvidence,type RecordedEvidence} from "../../domain/recordedEvidence";
 import {recordedStates,summarizeReturnedRunStates} from "../../domain/recordedRunSummary";
 import {recordedRunDuration} from "../../domain/recordedRunDuration";
@@ -56,7 +57,8 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   catch{setCopyError(id);setCopiedRunId(null);}
  };
  const counts=summarizeReturnedRunStates(runs);
- const visible=sortRecordedRuns(filterRunsByStartDate(filterRecordedRuns(runs,pipeline,state,query),from,to),sort);
+ const evidenceCounts=summarizeRecordedEvidence(runs);
+ const visible=sortRecordedRuns(filterByRecordedEvidence(filterRunsByStartDate(filterRecordedRuns(runs,pipeline,state,query),from,to),evidence),sort);
  const downloadCsv=()=>{
   const csv=exportRecordedRunsCsv(visible);
   const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
@@ -72,6 +74,10 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
    {recordedStates.map(item=><button type="button" key={item} aria-pressed={state===item} aria-label={`Filter ${item} recorded executions (${counts[item]})`} onClick={()=>setState(current=>current===item?"all":item)}><span>{item}</span><strong>{counts[item]}</strong></button>)}
   </div>
   <p className="metric-detail">Select a status count to filter the records below; select it again to clear that status. Status totals describe only the {runs.length} execution records returned by this API request, not the complete execution history. A recorded completed operation does not establish semantic approval.</p>
+  <div className="recorded-run-summary" aria-label="Returned evidence status summary">
+   {evidenceCategories.map(item=><button type="button" key={item} aria-pressed={evidence===item} aria-label={`Filter ${item} evidence records (${evidenceCounts[item]})`} onClick={()=>setEvidence(current=>current===item?"all":item)}><span>{item}</span><strong>{evidenceCounts[item]}</strong></button>)}
+  </div>
+  <p className="metric-detail">Evidence totals describe only the {runs.length} returned executions. Missing or malformed evidence labels are counted as not recorded, not validated. Select a count to filter; select again to clear.</p>
   <div className="recorded-run-filters">
    <label>Start date from (UTC)<input type="date" value={from} max={to||undefined} onChange={e=>setFrom(e.target.value)} /></label>
    <label>Start date to (UTC)<input type="date" value={to} min={from||undefined} onChange={e=>setTo(e.target.value)} /></label>
@@ -91,7 +97,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
     <option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="duration-longest">Longest duration first</option><option value="duration-shortest">Shortest duration first</option>
    </select></label>
    <button type="button" className="recorded-run-reset" onClick={downloadCsv} disabled={visible.length===0}>Export filtered CSV</button>
-   <button type="button" className="recorded-run-reset" onClick={()=>{setQuery("");setPipeline("all");setState("all");setSort("newest");setFrom("");setTo("");}} disabled={!query&&!from&&!to&&pipeline==="all"&&state==="all"&&sort==="newest"}>Reset filters</button>
+   <button type="button" className="recorded-run-reset" onClick={()=>{setQuery("");setPipeline("all");setState("all");setSort("newest");setFrom("");setTo("");setEvidence("all");}} disabled={!query&&!from&&!to&&pipeline==="all"&&state==="all"&&sort==="newest"&&evidence==="all"}>Reset filters</button>
   </div>
   <p className="metric-detail" role="status">Showing {visible.length} of {runs.length} returned execution records. Evidence classifications are parsed only from explicitly recorded backend diagnostics; missing evidence is not treated as valid. Date filters use UTC dates of recorded start times. Records without start times are excluded when a date range is selected. Filters and CSV export apply only to returned records; the API may contain additional records beyond its first 25.</p>
   {visible.length===0?<p className="section-copy">No recorded executions match these filters.</p>:
