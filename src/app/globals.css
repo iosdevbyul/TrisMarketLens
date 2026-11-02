@@ -1464,3 +1464,9 @@ h1 {
 .recorded-run-summary strong{font-size:19px;font-variant-numeric:tabular-nums}
 @media(max-width:800px){.recorded-run-summary{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:450px){.recorded-run-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.recorded-run-summary>button{display:grid;gap:8px;padding:12px;border:1px solid var(--border);border-radius:10px;min-width:0;background:transparent;color:var(--text);text-align:left;font:inherit;cursor:pointer}
+.recorded-run-summary>button span{font-size:11px;color:var(--muted);overflow-wrap:anywhere;text-transform:capitalize}
+.recorded-run-summary>button strong{font-size:19px;font-variant-numeric:tabular-nums}
+.recorded-run-summary>button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.recorded-run-summary>button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
