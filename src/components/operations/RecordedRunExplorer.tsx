@@ -1,5 +1,6 @@
 "use client";
 import {useEffect,useState} from "react";
+import {filterRunsRequiringAttention} from "../../domain/operationsAttention";
 import {parseSharedRunFilters,serializeSharedRunFilters} from "../../domain/sharedRunFilters";
 import {evidenceCategories,summarizeRecordedEvidence} from "../../domain/recordedEvidenceSummary";
 import {filterByRecordedEvidence,type RecordedEvidence} from "../../domain/recordedEvidence";
@@ -51,6 +52,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  const [evidence,setEvidence]=useState<RecordedEvidence|"all">("all");
  const [from,setFrom]=useState("");
  const [to,setTo]=useState("");
+ const [attentionOnly,setAttentionOnly]=useState(false);
  const [copiedRunId,setCopiedRunId]=useState<string|null>(null);
  const [copyError,setCopyError]=useState<string|null>(null);
  const [shareStatus,setShareStatus]=useState<string|null>(null);
@@ -64,11 +66,12 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   setEvidence(saved.evidence as RecordedEvidence|"all");
   setFrom(saved.from);
   setTo(saved.to);
+  setAttentionOnly(saved.attention);
   },0);
   return ()=>window.clearTimeout(timer);
  },[]);
  const shareFilters=async()=>{
-  const queryString=serializeSharedRunFilters(window.location.search,{query,pipeline,state,sort,evidence,from,to});
+  const queryString=serializeSharedRunFilters(window.location.search,{query,pipeline,state,sort,evidence,from,to,attention:attentionOnly});
   const url=new URL(window.location.href);
   url.search=queryString;
   window.history.replaceState(window.history.state,"",url.toString());
@@ -81,7 +84,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  };
  const counts=summarizeReturnedRunStates(runs);
  const evidenceCounts=summarizeRecordedEvidence(runs);
- const visible=sortRecordedRuns(filterByRecordedEvidence(filterRunsByStartDate(filterRecordedRuns(runs,pipeline,state,query),from,to),evidence),sort);
+ const visible=sortRecordedRuns(filterRunsRequiringAttention(filterByRecordedEvidence(filterRunsByStartDate(filterRecordedRuns(runs,pipeline,state,query),from,to),evidence),attentionOnly),sort);
  const downloadCsv=()=>{
   const csv=exportRecordedRunsCsv(visible);
   const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
@@ -102,6 +105,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   </div>
   <p className="metric-detail">Evidence totals describe only the {runs.length} returned executions. Missing or malformed evidence labels are counted as not recorded, not validated. Select a count to filter; select again to clear.</p>
   <div className="recorded-run-filters">
+   <label className="recorded-run-attention"><input type="checkbox" checked={attentionOnly} onChange={e=>setAttentionOnly(e.target.checked)} /> Needs attention only</label>
    <label>Start date from (UTC)<input type="date" value={from} max={to||undefined} onChange={e=>setFrom(e.target.value)} /></label>
    <label>Start date to (UTC)<input type="date" value={to} min={from||undefined} onChange={e=>setTo(e.target.value)} /></label>
    <label>Search recorded execution<input type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Run ID, source, diagnostic" autoComplete="off" /></label>
@@ -121,10 +125,10 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
    </select></label>
    <button type="button" className="recorded-run-reset" onClick={()=>void shareFilters()}>Copy filter link</button>
    <button type="button" className="recorded-run-reset" onClick={downloadCsv} disabled={visible.length===0}>Export filtered CSV</button>
-   <button type="button" className="recorded-run-reset" onClick={()=>{setQuery("");setPipeline("all");setState("all");setSort("newest");setFrom("");setTo("");setEvidence("all");}} disabled={!query&&!from&&!to&&pipeline==="all"&&state==="all"&&sort==="newest"&&evidence==="all"}>Reset filters</button>
+   <button type="button" className="recorded-run-reset" onClick={()=>{setQuery("");setPipeline("all");setState("all");setSort("newest");setFrom("");setTo("");setEvidence("all");setAttentionOnly(false);}} disabled={!query&&!from&&!to&&pipeline==="all"&&state==="all"&&sort==="newest"&&evidence==="all"&&!attentionOnly}>Reset filters</button>
   </div>
   {shareStatus?<p role="status" className="metric-detail">{shareStatus}</p>:null}
-  <p className="metric-detail" role="status">Showing {visible.length} of {runs.length} returned execution records. Evidence classifications are parsed only from explicitly recorded backend diagnostics; missing evidence is not treated as valid. Date filters use UTC dates of recorded start times. Records without start times are excluded when a date range is selected. Filters and CSV export apply only to returned records; the API may contain additional records beyond its first 25.</p>
+  <p className="metric-detail" role="status">Showing {visible.length} of {runs.length} returned execution records. Needs attention includes recorded failures, blocked executions, invalid evidence or unavailable evidence; it does not imply a complete history. Evidence classifications are parsed only from explicitly recorded backend diagnostics; missing evidence is not treated as valid. Date filters use UTC dates of recorded start times. Records without start times are excluded when a date range is selected. Filters and CSV export apply only to returned records; the API may contain additional records beyond its first 25.</p>
   {visible.length===0?<p className="section-copy">No recorded executions match these filters.</p>:
    <div className="operations-runs">{visible.map(run=><article className="operations-run" key={run.id}>
     <div><strong>{run.pipeline}</strong><p className="metric-detail">{run.id} · {run.dataThrough??"—"}</p><button className="recorded-run-copy" type="button" onClick={()=>void copyRunId(run.id)} aria-label={"Copy run ID "+run.id}>Copy run ID</button>{copiedRunId===run.id?<span className="metric-detail" role="status">Copied</span>:null}{copyError===run.id?<span className="metric-detail" role="alert">Copy unavailable</span>:null}</div>
