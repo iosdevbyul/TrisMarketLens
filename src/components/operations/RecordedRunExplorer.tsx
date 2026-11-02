@@ -7,12 +7,23 @@ export function filterRecordedRuns(runs:readonly AnalysisRun[],pipeline:RunFilte
  const needle=query.trim().toLocaleLowerCase();
  return runs.filter(run=>(!needle||[run.id,run.pipeline,run.summary??""].some(value=>value.toLocaleLowerCase().includes(needle)))&&(pipeline==="all"||(pipeline==="other"?!["Market collection","DART session","DART batch acquisition"].includes(run.pipeline):run.pipeline===pipeline))&&(state==="all"||run.state===state));
 }
+export type RunSort="newest"|"oldest";
+export function sortRecordedRuns(runs:readonly AnalysisRun[],sort:RunSort):AnalysisRun[]{
+ return [...runs].sort((a,b)=>{
+  const at=a.startedAt?Date.parse(a.startedAt):NaN,bt=b.startedAt?Date.parse(b.startedAt):NaN;
+  if(!Number.isFinite(at)&&!Number.isFinite(bt))return 0;
+  if(!Number.isFinite(at))return 1;
+  if(!Number.isFinite(bt))return -1;
+  return sort==="newest"?bt-at:at-bt;
+ });
+}
 const states:AnalysisRunState[]=["queued","running","succeeded","failed","blocked","unknown"];
 export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko"|"en"}){
  const [pipeline,setPipeline]=useState<RunFilter>("all");
  const [query,setQuery]=useState("");
  const [state,setState]=useState<"all"|AnalysisRunState>("all");
- const visible=filterRecordedRuns(runs,pipeline,state,query);
+ const [sort,setSort]=useState<RunSort>("newest");
+ const visible=sortRecordedRuns(filterRecordedRuns(runs,pipeline,state,query),sort);
  const formatTime=(value:string|null)=>value?new Intl.DateTimeFormat(locale==="ko"?"ko-KR":"en-US",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Seoul"}).format(new Date(value)):"—";
  return <div className="recorded-run-explorer">
   <div className="recorded-run-filters">
@@ -25,6 +36,10 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
    <label>Recorded status<select value={state} onChange={e=>setState(e.target.value as AnalysisRunState|"all")}>
     <option value="all">All statuses</option>{states.map(item=><option key={item} value={item}>{item}</option>)}
    </select></label>
+   <label>Sort by start time<select value={sort} onChange={e=>setSort(e.target.value as RunSort)}>
+    <option value="newest">Newest first</option><option value="oldest">Oldest first</option>
+   </select></label>
+   <button type="button" className="recorded-run-reset" onClick={()=>{setQuery("");setPipeline("all");setState("all");setSort("newest");}} disabled={!query&&pipeline==="all"&&state==="all"&&sort==="newest"}>Reset filters</button>
   </div>
   <p className="metric-detail" role="status">Showing {visible.length} of {runs.length} returned execution records. Filters are local to this page; the API may contain additional records beyond its first 25.</p>
   {visible.length===0?<p className="section-copy">No recorded executions match these filters.</p>:
