@@ -1445,3 +1445,6 @@ h1 {
 .recorded-run-reset{min-height:42px;align-self:end;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--surface-strong);color:var(--text);font:inherit;font-size:12px;cursor:pointer}
 .recorded-run-reset:disabled{opacity:.5;cursor:default}
 .recorded-run-reset:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.recorded-run-copy{margin:8px 10px 0 0;padding:6px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface-strong);color:var(--text);font:inherit;font-size:12px;cursor:pointer}
+.recorded-run-copy:focus-visible{outline:2px solid var(--accent);outline-offset:2px}

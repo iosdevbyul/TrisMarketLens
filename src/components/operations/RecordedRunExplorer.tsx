@@ -24,6 +24,12 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  const [query,setQuery]=useState("");
  const [state,setState]=useState<"all"|AnalysisRunState>("all");
  const [sort,setSort]=useState<RunSort>("newest");
+ const [copiedRunId,setCopiedRunId]=useState<string|null>(null);
+ const [copyError,setCopyError]=useState<string|null>(null);
+ const copyRunId=async(id:string)=>{
+  try{await navigator.clipboard.writeText(id);setCopiedRunId(id);setCopyError(null);}
+  catch{setCopyError(id);setCopiedRunId(null);}
+ };
  const visible=sortRecordedRuns(filterRecordedRuns(runs,pipeline,state,query),sort);
  const downloadCsv=()=>{
   const csv=exportRecordedRunsCsv(visible);
@@ -55,7 +61,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   <p className="metric-detail" role="status">Showing {visible.length} of {runs.length} returned execution records. Filters and CSV export apply only to returned records; the API may contain additional records beyond its first 25.</p>
   {visible.length===0?<p className="section-copy">No recorded executions match these filters.</p>:
    <div className="operations-runs">{visible.map(run=><article className="operations-run" key={run.id}>
-    <div><strong>{run.pipeline}</strong><p className="metric-detail">{run.id} · {run.dataThrough??"—"}</p></div>
+    <div><strong>{run.pipeline}</strong><p className="metric-detail">{run.id} · {run.dataThrough??"—"}</p><button className="recorded-run-copy" type="button" onClick={()=>void copyRunId(run.id)} aria-label={"Copy run ID "+run.id}>Copy run ID</button>{copiedRunId===run.id?<span className="metric-detail" role="status">Copied</span>:null}{copyError===run.id?<span className="metric-detail" role="alert">Copy unavailable</span>:null}</div>
     <div><span className="status-pill" data-state={run.state==="succeeded"?"verified":run.state==="running"||run.state==="queued"?"in_progress":"blocked"}>{run.state}</span><p className="metric-detail">{formatTime(run.startedAt)}</p></div>
     {run.summary?<p className="metric-detail operations-run-summary">{run.summary}</p>:null}
    </article>)}</div>}
