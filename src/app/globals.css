@@ -1448,3 +1448,11 @@ h1 {
 
 .recorded-run-copy{margin:8px 10px 0 0;padding:6px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface-strong);color:var(--text);font:inherit;font-size:12px;cursor:pointer}
 .recorded-run-copy:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.recorded-run-details{grid-column:1/-1;min-width:0;border-top:1px solid var(--border);padding-top:10px}
+.recorded-run-details summary{width:max-content;max-width:100%;padding:6px 0;cursor:pointer;color:var(--accent);font-size:12px}
+.recorded-run-details summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.recorded-run-details dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}
+.recorded-run-details dt{font-size:11px;color:var(--muted)}
+.recorded-run-details dd{margin:4px 0 0;font-size:12px;overflow-wrap:anywhere;white-space:pre-wrap}
+@media(max-width:600px){.recorded-run-details dl{grid-template-columns:1fr}}
