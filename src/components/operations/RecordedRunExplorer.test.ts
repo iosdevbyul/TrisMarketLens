@@ -23,4 +23,14 @@ describe("recorded operation filters",()=>{
   expect(sortRecordedRuns(input,"oldest").map(x=>x.id)).toEqual(["1","3","2"]);
   expect(input.map(x=>x.id)).toEqual(["1","2","3"]);
  });
+ it("sorts elapsed duration without inventing missing timestamps",()=>{
+  const input=[
+   {...runs[0],startedAt:"2026-11-01T10:00:00Z",finishedAt:"2026-11-01T10:01:00Z"},
+   {...runs[1],startedAt:null,finishedAt:"2026-11-01T11:00:00Z"},
+   {...runs[2],startedAt:"2026-11-01T10:00:00Z",finishedAt:"2026-11-01T10:05:00Z"}
+  ];
+  expect(sortRecordedRuns(input,"duration-longest").map(x=>x.id)).toEqual(["3","1","2"]);
+  expect(sortRecordedRuns(input,"duration-shortest").map(x=>x.id)).toEqual(["1","3","2"]);
+  expect(input.map(x=>x.id)).toEqual(["1","2","3"]);
+ });
 });
