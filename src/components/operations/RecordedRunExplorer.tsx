@@ -1,5 +1,6 @@
 "use client";
 import {useState} from "react";
+import {recordedRunDuration} from "../../domain/recordedRunDuration";
 import {exportRecordedRunsCsv} from "../../domain/operationsCsv";
 import type {AnalysisRun,AnalysisRunState} from "@/domain/operations";
 
@@ -70,6 +71,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
         <div><dt>Recorded status</dt><dd>{run.state}</dd></div>
         <div><dt>Started at</dt><dd>{formatTime(run.startedAt)}</dd></div>
         <div><dt>Finished at</dt><dd>{formatTime(run.finishedAt)}</dd></div>
+        <div><dt>Recorded elapsed time</dt><dd>{recordedRunDuration(run)??"Unavailable"}</dd></div>
         <div><dt>Data through</dt><dd>{run.dataThrough??"Not verified"}</dd></div>
         <div><dt>Recorded evidence and diagnostics</dt><dd>{run.summary??"No diagnostic supplied"}</dd></div>
       </dl>
