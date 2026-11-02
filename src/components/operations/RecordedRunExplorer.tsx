@@ -1,6 +1,6 @@
 "use client";
 import {useState} from "react";
-import {exportRecordedRunsCsv} from "@/domain/operationsCsv";
+import {exportRecordedRunsCsv} from "../../domain/operationsCsv";
 import type {AnalysisRun,AnalysisRunState} from "@/domain/operations";
 
 export type RunFilter="all"|"Market collection"|"DART session"|"DART batch acquisition"|"other";
