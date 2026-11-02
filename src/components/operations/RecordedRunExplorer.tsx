@@ -31,12 +31,22 @@ export function sortRecordedRuns(runs:readonly AnalysisRun[],sort:RunSort):Analy
   return sort==="newest"?bt-at:at-bt;
  });
 }
+export function filterRunsByStartDate(runs:readonly AnalysisRun[],from:string,to:string):AnalysisRun[]{
+ return runs.filter(run=>{
+  if(!from&&!to)return true;
+  if(!run.startedAt)return false;
+  const day=new Date(run.startedAt).toISOString().slice(0,10);
+  return (!from||day>=from)&&(!to||day<=to);
+ });
+}
 const states:AnalysisRunState[]=["queued","running","succeeded","failed","blocked","unknown"];
 export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko"|"en"}){
  const [pipeline,setPipeline]=useState<RunFilter>("all");
  const [query,setQuery]=useState("");
  const [state,setState]=useState<"all"|AnalysisRunState>("all");
  const [sort,setSort]=useState<RunSort>("newest");
+ const [from,setFrom]=useState("");
+ const [to,setTo]=useState("");
  const [copiedRunId,setCopiedRunId]=useState<string|null>(null);
  const [copyError,setCopyError]=useState<string|null>(null);
  const copyRunId=async(id:string)=>{
@@ -44,7 +54,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   catch{setCopyError(id);setCopiedRunId(null);}
  };
  const counts=summarizeReturnedRunStates(runs);
- const visible=sortRecordedRuns(filterRecordedRuns(runs,pipeline,state,query),sort);
+ const visible=sortRecordedRuns(filterRunsByStartDate(filterRecordedRuns(runs,pipeline,state,query),from,to),sort);
  const downloadCsv=()=>{
   const csv=exportRecordedRunsCsv(visible);
   const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
@@ -61,6 +71,8 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   </div>
   <p className="metric-detail">Select a status count to filter the records below; select it again to clear that status. Status totals describe only the {runs.length} execution records returned by this API request, not the complete execution history. A recorded completed operation does not establish semantic approval.</p>
   <div className="recorded-run-filters">
+   <label>Start date from (UTC)<input type="date" value={from} max={to||undefined} onChange={e=>setFrom(e.target.value)} /></label>
+   <label>Start date to (UTC)<input type="date" value={to} min={from||undefined} onChange={e=>setTo(e.target.value)} /></label>
    <label>Search recorded execution<input type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Run ID, source, diagnostic" autoComplete="off" /></label>
    <label>Pipeline<select value={pipeline} onChange={e=>setPipeline(e.target.value as RunFilter)}>
     <option value="all">All pipelines</option><option value="Market collection">Market collection</option>
@@ -74,9 +86,9 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
     <option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="duration-longest">Longest duration first</option><option value="duration-shortest">Shortest duration first</option>
    </select></label>
    <button type="button" className="recorded-run-reset" onClick={downloadCsv} disabled={visible.length===0}>Export filtered CSV</button>
-   <button type="button" className="recorded-run-reset" onClick={()=>{setQuery("");setPipeline("all");setState("all");setSort("newest");}} disabled={!query&&pipeline==="all"&&state==="all"&&sort==="newest"}>Reset filters</button>
+   <button type="button" className="recorded-run-reset" onClick={()=>{setQuery("");setPipeline("all");setState("all");setSort("newest");setFrom("");setTo("");}} disabled={!query&&!from&&!to&&pipeline==="all"&&state==="all"&&sort==="newest"}>Reset filters</button>
   </div>
-  <p className="metric-detail" role="status">Showing {visible.length} of {runs.length} returned execution records. Filters and CSV export apply only to returned records; the API may contain additional records beyond its first 25.</p>
+  <p className="metric-detail" role="status">Showing {visible.length} of {runs.length} returned execution records. Date filters use UTC dates of recorded start times. Records without start times are excluded when a date range is selected. Filters and CSV export apply only to returned records; the API may contain additional records beyond its first 25.</p>
   {visible.length===0?<p className="section-copy">No recorded executions match these filters.</p>:
    <div className="operations-runs">{visible.map(run=><article className="operations-run" key={run.id}>
     <div><strong>{run.pipeline}</strong><p className="metric-detail">{run.id} · {run.dataThrough??"—"}</p><button className="recorded-run-copy" type="button" onClick={()=>void copyRunId(run.id)} aria-label={"Copy run ID "+run.id}>Copy run ID</button>{copiedRunId===run.id?<span className="metric-detail" role="status">Copied</span>:null}{copyError===run.id?<span className="metric-detail" role="alert">Copy unavailable</span>:null}</div>
