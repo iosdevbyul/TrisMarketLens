@@ -1456,3 +1456,11 @@ h1 {
 .recorded-run-details dt{font-size:11px;color:var(--muted)}
 .recorded-run-details dd{margin:4px 0 0;font-size:12px;overflow-wrap:anywhere;white-space:pre-wrap}
 @media(max-width:600px){.recorded-run-details dl{grid-template-columns:1fr}}
+
+
+.recorded-run-summary{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin:18px 0}
+.recorded-run-summary>div{display:grid;gap:8px;padding:12px;border:1px solid var(--border);border-radius:10px;min-width:0}
+.recorded-run-summary span{font-size:11px;color:var(--muted);overflow-wrap:anywhere;text-transform:capitalize}
+.recorded-run-summary strong{font-size:19px;font-variant-numeric:tabular-nums}
+@media(max-width:800px){.recorded-run-summary{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:450px){.recorded-run-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
