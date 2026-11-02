@@ -1,5 +1,6 @@
 "use client";
 import {useState} from "react";
+import {recordedStates,summarizeReturnedRunStates} from "../../domain/recordedRunSummary";
 import {recordedRunDuration} from "../../domain/recordedRunDuration";
 import {exportRecordedRunsCsv} from "../../domain/operationsCsv";
 import type {AnalysisRun,AnalysisRunState} from "@/domain/operations";
@@ -42,6 +43,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   try{await navigator.clipboard.writeText(id);setCopiedRunId(id);setCopyError(null);}
   catch{setCopyError(id);setCopiedRunId(null);}
  };
+ const counts=summarizeReturnedRunStates(runs);
  const visible=sortRecordedRuns(filterRecordedRuns(runs,pipeline,state,query),sort);
  const downloadCsv=()=>{
   const csv=exportRecordedRunsCsv(visible);
@@ -54,6 +56,10 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  };
  const formatTime=(value:string|null)=>value?new Intl.DateTimeFormat(locale==="ko"?"ko-KR":"en-US",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Seoul"}).format(new Date(value)):"—";
  return <div className="recorded-run-explorer">
+  <div className="recorded-run-summary" aria-label="Returned execution status summary">
+   {recordedStates.map(item=><div key={item}><span>{item}</span><strong>{counts[item]}</strong></div>)}
+  </div>
+  <p className="metric-detail">Status totals describe only the {runs.length} execution records returned by this API request, not the complete execution history. A recorded completed operation does not establish semantic approval.</p>
   <div className="recorded-run-filters">
    <label>Search recorded execution<input type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Run ID, source, diagnostic" autoComplete="off" /></label>
    <label>Pipeline<select value={pipeline} onChange={e=>setPipeline(e.target.value as RunFilter)}>
