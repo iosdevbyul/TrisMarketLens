@@ -9,9 +9,20 @@ export function filterRecordedRuns(runs:readonly AnalysisRun[],pipeline:RunFilte
  const needle=query.trim().toLocaleLowerCase();
  return runs.filter(run=>(!needle||[run.id,run.pipeline,run.summary??""].some(value=>value.toLocaleLowerCase().includes(needle)))&&(pipeline==="all"||(pipeline==="other"?!["Market collection","DART session","DART batch acquisition"].includes(run.pipeline):run.pipeline===pipeline))&&(state==="all"||run.state===state));
 }
-export type RunSort="newest"|"oldest";
+export type RunSort="newest"|"oldest"|"duration-longest"|"duration-shortest";
+function elapsedMilliseconds(run:AnalysisRun):number|null{
+ if(!run.startedAt||!run.finishedAt)return null;
+ const start=Date.parse(run.startedAt),end=Date.parse(run.finishedAt);
+ return Number.isFinite(start)&&Number.isFinite(end)&&end>=start?end-start:null;
+}
 export function sortRecordedRuns(runs:readonly AnalysisRun[],sort:RunSort):AnalysisRun[]{
  return [...runs].sort((a,b)=>{
+  if(sort==="duration-longest"||sort==="duration-shortest"){
+   const aDuration=elapsedMilliseconds(a),bDuration=elapsedMilliseconds(b);
+   if(aDuration===null)return bDuration===null?0:1;
+   if(bDuration===null)return -1;
+   return sort==="duration-longest"?bDuration-aDuration:aDuration-bDuration;
+  }
   const at=a.startedAt?Date.parse(a.startedAt):NaN,bt=b.startedAt?Date.parse(b.startedAt):NaN;
   if(!Number.isFinite(at)&&!Number.isFinite(bt))return 0;
   if(!Number.isFinite(at))return 1;
@@ -53,8 +64,8 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
    <label>Recorded status<select value={state} onChange={e=>setState(e.target.value as AnalysisRunState|"all")}>
     <option value="all">All statuses</option>{states.map(item=><option key={item} value={item}>{item}</option>)}
    </select></label>
-   <label>Sort by start time<select value={sort} onChange={e=>setSort(e.target.value as RunSort)}>
-    <option value="newest">Newest first</option><option value="oldest">Oldest first</option>
+   <label>Sort execution records<select value={sort} onChange={e=>setSort(e.target.value as RunSort)}>
+    <option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="duration-longest">Longest duration first</option><option value="duration-shortest">Shortest duration first</option>
    </select></label>
    <button type="button" className="recorded-run-reset" onClick={downloadCsv} disabled={visible.length===0}>Export filtered CSV</button>
    <button type="button" className="recorded-run-reset" onClick={()=>{setQuery("");setPipeline("all");setState("all");setSort("newest");}} disabled={!query&&pipeline==="all"&&state==="all"&&sort==="newest"}>Reset filters</button>
