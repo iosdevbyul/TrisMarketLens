@@ -1493,3 +1493,15 @@ h1 {
 
 /* Evidence classification is separate from execution success and semantic approval. */
 .recorded-run-evidence{display:inline-block;margin:4px 0 0 8px;border:1px solid var(--border);border-radius:999px;padding:5px 8px;background:var(--surface-strong);color:var(--text);font-size:11px;text-transform:capitalize;vertical-align:middle}
+
+
+.recorded-run-matrix{margin:18px 0}
+.recorded-run-matrix-scroll{overflow-x:auto;max-width:100%}
+.recorded-run-matrix table{width:100%;border-collapse:collapse;min-width:570px;font-size:12px}
+.recorded-run-matrix th,.recorded-run-matrix td{border:1px solid var(--border);padding:6px;text-align:center}
+.recorded-run-matrix th:first-child{text-align:left;text-transform:capitalize}
+.recorded-run-matrix thead th{text-transform:capitalize;font-weight:650}
+.recorded-run-matrix td button{width:100%;min-height:34px;border:1px solid transparent;border-radius:6px;background:var(--surface-strong);color:var(--text);font:inherit;cursor:pointer}
+.recorded-run-matrix td button:disabled{opacity:.45;cursor:default}
+.recorded-run-matrix td button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.recorded-run-matrix td button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
