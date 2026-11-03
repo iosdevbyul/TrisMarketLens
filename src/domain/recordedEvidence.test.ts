@@ -11,8 +11,10 @@ describe("recorded evidence",()=>{
  it("keeps recorded execution state independent from its evidence classification",()=>{
   const completed=run("completed","Recorded status: completed · Evidence: unavailable · Source: sqlite_collection_audit");
   const failed=run("failed","Recorded status: failed · Evidence: validated · Source: dart_ledger");
-  expect(recordedEvidence({...completed,state:"succeeded"})).toBe("unavailable");
-  expect(recordedEvidence({...failed,state:"failed"})).toBe("validated");
+  const succeededRun:AnalysisRun={...completed,state:"succeeded"};
+  const failedRun:AnalysisRun={...failed,state:"failed"};
+  expect(recordedEvidence(succeededRun)).toBe("unavailable");
+  expect(recordedEvidence(failedRun)).toBe("validated");
   expect(recordedEvidence(run("missing","Recorded status: completed · Source: dart_ledger"))).toBe("not-recorded");
  });
  it("filters evidence independently of recorded execution state",()=>{
