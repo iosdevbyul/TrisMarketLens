@@ -1487,3 +1487,6 @@ h1 {
 
 .recorded-run-reason-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
 .recorded-run-reason-tags>span{display:inline-block;padding:4px 7px;border-radius:6px;border:1px solid var(--border);color:var(--text);background:var(--surface-strong);font-size:11px;line-height:1.4;text-transform:capitalize;overflow-wrap:anywhere}
+
+/* A recorded execution is not equivalent to semantically verified evidence. */
+.status-pill[data-state="recorded"]{background:var(--surface-strong);color:var(--text);border:1px solid var(--border)}
