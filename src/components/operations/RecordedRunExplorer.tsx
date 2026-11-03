@@ -1,5 +1,6 @@
 "use client";
 import {useEffect,useState} from "react";
+import {recordedStartDay,formatRecordedTime} from "../../domain/recordedTimestamp";
 import {filterByAttentionReason,type AttentionReason,attentionReasons,summarizeAttentionReasons} from "../../domain/attentionReasonSummary";
 import {filterRunsRequiringAttention} from "../../domain/operationsAttention";
 import {parseSharedRunFilters,serializeSharedRunFilters} from "../../domain/sharedRunFilters";
@@ -39,8 +40,8 @@ export function sortRecordedRuns(runs:readonly AnalysisRun[],sort:RunSort):Analy
 export function filterRunsByStartDate(runs:readonly AnalysisRun[],from:string,to:string):AnalysisRun[]{
  return runs.filter(run=>{
   if(!from&&!to)return true;
-  if(!run.startedAt)return false;
-  const day=new Date(run.startedAt).toISOString().slice(0,10);
+  const day=recordedStartDay(run.startedAt);
+  if(!day)return false;
   return (!from||day>=from)&&(!to||day<=to);
  });
 }
@@ -98,7 +99,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   document.body.appendChild(link);link.click();link.remove();
   URL.revokeObjectURL(url);
  };
- const formatTime=(value:string|null)=>value?new Intl.DateTimeFormat(locale==="ko"?"ko-KR":"en-US",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Seoul"}).format(new Date(value)):"—";
+ const formatTime=(value:string|null)=>formatRecordedTime(value,locale);
  return <div className="recorded-run-explorer">
   <div className="recorded-run-summary" aria-label="Returned execution status summary">
    {recordedStates.map(item=><button type="button" key={item} aria-pressed={state===item} aria-label={`Filter ${item} recorded executions (${counts[item]})`} onClick={()=>setState(current=>current===item?"all":item)}><span>{item}</span><strong>{counts[item]}</strong></button>)}

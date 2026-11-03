@@ -1,5 +1,5 @@
 import {describe,it,expect} from "vitest";
-import {filterRecordedRuns,sortRecordedRuns} from "./RecordedRunExplorer";
+import {filterRecordedRuns,sortRecordedRuns,filterRunsByStartDate} from "./RecordedRunExplorer";
 import type {AnalysisRun} from "@/domain/operations";
 const make=(id:string,pipeline:string,state:AnalysisRun["state"]):AnalysisRun=>({id,pipeline,state,startedAt:null,finishedAt:null,dataThrough:null,summary:null});
 const runs=[make("1","Market collection","unknown"),make("2","DART session","failed"),make("3","Custom","blocked")];
@@ -32,5 +32,10 @@ describe("recorded operation filters",()=>{
   expect(sortRecordedRuns(input,"duration-longest").map(x=>x.id)).toEqual(["3","1","2"]);
   expect(sortRecordedRuns(input,"duration-shortest").map(x=>x.id)).toEqual(["1","3","2"]);
   expect(input.map(x=>x.id)).toEqual(["1","2","3"]);
+ });
+ it("excludes malformed timestamps from UTC date ranges without crashing",()=>{
+  const rows=[{...runs[0],startedAt:"not-a-date"},{...runs[1],startedAt:"2026-11-03T23:30:00Z"},{...runs[2],startedAt:null}];
+  expect(filterRunsByStartDate(rows,"2026-11-03","2026-11-03").map(x=>x.id)).toEqual(["2"]);
+  expect(filterRunsByStartDate(rows,"","")).toEqual(rows);
  });
 });
