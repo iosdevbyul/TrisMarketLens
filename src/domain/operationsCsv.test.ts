@@ -29,7 +29,7 @@ describe("operations CSV export",()=>{
   const failed:AnalysisRun={id:"failed-and-invalid",pipeline:"Market collection",state:"failed",startedAt:null,finishedAt:null,dataThrough:null,summary:"Evidence: invalid"};
   const unknown:AnalysisRun={...failed,id:"unknown",state:"unknown",summary:"Evidence: partial"};
   const csv=exportRecordedRunsCsv([failed,unknown]);
-  const rows=csv.trim().split("\\r\\n");
+  const rows=csv.trim().split("\r\n");
   expect(rows[0]).toContain('"Attention reasons"');
   expect(rows[1]).toContain('"failed; invalid-evidence"');
   expect(rows[2]).toContain('"unknown","partial",""');
