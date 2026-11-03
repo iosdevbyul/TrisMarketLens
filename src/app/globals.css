@@ -1490,3 +1490,6 @@ h1 {
 
 /* A recorded execution is not equivalent to semantically verified evidence. */
 .status-pill[data-state="recorded"]{background:var(--surface-strong);color:var(--text);border:1px solid var(--border)}
+
+/* Evidence classification is separate from execution success and semantic approval. */
+.recorded-run-evidence{display:inline-block;margin:4px 0 0 8px;border:1px solid var(--border);border-radius:999px;padding:5px 8px;background:var(--surface-strong);color:var(--text);font-size:11px;text-transform:capitalize;vertical-align:middle}
