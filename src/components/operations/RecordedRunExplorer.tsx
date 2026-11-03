@@ -1,5 +1,6 @@
 "use client";
 import {useEffect,useState} from "react";
+import {summarizeEvidenceRecording} from "../../domain/evidenceRecordingCoverage";
 import {exportStatusEvidenceMatrixCsv} from "../../domain/statusEvidenceMatrixCsv";
 import {selectMatrixRow,selectMatrixColumn} from "../../domain/matrixMarginSelection";
 import {summarizeStatusEvidenceMatrix,statusEvidenceMatrixTotals} from "../../domain/statusEvidenceMatrix";
@@ -121,6 +122,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  const attentionCounts=summarizeAttentionReasons(runs);
  const statusEvidence=summarizeStatusEvidenceMatrix(runs);
  const statusEvidenceTotals=statusEvidenceMatrixTotals(statusEvidence);
+ const evidenceCoverage=summarizeEvidenceRecording(statusEvidence);
  const filterMatrixRow=(status:AnalysisRunState)=>{
   const selected=selectMatrixRow({state,evidence},status);
   setState(selected.state);setEvidence(selected.evidence);
@@ -159,6 +161,12 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   <p className="metric-detail">Evidence totals describe only the {runs.length} returned executions. Missing or malformed evidence labels are counted as not recorded, not validated. Select a count to filter; select again to clear.</p>
   <section className="recorded-run-matrix" aria-label="Recorded execution and evidence combinations">
    <h3>Execution × evidence breakdown</h3>
+   <div className="recorded-run-coverage" aria-label="Evidence recording coverage of returned executions">
+    <div><span>Evidence status recorded</span><strong>{evidenceCoverage.recordedPercent}%</strong><small>{evidenceCoverage.recorded} of {evidenceCoverage.total} returned runs</small></div>
+    <div><span>Evidence not recorded</span><strong>{evidenceCoverage.notRecordedPercent}%</strong><small>{evidenceCoverage.notRecorded} of {evidenceCoverage.total} returned runs</small></div>
+    <div><span>Evidence validated</span><strong>{evidenceCoverage.validated}</strong><small>Explicitly labeled validated; not inferred from successful runs</small></div>
+   </div>
+   <p className="metric-detail">Evidence recorded includes validated, partial, invalid and unavailable classifications. It measures recording coverage, not the proportion of evidence approved. Percentages use only API-returned executions; 0 returned runs display 0% rather than an inferred rate.</p>
    <button type="button" className="recorded-run-reset" onClick={downloadMatrixCsv}>Export matrix CSV</button>
    <p className="metric-detail">Counts use only the {runs.length} records returned by the API. Select a cell to filter by both dimensions, or a row/column total to inspect all evidence or execution states in that margin. Select an active cell or total again to clear it. Other search, date and attention filters still apply to results, so the list may be smaller than these totals. Recorded execution outcomes do not grant semantic approval.</p>
    <div className="recorded-run-matrix-scroll">
