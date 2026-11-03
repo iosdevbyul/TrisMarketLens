@@ -1,6 +1,6 @@
 "use client";
 import {useEffect,useState} from "react";
-import {summarizeStatusEvidenceMatrix} from "../../domain/statusEvidenceMatrix";
+import {summarizeStatusEvidenceMatrix,statusEvidenceMatrixTotals} from "../../domain/statusEvidenceMatrix";
 import {formatRecordedRunSummary} from "../../domain/recordedRunSummaryText";
 import {recordedRunBadgeTone} from "../../domain/recordedRunBadge";
 import {getActiveRunFilters} from "../../domain/activeRunFilters";
@@ -118,6 +118,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  const evidenceCounts=summarizeRecordedEvidence(runs);
  const attentionCounts=summarizeAttentionReasons(runs);
  const statusEvidence=summarizeStatusEvidenceMatrix(runs);
+ const statusEvidenceTotals=statusEvidenceMatrixTotals(statusEvidence);
  const visible=sortRecordedRuns(filterByAttentionReason(filterRunsRequiringAttention(filterByRecordedEvidence(filterRunsByStartDate(filterRecordedRuns(runs,pipeline,state,query),from,to),evidence),attentionOnly),attentionReason),sort);
  const downloadCsv=()=>{
   const csv=exportRecordedRunsCsv(visible);
@@ -143,11 +144,13 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
    <p className="metric-detail">Counts use only the {runs.length} records returned by the API. Selecting a cell applies both filters; selecting the same cell again clears both. Recorded execution outcomes do not grant semantic approval.</p>
    <div className="recorded-run-matrix-scroll">
     <table>
-     <thead><tr><th scope="col">Execution</th>{evidenceCategories.map(item=><th scope="col" key={item}>{item.replaceAll("-"," ")}</th>)}</tr></thead>
+     <thead><tr><th scope="col">Execution</th>{evidenceCategories.map(item=><th scope="col" key={item}>{item.replaceAll("-"," ")}</th>)}<th scope="col">Row total</th></tr></thead>
      <tbody>{recordedStates.map(status=><tr key={status}>
       <th scope="row">{status}</th>
       {evidenceCategories.map(item=><td key={item}><button type="button" disabled={statusEvidence[status][item]===0} aria-pressed={state===status&&evidence===item} aria-label={`Filter ${status} execution and ${item} evidence (${statusEvidence[status][item]} records)`} onClick={()=>{if(state===status&&evidence===item){setState("all");setEvidence("all");}else{setState(status);setEvidence(item);}}}>{statusEvidence[status][item]}</button></td>)}
+      <td className="recorded-run-matrix-total">{statusEvidenceTotals.byState[status]}</td>
      </tr>)}</tbody>
+     <tfoot><tr><th scope="row">Column total</th>{evidenceCategories.map(item=><td className="recorded-run-matrix-total" key={item}>{statusEvidenceTotals.byEvidence[item]}</td>)}<td className="recorded-run-matrix-total" aria-label={"Total returned executions: "+statusEvidenceTotals.total}>{statusEvidenceTotals.total}</td></tr></tfoot>
     </table>
    </div>
   </section>
