@@ -16,3 +16,8 @@ export function summarizeAttentionReasons(runs:readonly AnalysisRun[]):Record<At
 export function filterByAttentionReason(runs:readonly AnalysisRun[],reason:AttentionReason|null):AnalysisRun[]{
  return reason===null?[...runs]:runs.filter(run=>hasAttentionReason(run,reason));
 }
+
+/** Reasons are independently recorded and may overlap for a single run. */
+export function listAttentionReasons(run:AnalysisRun):AttentionReason[]{
+ return attentionReasons.filter(reason=>hasAttentionReason(run,reason));
+}
