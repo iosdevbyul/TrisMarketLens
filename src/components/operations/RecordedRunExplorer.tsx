@@ -1,5 +1,6 @@
 "use client";
 import {useEffect,useState} from "react";
+import {summarizeStatusEvidenceMatrix} from "../../domain/statusEvidenceMatrix";
 import {formatRecordedRunSummary} from "../../domain/recordedRunSummaryText";
 import {recordedRunBadgeTone} from "../../domain/recordedRunBadge";
 import {getActiveRunFilters} from "../../domain/activeRunFilters";
@@ -116,6 +117,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  const counts=summarizeReturnedRunStates(runs);
  const evidenceCounts=summarizeRecordedEvidence(runs);
  const attentionCounts=summarizeAttentionReasons(runs);
+ const statusEvidence=summarizeStatusEvidenceMatrix(runs);
  const visible=sortRecordedRuns(filterByAttentionReason(filterRunsRequiringAttention(filterByRecordedEvidence(filterRunsByStartDate(filterRecordedRuns(runs,pipeline,state,query),from,to),evidence),attentionOnly),attentionReason),sort);
  const downloadCsv=()=>{
   const csv=exportRecordedRunsCsv(visible);
@@ -136,6 +138,19 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
    {evidenceCategories.map(item=><button type="button" key={item} aria-pressed={evidence===item} aria-label={`Filter ${item} evidence records (${evidenceCounts[item]})`} onClick={()=>setEvidence(current=>current===item?"all":item)}><span>{item}</span><strong>{evidenceCounts[item]}</strong></button>)}
   </div>
   <p className="metric-detail">Evidence totals describe only the {runs.length} returned executions. Missing or malformed evidence labels are counted as not recorded, not validated. Select a count to filter; select again to clear.</p>
+  <section className="recorded-run-matrix" aria-label="Recorded execution and evidence combinations">
+   <h3>Execution × evidence breakdown</h3>
+   <p className="metric-detail">Counts use only the {runs.length} records returned by the API. Selecting a cell applies both filters; selecting the same cell again clears both. Recorded execution outcomes do not grant semantic approval.</p>
+   <div className="recorded-run-matrix-scroll">
+    <table>
+     <thead><tr><th scope="col">Execution</th>{evidenceCategories.map(item=><th scope="col" key={item}>{item.replaceAll("-"," ")}</th>)}</tr></thead>
+     <tbody>{recordedStates.map(status=><tr key={status}>
+      <th scope="row">{status}</th>
+      {evidenceCategories.map(item=><td key={item}><button type="button" disabled={statusEvidence[status][item]===0} aria-pressed={state===status&&evidence===item} aria-label={`Filter ${status} execution and ${item} evidence (${statusEvidence[status][item]} records)`} onClick={()=>{if(state===status&&evidence===item){setState("all");setEvidence("all");}else{setState(status);setEvidence(item);}}}>{statusEvidence[status][item]}</button></td>)}
+     </tr>)}</tbody>
+    </table>
+   </div>
+  </section>
   <section aria-label="Reasons requiring attention">
    <h3>Recorded attention reasons</h3>
    <div className="recorded-run-summary">
