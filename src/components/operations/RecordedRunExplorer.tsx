@@ -1,5 +1,6 @@
 "use client";
 import {useEffect,useState} from "react";
+import {exportStatusEvidenceMatrixCsv} from "../../domain/statusEvidenceMatrixCsv";
 import {selectMatrixRow,selectMatrixColumn} from "../../domain/matrixMarginSelection";
 import {summarizeStatusEvidenceMatrix,statusEvidenceMatrixTotals} from "../../domain/statusEvidenceMatrix";
 import {formatRecordedRunSummary} from "../../domain/recordedRunSummaryText";
@@ -138,6 +139,14 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   document.body.appendChild(link);link.click();link.remove();
   URL.revokeObjectURL(url);
  };
+ const downloadMatrixCsv=()=>{
+  const blob=new Blob([exportStatusEvidenceMatrixCsv(statusEvidence)],{type:"text/csv;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement("a");
+  link.href=url;link.download="operations-status-evidence-matrix.csv";
+  document.body.appendChild(link);link.click();link.remove();
+  URL.revokeObjectURL(url);
+ };
  const formatTime=(value:string|null)=>formatRecordedTime(value,locale);
  return <div className="recorded-run-explorer">
   <div className="recorded-run-summary" aria-label="Returned execution status summary">
@@ -150,6 +159,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   <p className="metric-detail">Evidence totals describe only the {runs.length} returned executions. Missing or malformed evidence labels are counted as not recorded, not validated. Select a count to filter; select again to clear.</p>
   <section className="recorded-run-matrix" aria-label="Recorded execution and evidence combinations">
    <h3>Execution × evidence breakdown</h3>
+   <button type="button" className="recorded-run-reset" onClick={downloadMatrixCsv}>Export matrix CSV</button>
    <p className="metric-detail">Counts use only the {runs.length} records returned by the API. Select a cell to filter by both dimensions, or a row/column total to inspect all evidence or execution states in that margin. Select an active cell or total again to clear it. Other search, date and attention filters still apply to results, so the list may be smaller than these totals. Recorded execution outcomes do not grant semantic approval.</p>
    <div className="recorded-run-matrix-scroll">
     <table>
