@@ -1508,3 +1508,11 @@ h1 {
 
 .recorded-run-matrix .recorded-run-matrix-total{font-weight:700;background:var(--surface-strong);font-variant-numeric:tabular-nums}
 .recorded-run-matrix tfoot th{font-weight:700;background:var(--surface-strong)}
+
+
+.recorded-run-coverage{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
+.recorded-run-coverage>div{display:flex;flex-direction:column;gap:6px;min-width:0;padding:12px;border:1px solid var(--border);border-radius:10px}
+.recorded-run-coverage span{font-size:12px;color:var(--muted)}
+.recorded-run-coverage strong{font-size:22px;font-variant-numeric:tabular-nums}
+.recorded-run-coverage small{font-size:11px;color:var(--muted);overflow-wrap:anywhere}
+@media(max-width:600px){.recorded-run-coverage{grid-template-columns:1fr}}
