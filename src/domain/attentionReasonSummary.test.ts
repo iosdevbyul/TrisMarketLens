@@ -1,5 +1,5 @@
 import {describe,it,expect} from "vitest";
-import {summarizeAttentionReasons,filterByAttentionReason} from "./attentionReasonSummary";
+import {summarizeAttentionReasons,filterByAttentionReason,listAttentionReasons} from "./attentionReasonSummary";
 import type {AnalysisRun} from "./operations";
 const run=(state:AnalysisRun["state"],summary:string|null):AnalysisRun=>({id:state+summary,pipeline:"Market collection",state,summary,startedAt:null,finishedAt:null,dataThrough:null});
 describe("attention reason counts",()=>{
@@ -14,5 +14,11 @@ describe("attention reason counts",()=>{
  });
  it("does not infer a reason from free-text diagnostics",()=>{
   expect(summarizeAttentionReasons([run("unknown","Possibly invalid")])["invalid-evidence"]).toBe(0);
+ });
+ it("lists all explicit attention reasons for one recorded run",()=>{
+  expect(listAttentionReasons(run("failed","Recorded status: failed · Evidence: invalid · Source: sqlite_collection_audit"))).toEqual(["failed","invalid-evidence"]);
+  expect(listAttentionReasons(run("blocked","Evidence: unavailable"))).toEqual(["blocked","unavailable-evidence"]);
+  expect(listAttentionReasons(run("unknown","Evidence: partial"))).toEqual([]);
+  expect(listAttentionReasons(run("unknown","Possibly invalid evidence"))).toEqual([]);
  });
 });
