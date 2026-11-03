@@ -2,7 +2,7 @@
 import {useEffect,useState} from "react";
 import {getActiveRunFilters} from "../../domain/activeRunFilters";
 import {recordedStartDay,formatRecordedTime} from "../../domain/recordedTimestamp";
-import {filterByAttentionReason,type AttentionReason,attentionReasons,summarizeAttentionReasons} from "../../domain/attentionReasonSummary";
+import {filterByAttentionReason,type AttentionReason,attentionReasons,summarizeAttentionReasons,listAttentionReasons} from "../../domain/attentionReasonSummary";
 import {filterRunsRequiringAttention} from "../../domain/operationsAttention";
 import {parseSharedRunFilters,serializeSharedRunFilters} from "../../domain/sharedRunFilters";
 import {evidenceCategories,summarizeRecordedEvidence} from "../../domain/recordedEvidenceSummary";
@@ -163,7 +163,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   {visible.length===0?<p className="section-copy">No recorded executions match these filters.</p>:
    <div className="operations-runs">{visible.map(run=><article className="operations-run" key={run.id}>
     <div><strong>{run.pipeline}</strong><p className="metric-detail">{run.id} · {run.dataThrough??"—"}</p><button className="recorded-run-copy" type="button" onClick={()=>void copyRunId(run.id)} aria-label={"Copy run ID "+run.id}>Copy run ID</button>{copiedRunId===run.id?<span className="metric-detail" role="status">Copied</span>:null}{copyError===run.id?<span className="metric-detail" role="alert">Copy unavailable</span>:null}</div>
-    <div><span className="status-pill" data-state={run.state==="succeeded"?"verified":run.state==="running"||run.state==="queued"?"in_progress":"blocked"}>{run.state}</span><p className="metric-detail">{formatTime(run.startedAt)}</p></div>
+    <div><span className="status-pill" data-state={run.state==="succeeded"?"verified":run.state==="running"||run.state==="queued"?"in_progress":"blocked"}>{run.state}</span><p className="metric-detail">{formatTime(run.startedAt)}</p>{listAttentionReasons(run).length>0?<div className="recorded-run-reason-tags" aria-label={"Recorded attention reasons for "+run.id}>{listAttentionReasons(run).map(reason=><span key={reason}>{reason.replaceAll("-"," ")}</span>)}</div>:null}</div>
     <details className="recorded-run-details"><summary>Inspect recorded details</summary>
       <dl>
         <div><dt>Run ID</dt><dd>{run.id}</dd></div>
