@@ -1,5 +1,6 @@
 "use client";
 import {useEffect,useState} from "react";
+import {formatRecordedRunSummary} from "../../domain/recordedRunSummaryText";
 import {recordedRunBadgeTone} from "../../domain/recordedRunBadge";
 import {getActiveRunFilters} from "../../domain/activeRunFilters";
 import {recordedStartDay,formatRecordedTime} from "../../domain/recordedTimestamp";
@@ -61,6 +62,8 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  const [copiedRunId,setCopiedRunId]=useState<string|null>(null);
  const [copyError,setCopyError]=useState<string|null>(null);
  const [shareStatus,setShareStatus]=useState<string|null>(null);
+ const [copiedSummaryId,setCopiedSummaryId]=useState<string|null>(null);
+ const [summaryCopyErrorId,setSummaryCopyErrorId]=useState<string|null>(null);
  useEffect(()=>{
   const timer=window.setTimeout(()=>{
    const saved=parseSharedRunFilters(window.location.search);
@@ -87,6 +90,14 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  const copyRunId=async(id:string)=>{
   try{await navigator.clipboard.writeText(id);setCopiedRunId(id);setCopyError(null);}
   catch{setCopyError(id);setCopiedRunId(null);}
+ };
+ const copyRunSummary=async(run:AnalysisRun)=>{
+  try{
+   await navigator.clipboard.writeText(formatRecordedRunSummary(run));
+   setCopiedSummaryId(run.id);setSummaryCopyErrorId(null);
+  }catch{
+   setCopiedSummaryId(null);setSummaryCopyErrorId(run.id);
+  }
  };
  const activeFilters=getActiveRunFilters({query,pipeline,state,sort,evidence,from,to,attention:attentionOnly,attentionReason});
  const clearActiveFilter=(key:string)=>{
@@ -166,6 +177,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
     <div><strong>{run.pipeline}</strong><p className="metric-detail">{run.id} · {run.dataThrough??"—"}</p><button className="recorded-run-copy" type="button" onClick={()=>void copyRunId(run.id)} aria-label={"Copy run ID "+run.id}>Copy run ID</button>{copiedRunId===run.id?<span className="metric-detail" role="status">Copied</span>:null}{copyError===run.id?<span className="metric-detail" role="alert">Copy unavailable</span>:null}</div>
     <div><span className="status-pill" data-state={recordedRunBadgeTone(run.state)}>{run.state}</span><span className="recorded-run-evidence" aria-label={"Recorded evidence: "+recordedEvidence(run)}>Evidence: {recordedEvidence(run).replaceAll("-"," ")}</span><p className="metric-detail">{formatTime(run.startedAt)}</p>{listAttentionReasons(run).length>0?<div className="recorded-run-reason-tags" aria-label={"Recorded attention reasons for "+run.id}>{listAttentionReasons(run).map(reason=><span key={reason}>{reason.replaceAll("-"," ")}</span>)}</div>:null}</div>
     <details className="recorded-run-details"><summary>Inspect recorded details</summary>
+      <button type="button" className="recorded-run-copy" onClick={()=>void copyRunSummary(run)} aria-label={"Copy recorded details for "+run.id}>Copy run details</button>{copiedSummaryId===run.id?<span role="status" className="metric-detail">Details copied</span>:null}{summaryCopyErrorId===run.id?<span role="alert" className="metric-detail">Copy unavailable</span>:null}
       <dl>
         <div><dt>Run ID</dt><dd>{run.id}</dd></div>
         <div><dt>Pipeline</dt><dd>{run.pipeline}</dd></div>
