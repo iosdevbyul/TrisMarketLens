@@ -69,11 +69,12 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   setFrom(saved.from);
   setTo(saved.to);
   setAttentionOnly(saved.attention);
+  setAttentionReason(saved.attentionReason as AttentionReason|null);
   },0);
   return ()=>window.clearTimeout(timer);
  },[]);
  const shareFilters=async()=>{
-  const queryString=serializeSharedRunFilters(window.location.search,{query,pipeline,state,sort,evidence,from,to,attention:attentionOnly});
+  const queryString=serializeSharedRunFilters(window.location.search,{query,pipeline,state,sort,evidence,from,to,attention:attentionOnly,attentionReason});
   const url=new URL(window.location.href);
   url.search=queryString;
   window.history.replaceState(window.history.state,"",url.toString());
