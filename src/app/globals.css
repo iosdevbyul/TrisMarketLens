@@ -1476,3 +1476,10 @@ h1 {
 
 .recorded-run-filters .recorded-run-attention{display:flex;align-items:center;gap:8px;cursor:pointer;white-space:normal}
 .recorded-run-attention input{width:16px;height:16px;flex:none;accent-color:var(--accent)}
+
+
+.recorded-run-active-filters{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:14px 0}
+.recorded-run-active-filters>strong{font-size:12px;margin-right:4px}
+.recorded-run-active-filters>button{font:inherit;font-size:12px;color:var(--text);border:1px solid var(--border);border-radius:20px;background:var(--surface-strong);padding:7px 10px;cursor:pointer;overflow-wrap:anywhere;max-width:100%;text-align:left}
+.recorded-run-active-filters>button:hover{border-color:var(--accent)}
+.recorded-run-active-filters>button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
