@@ -7,7 +7,7 @@ import {filterByAttentionReason,type AttentionReason,attentionReasons,summarizeA
 import {filterRunsRequiringAttention} from "../../domain/operationsAttention";
 import {parseSharedRunFilters,serializeSharedRunFilters} from "../../domain/sharedRunFilters";
 import {evidenceCategories,summarizeRecordedEvidence} from "../../domain/recordedEvidenceSummary";
-import {filterByRecordedEvidence,type RecordedEvidence} from "../../domain/recordedEvidence";
+import {recordedEvidence,filterByRecordedEvidence,type RecordedEvidence} from "../../domain/recordedEvidence";
 import {recordedStates,summarizeReturnedRunStates} from "../../domain/recordedRunSummary";
 import {recordedRunDuration} from "../../domain/recordedRunDuration";
 import {exportRecordedRunsCsv} from "../../domain/operationsCsv";
@@ -164,12 +164,13 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   {visible.length===0?<p className="section-copy">No recorded executions match these filters.</p>:
    <div className="operations-runs">{visible.map(run=><article className="operations-run" key={run.id}>
     <div><strong>{run.pipeline}</strong><p className="metric-detail">{run.id} · {run.dataThrough??"—"}</p><button className="recorded-run-copy" type="button" onClick={()=>void copyRunId(run.id)} aria-label={"Copy run ID "+run.id}>Copy run ID</button>{copiedRunId===run.id?<span className="metric-detail" role="status">Copied</span>:null}{copyError===run.id?<span className="metric-detail" role="alert">Copy unavailable</span>:null}</div>
-    <div><span className="status-pill" data-state={recordedRunBadgeTone(run.state)}>{run.state}</span><p className="metric-detail">{formatTime(run.startedAt)}</p>{listAttentionReasons(run).length>0?<div className="recorded-run-reason-tags" aria-label={"Recorded attention reasons for "+run.id}>{listAttentionReasons(run).map(reason=><span key={reason}>{reason.replaceAll("-"," ")}</span>)}</div>:null}</div>
+    <div><span className="status-pill" data-state={recordedRunBadgeTone(run.state)}>{run.state}</span><span className="recorded-run-evidence" aria-label={"Recorded evidence: "+recordedEvidence(run)}>Evidence: {recordedEvidence(run).replaceAll("-"," ")}</span><p className="metric-detail">{formatTime(run.startedAt)}</p>{listAttentionReasons(run).length>0?<div className="recorded-run-reason-tags" aria-label={"Recorded attention reasons for "+run.id}>{listAttentionReasons(run).map(reason=><span key={reason}>{reason.replaceAll("-"," ")}</span>)}</div>:null}</div>
     <details className="recorded-run-details"><summary>Inspect recorded details</summary>
       <dl>
         <div><dt>Run ID</dt><dd>{run.id}</dd></div>
         <div><dt>Pipeline</dt><dd>{run.pipeline}</dd></div>
         <div><dt>Recorded status</dt><dd>{run.state}</dd></div>
+        <div><dt>Recorded evidence status</dt><dd>{recordedEvidence(run).replaceAll("-"," ")}</dd></div>
         <div><dt>Started at</dt><dd>{formatTime(run.startedAt)}</dd></div>
         <div><dt>Finished at</dt><dd>{formatTime(run.finishedAt)}</dd></div>
         <div><dt>Recorded elapsed time</dt><dd>{recordedRunDuration(run)??"Unavailable"}</dd></div>
