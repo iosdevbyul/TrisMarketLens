@@ -1505,3 +1505,6 @@ h1 {
 .recorded-run-matrix td button:disabled{opacity:.45;cursor:default}
 .recorded-run-matrix td button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
 .recorded-run-matrix td button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.recorded-run-matrix .recorded-run-matrix-total{font-weight:700;background:var(--surface-strong);font-variant-numeric:tabular-nums}
+.recorded-run-matrix tfoot th{font-weight:700;background:var(--surface-strong)}
