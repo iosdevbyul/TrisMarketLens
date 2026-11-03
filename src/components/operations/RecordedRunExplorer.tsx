@@ -1,5 +1,6 @@
 "use client";
 import {useEffect,useState} from "react";
+import {getActiveRunFilters} from "../../domain/activeRunFilters";
 import {recordedStartDay,formatRecordedTime} from "../../domain/recordedTimestamp";
 import {filterByAttentionReason,type AttentionReason,attentionReasons,summarizeAttentionReasons} from "../../domain/attentionReasonSummary";
 import {filterRunsRequiringAttention} from "../../domain/operationsAttention";
@@ -86,6 +87,20 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   try{await navigator.clipboard.writeText(id);setCopiedRunId(id);setCopyError(null);}
   catch{setCopyError(id);setCopiedRunId(null);}
  };
+ const activeFilters=getActiveRunFilters({query,pipeline,state,sort,evidence,from,to,attention:attentionOnly,attentionReason});
+ const clearActiveFilter=(key:string)=>{
+  switch(key){
+   case "query":setQuery("");break;
+   case "pipeline":setPipeline("all");break;
+   case "state":setState("all");break;
+   case "evidence":setEvidence("all");break;
+   case "from":setFrom("");break;
+   case "to":setTo("");break;
+   case "attention":setAttentionOnly(false);break;
+   case "attentionReason":setAttentionReason(null);break;
+   case "sort":setSort("newest");break;
+  }
+ };
  const counts=summarizeReturnedRunStates(runs);
  const evidenceCounts=summarizeRecordedEvidence(runs);
  const attentionCounts=summarizeAttentionReasons(runs);
@@ -138,6 +153,10 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
    <button type="button" className="recorded-run-reset" onClick={()=>void shareFilters()}>Copy filter link</button>
    <button type="button" className="recorded-run-reset" onClick={downloadCsv} disabled={visible.length===0}>Export filtered CSV</button>
    <button type="button" className="recorded-run-reset" onClick={()=>{setQuery("");setPipeline("all");setState("all");setSort("newest");setFrom("");setTo("");setEvidence("all");setAttentionOnly(false);setAttentionReason(null);}} disabled={!query&&!from&&!to&&pipeline==="all"&&state==="all"&&sort==="newest"&&evidence==="all"&&!attentionOnly&&attentionReason===null}>Reset filters</button>
+  </div>
+  <div className="recorded-run-active-filters" aria-label="Active execution filters">
+   <strong>Active filters ({activeFilters.length})</strong>
+   {activeFilters.length===0?<span className="metric-detail">None — default view</span>:activeFilters.map(item=><button type="button" key={item.key} onClick={()=>clearActiveFilter(item.key)} aria-label={"Remove "+item.label+" filter"}>{item.label}<span aria-hidden="true"> ×</span></button>)}
   </div>
   {shareStatus?<p role="status" className="metric-detail">{shareStatus}</p>:null}
   <p className="metric-detail" role="status">Showing {visible.length} of {runs.length} returned execution records. Needs attention includes recorded failures, blocked executions, invalid evidence or unavailable evidence; it does not imply a complete history. Evidence classifications are parsed only from explicitly recorded backend diagnostics; missing evidence is not treated as valid. Date filters use UTC dates of recorded start times. Records without start times are excluded when a date range is selected. Filters and CSV export apply only to returned records; the API may contain additional records beyond its first 25.</p>
