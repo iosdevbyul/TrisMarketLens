@@ -1,5 +1,6 @@
 "use client";
 import {useEffect,useState} from "react";
+import {exportPipelineEvidenceCoverageCsv} from "../../domain/pipelineEvidenceCoverageCsv";
 import {selectMissingPipelineEvidence} from "../../domain/pipelineMissingEvidenceSelection";
 import {summarizePipelineEvidenceCoverage} from "../../domain/pipelineEvidenceCoverage";
 import {summarizeEvidenceRecording} from "../../domain/evidenceRecordingCoverage";
@@ -148,6 +149,14 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   document.body.appendChild(link);link.click();link.remove();
   URL.revokeObjectURL(url);
  };
+ const downloadPipelineCoverageCsv=()=>{
+  const blob=new Blob([exportPipelineEvidenceCoverageCsv(pipelineEvidenceCoverage)],{type:"text/csv;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement("a");
+  link.href=url;link.download="operations-pipeline-evidence-coverage.csv";
+  document.body.appendChild(link);link.click();link.remove();
+  URL.revokeObjectURL(url);
+ };
  const downloadMatrixCsv=()=>{
   const blob=new Blob([exportStatusEvidenceMatrixCsv(statusEvidence)],{type:"text/csv;charset=utf-8"});
   const url=URL.createObjectURL(blob);
@@ -176,6 +185,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
    <p className="metric-detail">Evidence recorded includes validated, partial, invalid and unavailable classifications. It measures recording coverage, not the proportion of evidence approved. Percentages use only API-returned executions; 0 returned runs display 0% rather than an inferred rate.</p>
    <section aria-label="Evidence recording coverage by pipeline" className="recorded-run-pipeline-coverage">
     <h4>Evidence recording by pipeline</h4>
+    <button type="button" className="recorded-run-reset" onClick={downloadPipelineCoverageCsv}>Export pipeline coverage CSV</button>
     <p className="metric-detail">Each row covers only records returned by the API. Other groups unrecognized pipeline names. A dash means no executions were returned for that pipeline; recorded evidence does not imply validation. Select a nonzero Not recorded count to filter by its pipeline and missing evidence; select it again to clear both dimensions. Other active filters still apply to the result list.</p>
     <div className="recorded-run-matrix-scroll">
      <table>
