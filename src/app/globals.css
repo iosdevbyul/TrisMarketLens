@@ -1516,3 +1516,8 @@ h1 {
 .recorded-run-coverage strong{font-size:22px;font-variant-numeric:tabular-nums}
 .recorded-run-coverage small{font-size:11px;color:var(--muted);overflow-wrap:anywhere}
 @media(max-width:600px){.recorded-run-coverage{grid-template-columns:1fr}}
+
+.recorded-run-pipeline-coverage{margin:18px 0}
+.recorded-run-pipeline-coverage h4{margin:0 0 8px;font-size:14px}
+.recorded-run-pipeline-coverage table{min-width:650px}
+.recorded-run-pipeline-coverage tbody td{font-variant-numeric:tabular-nums}
