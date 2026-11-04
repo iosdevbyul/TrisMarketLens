@@ -126,7 +126,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  const statusEvidenceTotals=statusEvidenceMatrixTotals(statusEvidence);
  const evidenceCoverage=summarizeEvidenceRecording(statusEvidence);
  const pipelineEvidenceCoverage=summarizePipelineEvidenceCoverage(runs);
- const filterPipelineMissingEvidence=(selectedPipeline:RunFilter)=>{
+ const filterPipelineMissingEvidence=(selectedPipeline:Exclude<RunFilter,"all">)=>{
   const selected=selectMissingPipelineEvidence({pipeline,evidence},selectedPipeline);
   setPipeline(selected.pipeline);setEvidence(selected.evidence);
  };
