@@ -1,5 +1,6 @@
 "use client";
 import {useEffect,useState} from "react";
+import {summarizePipelineEvidenceCoverage} from "../../domain/pipelineEvidenceCoverage";
 import {summarizeEvidenceRecording} from "../../domain/evidenceRecordingCoverage";
 import {exportStatusEvidenceMatrixCsv} from "../../domain/statusEvidenceMatrixCsv";
 import {selectMatrixRow,selectMatrixColumn} from "../../domain/matrixMarginSelection";
@@ -123,6 +124,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  const statusEvidence=summarizeStatusEvidenceMatrix(runs);
  const statusEvidenceTotals=statusEvidenceMatrixTotals(statusEvidence);
  const evidenceCoverage=summarizeEvidenceRecording(statusEvidence);
+ const pipelineEvidenceCoverage=summarizePipelineEvidenceCoverage(runs);
  const filterMatrixRow=(status:AnalysisRunState)=>{
   const selected=selectMatrixRow({state,evidence},status);
   setState(selected.state);setEvidence(selected.evidence);
@@ -167,6 +169,19 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
     <div><span>Evidence validated</span><strong>{evidenceCoverage.validated}</strong><small>Explicitly labeled validated; not inferred from successful runs</small></div>
    </div>
    <p className="metric-detail">Evidence recorded includes validated, partial, invalid and unavailable classifications. It measures recording coverage, not the proportion of evidence approved. Percentages use only API-returned executions; 0 returned runs display 0% rather than an inferred rate.</p>
+   <section aria-label="Evidence recording coverage by pipeline" className="recorded-run-pipeline-coverage">
+    <h4>Evidence recording by pipeline</h4>
+    <p className="metric-detail">Each row covers only records returned by the API. Other groups unrecognized pipeline names. A dash means no executions were returned for that pipeline; recorded evidence does not imply validation.</p>
+    <div className="recorded-run-matrix-scroll">
+     <table>
+      <thead><tr><th scope="col">Pipeline</th><th scope="col">Returned</th><th scope="col">Recorded</th><th scope="col">Not recorded</th><th scope="col">Validated</th><th scope="col">Recording rate</th></tr></thead>
+      <tbody>{pipelineEvidenceCoverage.map(row=><tr key={row.pipeline}>
+       <th scope="row">{row.pipeline==="other"?"Other pipelines":row.pipeline}</th>
+       <td>{row.total}</td><td>{row.recorded}</td><td>{row.notRecorded}</td><td>{row.validated}</td><td>{row.recordedPercent===null?"—":row.recordedPercent+"%"}</td>
+      </tr>)}</tbody>
+     </table>
+    </div>
+   </section>
    <button type="button" className="recorded-run-reset" onClick={downloadMatrixCsv}>Export matrix CSV</button>
    <p className="metric-detail">Counts use only the {runs.length} records returned by the API. Select a cell to filter by both dimensions, or a row/column total to inspect all evidence or execution states in that margin. Select an active cell or total again to clear it. Other search, date and attention filters still apply to results, so the list may be smaller than these totals. Recorded execution outcomes do not grant semantic approval.</p>
    <div className="recorded-run-matrix-scroll">
