@@ -1,5 +1,6 @@
 "use client";
 import {useEffect,useState} from "react";
+import {selectMissingPipelineEvidence} from "../../domain/pipelineMissingEvidenceSelection";
 import {summarizePipelineEvidenceCoverage} from "../../domain/pipelineEvidenceCoverage";
 import {summarizeEvidenceRecording} from "../../domain/evidenceRecordingCoverage";
 import {exportStatusEvidenceMatrixCsv} from "../../domain/statusEvidenceMatrixCsv";
@@ -125,6 +126,10 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  const statusEvidenceTotals=statusEvidenceMatrixTotals(statusEvidence);
  const evidenceCoverage=summarizeEvidenceRecording(statusEvidence);
  const pipelineEvidenceCoverage=summarizePipelineEvidenceCoverage(runs);
+ const filterPipelineMissingEvidence=(selectedPipeline:RunFilter)=>{
+  const selected=selectMissingPipelineEvidence({pipeline,evidence},selectedPipeline);
+  setPipeline(selected.pipeline);setEvidence(selected.evidence);
+ };
  const filterMatrixRow=(status:AnalysisRunState)=>{
   const selected=selectMatrixRow({state,evidence},status);
   setState(selected.state);setEvidence(selected.evidence);
@@ -171,13 +176,13 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
    <p className="metric-detail">Evidence recorded includes validated, partial, invalid and unavailable classifications. It measures recording coverage, not the proportion of evidence approved. Percentages use only API-returned executions; 0 returned runs display 0% rather than an inferred rate.</p>
    <section aria-label="Evidence recording coverage by pipeline" className="recorded-run-pipeline-coverage">
     <h4>Evidence recording by pipeline</h4>
-    <p className="metric-detail">Each row covers only records returned by the API. Other groups unrecognized pipeline names. A dash means no executions were returned for that pipeline; recorded evidence does not imply validation.</p>
+    <p className="metric-detail">Each row covers only records returned by the API. Other groups unrecognized pipeline names. A dash means no executions were returned for that pipeline; recorded evidence does not imply validation. Select a nonzero Not recorded count to filter by its pipeline and missing evidence; select it again to clear both dimensions. Other active filters still apply to the result list.</p>
     <div className="recorded-run-matrix-scroll">
      <table>
       <thead><tr><th scope="col">Pipeline</th><th scope="col">Returned</th><th scope="col">Recorded</th><th scope="col">Not recorded</th><th scope="col">Validated</th><th scope="col">Recording rate</th></tr></thead>
       <tbody>{pipelineEvidenceCoverage.map(row=><tr key={row.pipeline}>
        <th scope="row">{row.pipeline==="other"?"Other pipelines":row.pipeline}</th>
-       <td>{row.total}</td><td>{row.recorded}</td><td>{row.notRecorded}</td><td>{row.validated}</td><td>{row.recordedPercent===null?"—":row.recordedPercent+"%"}</td>
+       <td>{row.total}</td><td>{row.recorded}</td><td><button type="button" className="recorded-run-pipeline-drilldown" disabled={row.notRecorded===0} aria-pressed={pipeline===row.pipeline&&evidence==="not-recorded"} aria-label={`Filter ${row.pipeline} executions with no recorded evidence (${row.notRecorded} records)`} onClick={()=>filterPipelineMissingEvidence(row.pipeline)}>{row.notRecorded}</button></td><td>{row.validated}</td><td>{row.recordedPercent===null?"—":row.recordedPercent+"%"}</td>
       </tr>)}</tbody>
      </table>
     </div>
