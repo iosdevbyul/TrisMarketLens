@@ -3,6 +3,7 @@ import {useEffect,useState} from "react";
 import {exportPipelineEvidenceCoverageCsv} from "../../domain/pipelineEvidenceCoverageCsv";
 import {exportPipelineMissingEvidenceCsv} from "../../domain/pipelineMissingEvidenceCsv";
 import {summarizePipelineMissingEvidenceTriage} from "../../domain/pipelineMissingEvidenceTriage";
+import {orderPipelineCoverage,type PipelineCoverageOrder} from "../../domain/pipelineCoverageOrdering";
 import {formatPipelineTriageHandoff} from "../../domain/pipelineTriageHandoff";
 import {selectOldestMissingEvidenceReview} from "../../domain/oldestMissingEvidenceReview";
 import type {CoveragePipeline} from "../../domain/pipelineEvidenceCoverage";
@@ -77,6 +78,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  const [copiedSummaryId,setCopiedSummaryId]=useState<string|null>(null);
  const [summaryCopyErrorId,setSummaryCopyErrorId]=useState<string|null>(null);
  const [handoffCopyStatus,setHandoffCopyStatus]=useState<string|null>(null);
+ const [coverageOrder,setCoverageOrder]=useState<PipelineCoverageOrder>("default");
  useEffect(()=>{
   const timer=window.setTimeout(()=>{
    const saved=parseSharedRunFilters(window.location.search);
@@ -134,6 +136,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  const evidenceCoverage=summarizeEvidenceRecording(statusEvidence);
  const pipelineEvidenceCoverage=summarizePipelineEvidenceCoverage(runs);
  const missingEvidenceTriage=summarizePipelineMissingEvidenceTriage(runs);
+ const orderedPipelineCoverage=orderPipelineCoverage(pipelineEvidenceCoverage,missingEvidenceTriage,coverageOrder);
  const copyPipelineHandoff=async(selectedPipeline:CoveragePipeline)=>{
   const coverage=pipelineEvidenceCoverage.find(item=>item.pipeline===selectedPipeline);
   const triage=missingEvidenceTriage.find(item=>item.pipeline===selectedPipeline);
@@ -227,12 +230,13 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
    <p className="metric-detail">Evidence recorded includes validated, partial, invalid and unavailable classifications. It measures recording coverage, not the proportion of evidence approved. Percentages use only API-returned executions; 0 returned runs display 0% rather than an inferred rate.</p>
    <section aria-label="Evidence recording coverage by pipeline" className="recorded-run-pipeline-coverage">
     <h4>Evidence recording by pipeline</h4>
+    <label>Pipeline row order <select aria-label="Pipeline row order" value={coverageOrder} onChange={event=>setCoverageOrder(event.target.value as PipelineCoverageOrder)}><option value="default">Default</option><option value="most-missing-first">Most missing evidence first</option><option value="oldest-missing-first">Oldest missing evidence first</option></select></label>
     <button type="button" className="recorded-run-reset" onClick={downloadPipelineCoverageCsv}>Export pipeline coverage CSV</button>
-    <p className="metric-detail">Each row covers only records returned by the API. Other groups unrecognized pipeline names. A dash means no executions were returned for that pipeline; recorded evidence does not imply validation. Select a nonzero Not recorded count to filter by its pipeline and missing evidence; select it again to clear both dimensions. Export missing CSV downloads only that pipeline&apos;s returned records without an explicit evidence classification, independent of active filters. Oldest start is the earliest valid recorded UTC start among missing-evidence executions; missing start counts have no usable timestamp. Copy handoff shares only the returned-run coverage and timestamp summary, not a verification decision. Review oldest resets other filters to show that pipeline&apos;s returned missing-evidence executions in ascending start order (unknown times last). Other active filters still apply to the count drilldown.</p>
+    <p className="metric-detail">Each row covers only records returned by the API. Other groups unrecognized pipeline names. A dash means no executions were returned for that pipeline; recorded evidence does not imply validation. Select a nonzero Not recorded count to filter by its pipeline and missing evidence; select it again to clear both dimensions. Export missing CSV downloads only that pipeline&apos;s returned records without an explicit evidence classification, independent of active filters. Oldest start is the earliest valid recorded UTC start among missing-evidence executions; missing start counts have no usable timestamp. Copy handoff shares only the returned-run coverage and timestamp summary, not a verification decision. Row ordering changes the table display only; exports keep their existing order and missing timestamps appear after known timestamps. Review oldest resets other filters to show that pipeline&apos;s returned missing-evidence executions in ascending start order (unknown times last). Other active filters still apply to the count drilldown.</p>
     <div className="recorded-run-matrix-scroll">
      <table>
       <thead><tr><th scope="col">Pipeline</th><th scope="col">Returned</th><th scope="col">Recorded</th><th scope="col">Not recorded</th><th scope="col">Validated</th><th scope="col">Recording rate</th><th scope="col">Oldest missing start (UTC)</th><th scope="col">Missing start times</th><th scope="col">Review missing records</th><th scope="col">Copy handoff</th><th scope="col">Missing evidence export</th></tr></thead>
-      <tbody>{pipelineEvidenceCoverage.map(row=><tr key={row.pipeline}>
+      <tbody>{orderedPipelineCoverage.map(row=><tr key={row.pipeline}>
        <th scope="row">{row.pipeline==="other"?"Other pipelines":row.pipeline}</th>
        <td>{row.total}</td><td>{row.recorded}</td><td><button type="button" className="recorded-run-pipeline-drilldown" disabled={row.notRecorded===0} aria-pressed={pipeline===row.pipeline&&evidence==="not-recorded"} aria-label={`Filter ${row.pipeline} executions with no recorded evidence (${row.notRecorded} records)`} onClick={()=>filterPipelineMissingEvidence(row.pipeline)}>{row.notRecorded}</button></td><td>{row.validated}</td><td>{row.recordedPercent===null?"—":row.recordedPercent+"%"}</td><td>{missingEvidenceTriage.find(item=>item.pipeline===row.pipeline)?.oldestStartedAt?.replace("T"," ").replace(".000Z"," UTC")??"—"}</td><td>{missingEvidenceTriage.find(item=>item.pipeline===row.pipeline)?.missingStartTimes??0}</td><td><button type="button" className="recorded-run-reset" disabled={row.notRecorded===0} aria-label={`Review oldest missing evidence for ${row.pipeline} (${row.notRecorded} records)`} onClick={()=>reviewOldestMissingEvidence(row.pipeline)}>Review oldest</button></td><td><button type="button" className="recorded-run-reset" disabled={row.total===0} aria-label={`Copy evidence triage handoff for ${row.pipeline}`} onClick={()=>void copyPipelineHandoff(row.pipeline)}>Copy handoff</button></td><td><button type="button" className="recorded-run-reset" disabled={row.notRecorded===0} aria-label={`Export missing evidence CSV for ${row.pipeline} (${row.notRecorded} records)`} onClick={()=>downloadPipelineMissingEvidenceCsv(row.pipeline)}>Export missing CSV</button></td>
       </tr>)}</tbody>
