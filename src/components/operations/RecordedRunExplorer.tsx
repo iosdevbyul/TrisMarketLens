@@ -6,6 +6,7 @@ import {exportPipelineMissingEvidenceCsv} from "../../domain/pipelineMissingEvid
 import {exportPipelineEvidenceIssuesCsv} from "../../domain/pipelineEvidenceIssuesCsv";
 import {summarizePipelineMissingEvidenceTriage} from "../../domain/pipelineMissingEvidenceTriage";
 import {summarizePipelineEvidenceIssueAge} from "../../domain/pipelineEvidenceIssueAge";
+import {summarizePipelineEvidenceIssueOverview} from "../../domain/pipelineEvidenceIssueOverview";
 import {exportPipelineEvidenceIssueAgeCsv} from "../../domain/pipelineEvidenceIssueAgeCsv";
 import {formatPipelineEvidenceIssueHandoff} from "../../domain/pipelineEvidenceIssueHandoff";
 import {summarizePipelineEvidenceQuality} from "../../domain/pipelineEvidenceQuality";
@@ -147,6 +148,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  const pipelineEvidenceQuality=summarizePipelineEvidenceQuality(runs);
  const missingEvidenceTriage=summarizePipelineMissingEvidenceTriage(runs);
  const evidenceIssueAges=summarizePipelineEvidenceIssueAge(runs);
+ const evidenceIssueOverview=summarizePipelineEvidenceIssueOverview(pipelineEvidenceQuality,evidenceIssueAges);
  const orderedPipelineCoverage=orderPipelineCoverage(pipelineEvidenceCoverage,missingEvidenceTriage,coverageOrder,evidenceIssueAges);
  const copyEvidenceIssueHandoff=async(selectedPipeline:CoveragePipeline)=>{
   const quality=pipelineEvidenceQuality.find(item=>item.pipeline===selectedPipeline);
@@ -315,6 +317,16 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
     <div><span>Evidence validated</span><strong>{evidenceCoverage.validated}</strong><small>Explicitly labeled validated; not inferred from successful runs</small></div>
    </div>
    <p className="metric-detail">Evidence recorded includes validated, partial, invalid and unavailable classifications. It measures recording coverage, not the proportion of evidence approved. Percentages use only API-returned executions; 0 returned runs display 0% rather than an inferred rate.</p>
+   <section aria-label="Evidence issues across returned executions" className="recorded-run-pipeline-coverage">
+    <h4>Evidence issues overview</h4>
+    <div className="recorded-run-coverage">
+     <div><span>Explicitly invalid</span><strong>{evidenceIssueOverview.invalid}</strong><small>Returned execution records only</small></div>
+     <div><span>Explicitly unavailable</span><strong>{evidenceIssueOverview.unavailable}</strong><small>Returned execution records only</small></div>
+     <div><span>Total evidence issues</span><strong>{evidenceIssueOverview.total}</strong><small>Invalid + unavailable; not an inferred severity score</small></div>
+     <div><span>Issue starts unavailable</span><strong>{evidenceIssueOverview.missingStartTimes}</strong><small>Missing or unusable execution start timestamps</small></div>
+    </div>
+    <p className="metric-detail">Oldest observed issue execution start (UTC): {evidenceIssueOverview.oldestStartedAt??"Unavailable"}. These totals cover API-returned records, not a complete history. An execution start is not an incident discovery timestamp, SLA, or approval.</p>
+   </section>
    <section aria-label="Evidence recording coverage by pipeline" className="recorded-run-pipeline-coverage">
     <h4>Evidence recording by pipeline</h4>
     <label>Pipeline row order <select aria-label="Pipeline row order" value={coverageOrder} onChange={event=>setCoverageOrder(event.target.value as PipelineCoverageOrder)}><option value="default">Default</option><option value="most-missing-first">Most missing evidence first</option><option value="oldest-missing-first">Oldest missing evidence first</option><option value="most-issues-first">Most invalid/unavailable first</option><option value="oldest-issues-first">Oldest invalid/unavailable start first</option></select></label>
