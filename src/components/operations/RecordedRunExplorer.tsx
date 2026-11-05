@@ -2,6 +2,7 @@
 import {useEffect,useState} from "react";
 import {exportPipelineEvidenceCoverageCsv} from "../../domain/pipelineEvidenceCoverageCsv";
 import {exportPipelineMissingEvidenceCsv} from "../../domain/pipelineMissingEvidenceCsv";
+import {summarizePipelineMissingEvidenceTriage} from "../../domain/pipelineMissingEvidenceTriage";
 import type {CoveragePipeline} from "../../domain/pipelineEvidenceCoverage";
 import {selectMissingPipelineEvidence} from "../../domain/pipelineMissingEvidenceSelection";
 import {summarizePipelineEvidenceCoverage} from "../../domain/pipelineEvidenceCoverage";
@@ -129,6 +130,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  const statusEvidenceTotals=statusEvidenceMatrixTotals(statusEvidence);
  const evidenceCoverage=summarizeEvidenceRecording(statusEvidence);
  const pipelineEvidenceCoverage=summarizePipelineEvidenceCoverage(runs);
+ const missingEvidenceTriage=summarizePipelineMissingEvidenceTriage(runs);
  const filterPipelineMissingEvidence=(selectedPipeline:Exclude<RunFilter,"all">)=>{
   const selected=selectMissingPipelineEvidence({pipeline,evidence},selectedPipeline);
   setPipeline(selected.pipeline);setEvidence(selected.evidence);
@@ -198,13 +200,13 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
    <section aria-label="Evidence recording coverage by pipeline" className="recorded-run-pipeline-coverage">
     <h4>Evidence recording by pipeline</h4>
     <button type="button" className="recorded-run-reset" onClick={downloadPipelineCoverageCsv}>Export pipeline coverage CSV</button>
-    <p className="metric-detail">Each row covers only records returned by the API. Other groups unrecognized pipeline names. A dash means no executions were returned for that pipeline; recorded evidence does not imply validation. Select a nonzero Not recorded count to filter by its pipeline and missing evidence; select it again to clear both dimensions. Export missing CSV downloads only that pipeline\u0027s returned records without an explicit evidence classification, independent of active filters. Other active filters still apply to the result list.</p>
+    <p className="metric-detail">Each row covers only records returned by the API. Other groups unrecognized pipeline names. A dash means no executions were returned for that pipeline; recorded evidence does not imply validation. Select a nonzero Not recorded count to filter by its pipeline and missing evidence; select it again to clear both dimensions. Export missing CSV downloads only that pipeline&apos;s returned records without an explicit evidence classification, independent of active filters. Oldest start is the earliest valid recorded UTC start among missing-evidence executions; missing start counts have no usable timestamp. Other active filters still apply to the result list.</p>
     <div className="recorded-run-matrix-scroll">
      <table>
-      <thead><tr><th scope="col">Pipeline</th><th scope="col">Returned</th><th scope="col">Recorded</th><th scope="col">Not recorded</th><th scope="col">Validated</th><th scope="col">Recording rate</th><th scope="col">Missing evidence export</th></tr></thead>
+      <thead><tr><th scope="col">Pipeline</th><th scope="col">Returned</th><th scope="col">Recorded</th><th scope="col">Not recorded</th><th scope="col">Validated</th><th scope="col">Recording rate</th><th scope="col">Oldest missing start (UTC)</th><th scope="col">Missing start times</th><th scope="col">Missing evidence export</th></tr></thead>
       <tbody>{pipelineEvidenceCoverage.map(row=><tr key={row.pipeline}>
        <th scope="row">{row.pipeline==="other"?"Other pipelines":row.pipeline}</th>
-       <td>{row.total}</td><td>{row.recorded}</td><td><button type="button" className="recorded-run-pipeline-drilldown" disabled={row.notRecorded===0} aria-pressed={pipeline===row.pipeline&&evidence==="not-recorded"} aria-label={`Filter ${row.pipeline} executions with no recorded evidence (${row.notRecorded} records)`} onClick={()=>filterPipelineMissingEvidence(row.pipeline)}>{row.notRecorded}</button></td><td>{row.validated}</td><td>{row.recordedPercent===null?"—":row.recordedPercent+"%"}</td><td><button type="button" className="recorded-run-reset" disabled={row.notRecorded===0} aria-label={`Export missing evidence CSV for ${row.pipeline} (${row.notRecorded} records)`} onClick={()=>downloadPipelineMissingEvidenceCsv(row.pipeline)}>Export missing CSV</button></td>
+       <td>{row.total}</td><td>{row.recorded}</td><td><button type="button" className="recorded-run-pipeline-drilldown" disabled={row.notRecorded===0} aria-pressed={pipeline===row.pipeline&&evidence==="not-recorded"} aria-label={`Filter ${row.pipeline} executions with no recorded evidence (${row.notRecorded} records)`} onClick={()=>filterPipelineMissingEvidence(row.pipeline)}>{row.notRecorded}</button></td><td>{row.validated}</td><td>{row.recordedPercent===null?"—":row.recordedPercent+"%"}</td><td>{missingEvidenceTriage.find(item=>item.pipeline===row.pipeline)?.oldestStartedAt?.replace("T"," ").replace(".000Z"," UTC")??"—"}</td><td>{missingEvidenceTriage.find(item=>item.pipeline===row.pipeline)?.missingStartTimes??0}</td><td><button type="button" className="recorded-run-reset" disabled={row.notRecorded===0} aria-label={`Export missing evidence CSV for ${row.pipeline} (${row.notRecorded} records)`} onClick={()=>downloadPipelineMissingEvidenceCsv(row.pipeline)}>Export missing CSV</button></td>
       </tr>)}</tbody>
      </table>
     </div>
