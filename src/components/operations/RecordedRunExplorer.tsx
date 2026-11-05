@@ -6,6 +6,7 @@ import {exportPipelineMissingEvidenceCsv} from "../../domain/pipelineMissingEvid
 import {exportPipelineEvidenceIssuesCsv} from "../../domain/pipelineEvidenceIssuesCsv";
 import {summarizePipelineMissingEvidenceTriage} from "../../domain/pipelineMissingEvidenceTriage";
 import {summarizePipelineEvidenceIssueAge} from "../../domain/pipelineEvidenceIssueAge";
+import {exportPipelineEvidenceIssueAgeCsv} from "../../domain/pipelineEvidenceIssueAgeCsv";
 import {formatPipelineEvidenceIssueHandoff} from "../../domain/pipelineEvidenceIssueHandoff";
 import {summarizePipelineEvidenceQuality} from "../../domain/pipelineEvidenceQuality";
 import {exportPipelineEvidenceQualityCsv} from "../../domain/pipelineEvidenceQualityCsv";
@@ -245,6 +246,19 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   document.body.appendChild(link);link.click();link.remove();
   URL.revokeObjectURL(url);
  };
+ const downloadPipelineIssueAgeCsv=()=>{
+  const qualityByPipeline=new Map(pipelineEvidenceQuality.map(row=>[row.pipeline,row]));
+  const orderedQuality=orderedPipelineCoverage.map(row=>qualityByPipeline.get(row.pipeline)).filter(
+   (row):row is (typeof pipelineEvidenceQuality)[number]=>row!==undefined
+  );
+  const csv=exportPipelineEvidenceIssueAgeCsv(orderedQuality,evidenceIssueAges);
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement("a");
+  link.href=url;link.download="operations-pipeline-evidence-issue-starts.csv";
+  document.body.appendChild(link);link.click();link.remove();
+  URL.revokeObjectURL(url);
+ };
  const downloadPipelineQualityCsv=()=>{
   const qualityByPipeline=new Map(pipelineEvidenceQuality.map(row=>[row.pipeline,row]));
   const rows=orderedPipelineCoverage.map(row=>qualityByPipeline.get(row.pipeline)).filter(
@@ -307,7 +321,8 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
     <button type="button" className="recorded-run-reset" onClick={downloadPipelineCoverageCsv}>Export pipeline coverage CSV</button>
     <button type="button" className="recorded-run-reset" onClick={downloadPipelineTriageCsv}>Export triage CSV</button>
     <button type="button" className="recorded-run-reset" onClick={downloadPipelineQualityCsv}>Export evidence quality CSV</button>
-    <p className="metric-detail">Each row covers only records returned by the API. Other groups unrecognized pipeline names. A dash means no executions were returned for that pipeline; recorded evidence does not imply validation. Select a nonzero Not recorded count to filter by its pipeline and missing evidence; select it again to clear both dimensions. Export missing CSV downloads only that pipeline&apos;s returned records without an explicit evidence classification, independent of active filters. Oldest start is the earliest valid recorded UTC start among missing-evidence executions; missing start counts have no usable timestamp. Copy handoff includes returned-run coverage, explicit evidence quality categories, and timestamps, not a verification decision. Copy issue handoff shares only explicitly invalid or unavailable evidence totals and observed execution start timestamps; it does not establish incident discovery time, an SLA, or approval. Row ordering changes the table display; existing exports keep their original order, while triage and evidence quality CSV follow the selected table order. Missing timestamps appear after known timestamps. Issue start columns include only explicitly invalid or unavailable evidence and show the oldest observed UTC start and the number of unusable starts; they do not establish incident age or an SLA. Review oldest resets other filters to show that pipeline&apos;s returned missing-evidence executions in ascending start order (unknown times last). Export issues CSV downloads only the selected pipeline&apos;s explicitly invalid or unavailable executions, oldest first with unknown starts last and independently of active filters. Partial, invalid, and unavailable counts use only explicit backend evidence labels and can be selected to filter the returned runs; other active filters still apply to count drilldowns. Review invalid and Review unavailable reset unrelated filters and sort the selected evidence class oldest first; records without valid start timestamps remain last.</p>
+    <button type="button" className="recorded-run-reset" onClick={downloadPipelineIssueAgeCsv}>Export issue starts CSV</button>
+    <p className="metric-detail">Each row covers only records returned by the API. Other groups unrecognized pipeline names. A dash means no executions were returned for that pipeline; recorded evidence does not imply validation. Select a nonzero Not recorded count to filter by its pipeline and missing evidence; select it again to clear both dimensions. Export missing CSV downloads only that pipeline&apos;s returned records without an explicit evidence classification, independent of active filters. Oldest start is the earliest valid recorded UTC start among missing-evidence executions; missing start counts have no usable timestamp. Copy handoff includes returned-run coverage, explicit evidence quality categories, and timestamps, not a verification decision. Copy issue handoff shares only explicitly invalid or unavailable evidence totals and observed execution start timestamps; it does not establish incident discovery time, an SLA, or approval. Row ordering changes the table display; existing exports keep their original order, while triage, evidence quality and issue starts CSV follow the selected table order. Missing timestamps appear after known timestamps. Issue start columns include only explicitly invalid or unavailable evidence and show the oldest observed UTC start and the number of unusable starts; they do not establish incident age or an SLA. Review oldest resets other filters to show that pipeline&apos;s returned missing-evidence executions in ascending start order (unknown times last). Export issues CSV downloads only the selected pipeline&apos;s explicitly invalid or unavailable executions, oldest first with unknown starts last and independently of active filters. Partial, invalid, and unavailable counts use only explicit backend evidence labels and can be selected to filter the returned runs; other active filters still apply to count drilldowns. Review invalid and Review unavailable reset unrelated filters and sort the selected evidence class oldest first; records without valid start timestamps remain last.</p>
     <div className="recorded-run-matrix-scroll">
      <table>
       <thead><tr><th scope="col">Pipeline</th><th scope="col">Returned</th><th scope="col">Recorded</th><th scope="col">Not recorded</th><th scope="col">Validated</th><th scope="col">Partial</th><th scope="col">Invalid</th><th scope="col">Unavailable</th><th scope="col">Recording rate</th><th scope="col">Oldest missing start (UTC)</th><th scope="col">Missing start times</th><th scope="col">Oldest issue start (UTC)</th><th scope="col">Issue start times missing</th><th scope="col">Review missing records</th><th scope="col">Review evidence issues</th><th scope="col">Copy handoff</th><th scope="col">Copy issue handoff</th><th scope="col">Evidence issues export</th><th scope="col">Missing evidence export</th></tr></thead>
