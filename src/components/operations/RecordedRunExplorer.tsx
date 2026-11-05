@@ -5,6 +5,7 @@ import {exportPipelineTriageCsv} from "../../domain/pipelineTriageCsv";
 import {exportPipelineMissingEvidenceCsv} from "../../domain/pipelineMissingEvidenceCsv";
 import {summarizePipelineMissingEvidenceTriage} from "../../domain/pipelineMissingEvidenceTriage";
 import {summarizePipelineEvidenceQuality} from "../../domain/pipelineEvidenceQuality";
+import {exportPipelineEvidenceQualityCsv} from "../../domain/pipelineEvidenceQualityCsv";
 import {selectPipelineEvidence} from "../../domain/pipelineEvidenceSelection";
 import {orderPipelineCoverage,type PipelineCoverageOrder} from "../../domain/pipelineCoverageOrdering";
 import {formatPipelineTriageHandoff} from "../../domain/pipelineTriageHandoff";
@@ -203,6 +204,19 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   document.body.appendChild(link);link.click();link.remove();
   URL.revokeObjectURL(url);
  };
+ const downloadPipelineQualityCsv=()=>{
+  const qualityByPipeline=new Map(pipelineEvidenceQuality.map(row=>[row.pipeline,row]));
+  const rows=orderedPipelineCoverage.map(row=>qualityByPipeline.get(row.pipeline)).filter(
+   (row):row is (typeof pipelineEvidenceQuality)[number]=>row!==undefined
+  );
+  const csv=exportPipelineEvidenceQualityCsv(rows);
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement("a");
+  link.href=url;link.download="operations-pipeline-evidence-quality.csv";
+  document.body.appendChild(link);link.click();link.remove();
+  URL.revokeObjectURL(url);
+ };
  const downloadPipelineTriageCsv=()=>{
   const csv=exportPipelineTriageCsv(orderedPipelineCoverage,missingEvidenceTriage);
   const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
@@ -251,7 +265,8 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
     <label>Pipeline row order <select aria-label="Pipeline row order" value={coverageOrder} onChange={event=>setCoverageOrder(event.target.value as PipelineCoverageOrder)}><option value="default">Default</option><option value="most-missing-first">Most missing evidence first</option><option value="oldest-missing-first">Oldest missing evidence first</option></select></label>
     <button type="button" className="recorded-run-reset" onClick={downloadPipelineCoverageCsv}>Export pipeline coverage CSV</button>
     <button type="button" className="recorded-run-reset" onClick={downloadPipelineTriageCsv}>Export triage CSV</button>
-    <p className="metric-detail">Each row covers only records returned by the API. Other groups unrecognized pipeline names. A dash means no executions were returned for that pipeline; recorded evidence does not imply validation. Select a nonzero Not recorded count to filter by its pipeline and missing evidence; select it again to clear both dimensions. Export missing CSV downloads only that pipeline&apos;s returned records without an explicit evidence classification, independent of active filters. Oldest start is the earliest valid recorded UTC start among missing-evidence executions; missing start counts have no usable timestamp. Copy handoff shares only the returned-run coverage and timestamp summary, not a verification decision. Row ordering changes the table display; existing exports keep their original order, while triage CSV follows the selected table order. Missing timestamps appear after known timestamps. Review oldest resets other filters to show that pipeline&apos;s returned missing-evidence executions in ascending start order (unknown times last). Partial, invalid, and unavailable counts use only explicit backend evidence labels and can be selected to filter the returned runs; other active filters still apply to drilldowns.</p>
+    <button type="button" className="recorded-run-reset" onClick={downloadPipelineQualityCsv}>Export evidence quality CSV</button>
+    <p className="metric-detail">Each row covers only records returned by the API. Other groups unrecognized pipeline names. A dash means no executions were returned for that pipeline; recorded evidence does not imply validation. Select a nonzero Not recorded count to filter by its pipeline and missing evidence; select it again to clear both dimensions. Export missing CSV downloads only that pipeline&apos;s returned records without an explicit evidence classification, independent of active filters. Oldest start is the earliest valid recorded UTC start among missing-evidence executions; missing start counts have no usable timestamp. Copy handoff shares only the returned-run coverage and timestamp summary, not a verification decision. Row ordering changes the table display; existing exports keep their original order, while triage and evidence quality CSV follow the selected table order. Missing timestamps appear after known timestamps. Review oldest resets other filters to show that pipeline&apos;s returned missing-evidence executions in ascending start order (unknown times last). Partial, invalid, and unavailable counts use only explicit backend evidence labels and can be selected to filter the returned runs; other active filters still apply to drilldowns.</p>
     <div className="recorded-run-matrix-scroll">
      <table>
       <thead><tr><th scope="col">Pipeline</th><th scope="col">Returned</th><th scope="col">Recorded</th><th scope="col">Not recorded</th><th scope="col">Validated</th><th scope="col">Partial</th><th scope="col">Invalid</th><th scope="col">Unavailable</th><th scope="col">Recording rate</th><th scope="col">Oldest missing start (UTC)</th><th scope="col">Missing start times</th><th scope="col">Review missing records</th><th scope="col">Copy handoff</th><th scope="col">Missing evidence export</th></tr></thead>
