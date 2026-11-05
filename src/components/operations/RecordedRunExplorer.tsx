@@ -7,6 +7,7 @@ import {exportPipelineEvidenceIssuesCsv} from "../../domain/pipelineEvidenceIssu
 import {summarizePipelineMissingEvidenceTriage} from "../../domain/pipelineMissingEvidenceTriage";
 import {summarizePipelineEvidenceIssueAge} from "../../domain/pipelineEvidenceIssueAge";
 import {summarizePipelineEvidenceIssueOverview} from "../../domain/pipelineEvidenceIssueOverview";
+import {formatPipelineEvidenceIssueOverviewHandoff} from "../../domain/pipelineEvidenceIssueOverviewHandoff";
 import {exportPipelineEvidenceIssueAgeCsv} from "../../domain/pipelineEvidenceIssueAgeCsv";
 import {formatPipelineEvidenceIssueHandoff} from "../../domain/pipelineEvidenceIssueHandoff";
 import {summarizePipelineEvidenceQuality} from "../../domain/pipelineEvidenceQuality";
@@ -88,6 +89,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  const [copiedSummaryId,setCopiedSummaryId]=useState<string|null>(null);
  const [summaryCopyErrorId,setSummaryCopyErrorId]=useState<string|null>(null);
  const [handoffCopyStatus,setHandoffCopyStatus]=useState<string|null>(null);
+ const [overviewCopyStatus,setOverviewCopyStatus]=useState<string|null>(null);
  const [coverageOrder,setCoverageOrder]=useState<PipelineCoverageOrder>("default");
  useEffect(()=>{
   const timer=window.setTimeout(()=>{
@@ -150,6 +152,14 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  const evidenceIssueAges=summarizePipelineEvidenceIssueAge(runs);
  const evidenceIssueOverview=summarizePipelineEvidenceIssueOverview(pipelineEvidenceQuality,evidenceIssueAges);
  const orderedPipelineCoverage=orderPipelineCoverage(pipelineEvidenceCoverage,missingEvidenceTriage,coverageOrder,evidenceIssueAges);
+ const copyEvidenceIssueOverview=async()=>{
+  try{
+   await navigator.clipboard.writeText(formatPipelineEvidenceIssueOverviewHandoff(evidenceIssueOverview,runs.length));
+   setOverviewCopyStatus("Evidence issues overview copied");
+  }catch{
+   setOverviewCopyStatus("Evidence issues overview copy unavailable");
+  }
+ };
  const copyEvidenceIssueHandoff=async(selectedPipeline:CoveragePipeline)=>{
   const quality=pipelineEvidenceQuality.find(item=>item.pipeline===selectedPipeline);
   const age=evidenceIssueAges.find(item=>item.pipeline===selectedPipeline);
@@ -319,6 +329,8 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
    <p className="metric-detail">Evidence recorded includes validated, partial, invalid and unavailable classifications. It measures recording coverage, not the proportion of evidence approved. Percentages use only API-returned executions; 0 returned runs display 0% rather than an inferred rate.</p>
    <section aria-label="Evidence issues across returned executions" className="recorded-run-pipeline-coverage">
     <h4>Evidence issues overview</h4>
+    <button type="button" className="recorded-run-reset" onClick={()=>void copyEvidenceIssueOverview()}>Copy overview handoff</button>
+    {overviewCopyStatus?<p role="status" className="metric-detail">{overviewCopyStatus}</p>:null}
     <div className="recorded-run-coverage">
      <div><span>Explicitly invalid</span><strong>{evidenceIssueOverview.invalid}</strong><small>Returned execution records only</small></div>
      <div><span>Explicitly unavailable</span><strong>{evidenceIssueOverview.unavailable}</strong><small>Returned execution records only</small></div>
