@@ -1,9 +1,9 @@
 import type {CoveragePipeline} from "./pipelineEvidenceCoverage";
-import type {RecordedEvidence} from "./recordedEvidence";
+import type {RecordedEvidence,EvidenceFilter} from "./recordedEvidence";
 
 export interface PipelineEvidenceSelection{
  pipeline:CoveragePipeline|"all";
- evidence:RecordedEvidence|"all";
+ evidence:EvidenceFilter;
 }
 
 /** Toggle just the selected pipeline and explicit evidence classification. */

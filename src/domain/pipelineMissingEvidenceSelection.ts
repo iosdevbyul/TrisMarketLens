@@ -1,8 +1,8 @@
 import type {CoveragePipeline} from "./pipelineEvidenceCoverage";
-import type {RecordedEvidence} from "./recordedEvidence";
+import type {EvidenceFilter} from "./recordedEvidence";
 export interface PipelineMissingEvidenceSelection {
  pipeline:CoveragePipeline|"all";
- evidence:RecordedEvidence|"all";
+ evidence:EvidenceFilter;
 }
 /** Toggle just the pipeline and evidence dimensions, preserving unrelated filters. */
 export function selectMissingPipelineEvidence(

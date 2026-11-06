@@ -38,7 +38,7 @@ import {filterByAttentionReason,type AttentionReason,attentionReasons,summarizeA
 import {filterRunsRequiringAttention} from "../../domain/operationsAttention";
 import {parseSharedRunFilters,serializeSharedRunFilters} from "../../domain/sharedRunFilters";
 import {evidenceCategories,summarizeRecordedEvidence} from "../../domain/recordedEvidenceSummary";
-import {recordedEvidence,filterByRecordedEvidence,type RecordedEvidence} from "../../domain/recordedEvidence";
+import {recordedEvidence,filterByRecordedEvidence,type RecordedEvidence,type EvidenceFilter} from "../../domain/recordedEvidence";
 import {recordedStates,summarizeReturnedRunStates} from "../../domain/recordedRunSummary";
 import {recordedRunDuration} from "../../domain/recordedRunDuration";
 import {exportRecordedRunsCsv} from "../../domain/operationsCsv";
@@ -84,7 +84,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  const [query,setQuery]=useState("");
  const [state,setState]=useState<"all"|AnalysisRunState>("all");
  const [sort,setSort]=useState<RunSort>("newest");
- const [evidence,setEvidence]=useState<RecordedEvidence|"all">("all");
+ const [evidence,setEvidence]=useState<EvidenceFilter>("all");
  const [from,setFrom]=useState("");
  const [to,setTo]=useState("");
  const [attentionOnly,setAttentionOnly]=useState(false);
@@ -104,7 +104,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   setQuery(saved.query);
   setState(saved.state as AnalysisRunState|"all");
   setSort(saved.sort as RunSort);
-  setEvidence(saved.evidence as RecordedEvidence|"all");
+  setEvidence(saved.evidence as EvidenceFilter);
   setFrom(saved.from);
   setTo(saved.to);
   setAttentionOnly(saved.attention);
@@ -217,7 +217,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
    setHandoffCopyStatus(selectedPipeline+" handoff copy unavailable");
   }
  };
- const reviewAllEvidenceIssues=(selectedEvidence:"invalid"|"unavailable")=>{
+ const reviewAllEvidenceIssues=(selectedEvidence:"invalid"|"unavailable"|"issues")=>{
   const selected=selectAllEvidenceIssueReview(
    {query,pipeline,state,evidence,sort,from,to,attention:attentionOnly,attentionReason},
    selectedEvidence
@@ -225,7 +225,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   setQuery(selected.query);
   setPipeline(selected.pipeline as RunFilter);
   setState(selected.state as AnalysisRunState|"all");
-  setEvidence(selected.evidence as RecordedEvidence|"all");
+  setEvidence(selected.evidence as EvidenceFilter);
   setSort(selected.sort as RunSort);
   setFrom(selected.from);setTo(selected.to);
   setAttentionOnly(selected.attention);
@@ -238,7 +238,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   setQuery(selected.query);
   setPipeline(selected.pipeline as RunFilter);
   setState(selected.state as AnalysisRunState|"all");
-  setEvidence(selected.evidence as RecordedEvidence|"all");
+  setEvidence(selected.evidence as EvidenceFilter);
   setSort(selected.sort as RunSort);
   setFrom(selected.from);setTo(selected.to);
   setAttentionOnly(selected.attention);
@@ -252,7 +252,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   setQuery(selected.query);
   setPipeline(selected.pipeline as RunFilter);
   setState(selected.state as AnalysisRunState|"all");
-  setEvidence(selected.evidence as RecordedEvidence|"all");
+  setEvidence(selected.evidence as EvidenceFilter);
   setSort(selected.sort as RunSort);
   setFrom(selected.from);setTo(selected.to);
   setAttentionOnly(selected.attention);
@@ -266,7 +266,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   setQuery(selected.query);
   setPipeline(selected.pipeline as RunFilter);
   setState(selected.state as AnalysisRunState|"all");
-  setEvidence(selected.evidence as RecordedEvidence|"all");
+  setEvidence(selected.evidence as EvidenceFilter);
   setSort(selected.sort as RunSort);
   setFrom(selected.from);setTo(selected.to);
   setAttentionOnly(selected.attention);
@@ -397,6 +397,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
     <button type="button" className="recorded-run-reset" disabled={evidenceCounts["not-recorded"]===0} onClick={reviewAllMissingEvidence}>Review all missing evidence oldest first</button>
     <button type="button" className="recorded-run-reset" disabled={evidenceIssueOverview.invalid===0} onClick={()=>reviewAllEvidenceIssues("invalid")}>Review all invalid evidence oldest first</button>
     <button type="button" className="recorded-run-reset" disabled={evidenceIssueOverview.unavailable===0} onClick={()=>reviewAllEvidenceIssues("unavailable")}>Review all unavailable evidence oldest first</button>
+    <button type="button" className="recorded-run-reset" disabled={evidenceIssueOverview.total===0} onClick={()=>reviewAllEvidenceIssues("issues")}>Review all evidence issues oldest first</button>
     {overviewCopyStatus?<p role="status" className="metric-detail">{overviewCopyStatus}</p>:null}
     <div className="recorded-run-coverage">
      <div><span>Explicitly invalid</span><strong>{evidenceIssueOverview.invalid}</strong><small>Returned execution records only</small></div>
@@ -466,8 +467,8 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
    <label>Recorded status<select value={state} onChange={e=>setState(e.target.value as AnalysisRunState|"all")}>
     <option value="all">All statuses</option>{states.map(item=><option key={item} value={item}>{item}</option>)}
    </select></label>
-   <label>Recorded evidence<select value={evidence} onChange={e=>setEvidence(e.target.value as RecordedEvidence|"all")}>
-    <option value="all">All evidence</option><option value="validated">Validated</option><option value="partial">Partial</option><option value="invalid">Invalid</option><option value="unavailable">Unavailable</option><option value="not-recorded">Not recorded</option>
+   <label>Recorded evidence<select value={evidence} onChange={e=>setEvidence(e.target.value as EvidenceFilter)}>
+    <option value="all">All evidence</option><option value="validated">Validated</option><option value="partial">Partial</option><option value="invalid">Invalid</option><option value="unavailable">Unavailable</option><option value="issues">Evidence issues (invalid + unavailable)</option><option value="not-recorded">Not recorded</option>
    </select></label>
    <label>Sort execution records<select value={sort} onChange={e=>setSort(e.target.value as RunSort)}>
     <option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="duration-longest">Longest duration first</option><option value="duration-shortest">Shortest duration first</option>

@@ -1,6 +1,6 @@
 export interface SharedRunFilters {query:string;pipeline:string;state:string;evidence:string;sort:string;from:string;to:string;attention:boolean;attentionReason:string|null}
 export const defaultRunFilters:SharedRunFilters={query:"",pipeline:"all",state:"all",evidence:"all",sort:"newest",from:"",to:"",attention:false,attentionReason:null};
-const choices:Record<string,string[]>={pipeline:["all","Market collection","DART session","DART batch acquisition","other"],state:["all","queued","running","succeeded","failed","blocked","unknown"],evidence:["all","validated","partial","invalid","unavailable","not-recorded"],sort:["newest","oldest","duration-longest","duration-shortest"]};
+const choices:Record<string,string[]>={pipeline:["all","Market collection","DART session","DART batch acquisition","other"],state:["all","queued","running","succeeded","failed","blocked","unknown"],evidence:["all","validated","partial","invalid","unavailable","not-recorded","issues"],sort:["newest","oldest","duration-longest","duration-shortest"]};
 const validDate=(value:string)=>!value||(/^\d{4}-\d{2}-\d{2}$/.test(value)&&!Number.isNaN(Date.parse(value))&&new Date(value+"T00:00:00Z").toISOString().slice(0,10)===value);
 export function parseSharedRunFilters(queryString:string):SharedRunFilters{
  const params=new URLSearchParams(queryString);
