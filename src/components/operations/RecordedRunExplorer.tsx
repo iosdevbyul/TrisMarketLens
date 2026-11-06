@@ -5,6 +5,7 @@ import {exportPipelineTriageCsv} from "../../domain/pipelineTriageCsv";
 import {exportPipelineMissingEvidenceCsv} from "../../domain/pipelineMissingEvidenceCsv";
 import {exportPipelineEvidenceIssuesCsv} from "../../domain/pipelineEvidenceIssuesCsv";
 import {exportAllEvidenceIssuesCsv} from "../../domain/allEvidenceIssuesCsv";
+import {exportAllMissingEvidenceCsv} from "../../domain/allMissingEvidenceCsv";
 import {summarizePipelineMissingEvidenceTriage} from "../../domain/pipelineMissingEvidenceTriage";
 import {summarizePipelineEvidenceIssueAge} from "../../domain/pipelineEvidenceIssueAge";
 import {summarizePipelineEvidenceIssueOverview} from "../../domain/pipelineEvidenceIssueOverview";
@@ -156,6 +157,15 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  const evidenceIssueOverview=summarizePipelineEvidenceIssueOverview(pipelineEvidenceQuality,evidenceIssueAges);
  const evidenceIssueShare=summarizePipelineEvidenceIssueShare(pipelineEvidenceQuality);
  const orderedPipelineCoverage=orderPipelineCoverage(pipelineEvidenceCoverage,missingEvidenceTriage,coverageOrder,evidenceIssueAges);
+ const downloadAllMissingEvidenceCsv=()=>{
+  const csv=exportAllMissingEvidenceCsv(runs);
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement("a");
+  link.href=url;link.download="operations-all-missing-evidence.csv";
+  document.body.appendChild(link);link.click();link.remove();
+  URL.revokeObjectURL(url);
+ };
  const downloadAllEvidenceIssuesCsv=()=>{
   const csv=exportAllEvidenceIssuesCsv(runs);
   const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
@@ -354,6 +364,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
     <button type="button" className="recorded-run-reset" onClick={()=>void copyEvidenceIssueOverview()}>Copy overview handoff</button>
     <button type="button" className="recorded-run-reset" onClick={downloadEvidenceIssueOverviewCsv}>Export overview CSV</button>
     <button type="button" className="recorded-run-reset" disabled={evidenceIssueOverview.total===0} onClick={downloadAllEvidenceIssuesCsv}>Export all issue records CSV</button>
+    <button type="button" className="recorded-run-reset" disabled={evidenceCounts["not-recorded"]===0} onClick={downloadAllMissingEvidenceCsv}>Export all missing evidence CSV</button>
     {overviewCopyStatus?<p role="status" className="metric-detail">{overviewCopyStatus}</p>:null}
     <div className="recorded-run-coverage">
      <div><span>Explicitly invalid</span><strong>{evidenceIssueOverview.invalid}</strong><small>Returned execution records only</small></div>
