@@ -8,7 +8,7 @@ describe("all-pipeline explicit evidence issue reviews",()=>{
   sort:"duration-longest",from:"2026-11-01",to:"2026-11-05",
   attention:true,attentionReason:"failed"
  };
- it.each(["invalid","unavailable"] as const)("clears unrelated filters for %s and sorts oldest first",category=>{
+ it.each(["invalid","unavailable","issues"] as const)("clears unrelated filters for %s and sorts oldest first",category=>{
   expect(selectAllEvidenceIssueReview(masked,category)).toEqual({
    ...defaultRunFilters,evidence:category,sort:"oldest"
   });
