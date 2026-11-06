@@ -1,9 +1,9 @@
 import type {SharedRunFilters} from "./sharedRunFilters";
 import type {ReviewableEvidence} from "./pipelineQualityReview";
 
-/** Review one explicit evidence issue category across all API-returned pipelines. */
+/** Review one or both explicit evidence issue categories across all API-returned pipelines. */
 export function selectAllEvidenceIssueReview(
- current:SharedRunFilters,evidence:ReviewableEvidence
+ current:SharedRunFilters,evidence:ReviewableEvidence|"issues"
 ):SharedRunFilters{
  return {
   ...current,
