@@ -8,4 +8,9 @@ describe("pipeline evidence selection",()=>{
   expect(selectPipelineEvidence({pipeline:"DART session",evidence:"unavailable"},"DART session","unavailable")).toEqual({pipeline:"all",evidence:"all"});
   expect(selectPipelineEvidence({pipeline:"DART session",evidence:"invalid"},"DART session","partial")).toEqual({pipeline:"DART session",evidence:"partial"});
  });
+ it("toggles combined invalid and unavailable issue selection per pipeline",()=>{
+  expect(selectPipelineEvidence({pipeline:"all",evidence:"all"},"Market collection","issues")).toEqual({pipeline:"Market collection",evidence:"issues"});
+  expect(selectPipelineEvidence({pipeline:"Market collection",evidence:"issues"},"Market collection","issues")).toEqual({pipeline:"all",evidence:"all"});
+  expect(selectPipelineEvidence({pipeline:"Market collection",evidence:"issues"},"other","issues")).toEqual({pipeline:"other",evidence:"issues"});
+ });
 });
