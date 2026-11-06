@@ -1,8 +1,8 @@
 import type {AnalysisRunState} from "./operations";
-import type {RecordedEvidence} from "./recordedEvidence";
+import type {RecordedEvidence,EvidenceFilter} from "./recordedEvidence";
 export interface MatrixSelection{
  state:"all"|AnalysisRunState;
- evidence:"all"|RecordedEvidence;
+ evidence:EvidenceFilter;
 }
 /** Margin selection clears the opposite matrix dimension, not unrelated UI filters. */
 export function selectMatrixRow(current:MatrixSelection,status:AnalysisRunState):MatrixSelection{
