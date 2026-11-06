@@ -4,6 +4,7 @@ import {exportPipelineEvidenceCoverageCsv} from "../../domain/pipelineEvidenceCo
 import {exportPipelineTriageCsv} from "../../domain/pipelineTriageCsv";
 import {exportPipelineMissingEvidenceCsv} from "../../domain/pipelineMissingEvidenceCsv";
 import {exportPipelineEvidenceIssuesCsv} from "../../domain/pipelineEvidenceIssuesCsv";
+import {exportAllEvidenceIssuesCsv} from "../../domain/allEvidenceIssuesCsv";
 import {summarizePipelineMissingEvidenceTriage} from "../../domain/pipelineMissingEvidenceTriage";
 import {summarizePipelineEvidenceIssueAge} from "../../domain/pipelineEvidenceIssueAge";
 import {summarizePipelineEvidenceIssueOverview} from "../../domain/pipelineEvidenceIssueOverview";
@@ -155,6 +156,15 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  const evidenceIssueOverview=summarizePipelineEvidenceIssueOverview(pipelineEvidenceQuality,evidenceIssueAges);
  const evidenceIssueShare=summarizePipelineEvidenceIssueShare(pipelineEvidenceQuality);
  const orderedPipelineCoverage=orderPipelineCoverage(pipelineEvidenceCoverage,missingEvidenceTriage,coverageOrder,evidenceIssueAges);
+ const downloadAllEvidenceIssuesCsv=()=>{
+  const csv=exportAllEvidenceIssuesCsv(runs);
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement("a");
+  link.href=url;link.download="operations-all-evidence-issues.csv";
+  document.body.appendChild(link);link.click();link.remove();
+  URL.revokeObjectURL(url);
+ };
  const downloadEvidenceIssueOverviewCsv=()=>{
   const csv=exportPipelineEvidenceIssueOverviewCsv(evidenceIssueOverview,runs.length);
   const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
@@ -343,6 +353,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
     <h4>Evidence issues overview</h4>
     <button type="button" className="recorded-run-reset" onClick={()=>void copyEvidenceIssueOverview()}>Copy overview handoff</button>
     <button type="button" className="recorded-run-reset" onClick={downloadEvidenceIssueOverviewCsv}>Export overview CSV</button>
+    <button type="button" className="recorded-run-reset" disabled={evidenceIssueOverview.total===0} onClick={downloadAllEvidenceIssuesCsv}>Export all issue records CSV</button>
     {overviewCopyStatus?<p role="status" className="metric-detail">{overviewCopyStatus}</p>:null}
     <div className="recorded-run-coverage">
      <div><span>Explicitly invalid</span><strong>{evidenceIssueOverview.invalid}</strong><small>Returned execution records only</small></div>
