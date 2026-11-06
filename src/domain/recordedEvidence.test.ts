@@ -23,4 +23,8 @@ describe("recorded evidence",()=>{
   expect(filterByRecordedEvidence(rows,"not-recorded").map(item=>item.id)).toEqual(["c"]);
   expect(filterByRecordedEvidence(rows,"all")).toEqual(rows);
  });
+ it("filters combined explicit issues without including partial or missing classifications",()=>{
+  const rows=[run("a","Evidence: invalid"),run("b","Evidence: unavailable"),run("c","Evidence: partial"),run("d",null),run("e","Evidence: validated")];
+  expect(filterByRecordedEvidence(rows,"issues").map(item=>item.id)).toEqual(["a","b"]);
+ });
 });
