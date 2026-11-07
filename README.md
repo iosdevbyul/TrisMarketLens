@@ -220,6 +220,29 @@ path. CI verifies build and offline fixtures, **not** a live operator-owned
 market backend. Run `npm run verify:integration:audit` only with an actually
 running loopback backend and web server to test live HTTP integration.
 
+## Market data and analysis provenance safeguards
+
+The OHLCV chart uses the original backend-provided UTC calendar dates,
+unadjusted integer OHLC and volume. The 1M/3M/6M/1Y selection subtracts
+**calendar** months from the last bar and clamps the target day to month-end
+(e.g. March 31 → February 28/29); no trading sessions or prices are generated.
+
+Published market bars, per-security analysis `dataThrough`, and evaluation
+reference/outcome days reject impossible Gregorian dates such as February 30.
+Unsafe integer prices/volumes are rejected instead of rounded or plotted.
+The per-ticker chart displays model annotations **only when the price source
+and analysis source agree** and analysis loading succeeded. In particular,
+fictional demo records are never overlaid on HTTP market prices, and
+live published analysis records are never annotated on demonstration candles.
+
+These are frontend integrity/visualization checks against published API
+contracts, **not** independent confirmation of live KRX prices, model accuracy,
+historical ticker identity, or investment eligibility. The operator-owned
+backend is not reachable in GitHub fixture CI; real HTTP price-by-price and
+browser chart E2E verification still require a local operator run. The current
+DonghakStockVision FastAPI app has no evaluations route, so any attempted
+HTTP evaluation read must remain unavailable rather than fabricated.
+
 ## Current routes
 
 - / research overview

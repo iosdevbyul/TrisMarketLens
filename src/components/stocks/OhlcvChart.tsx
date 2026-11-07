@@ -3,17 +3,8 @@ import { useMemo, useState } from "react";
 import type { OhlcvBar } from "@/domain/ohlcv";
 import type { StockAnalysisRecord } from "@/domain/stockAnalysis";
 import { groupChartAnalyses } from "@/domain/chartSignals";
+import {filterOhlcvPeriod,type ChartPeriod} from "@/domain/marketChartProvenance";
 interface Props { ticker: string; bars: OhlcvBar[]; locale: "en" | "ko"; analyses?: StockAnalysisRecord[]; analysisIsDemo?: boolean }
-export type ChartPeriod = "1M" | "3M" | "6M" | "1Y";
-export function filterOhlcvPeriod(bars: OhlcvBar[], period: ChartPeriod): OhlcvBar[] {
-  if (!bars.length) return [];
-  const latest = new Date(bars[bars.length - 1].date + "T00:00:00Z");
-  const months = { "1M": 1, "3M": 3, "6M": 6, "1Y": 12 }[period];
-  const boundary = new Date(latest);
-  boundary.setUTCMonth(boundary.getUTCMonth() - months);
-  const start = boundary.toISOString().slice(0,10);
-  return bars.filter(bar => bar.date >= start);
-}
 
 const W = 960, H = 360, LEFT = 72, RIGHT = 26, TOP = 22, PRICE_BOTTOM = 258, VOL_TOP = 278, VOL_BOTTOM = 326;
 export function OhlcvChart({ ticker, bars, locale, analyses = [], analysisIsDemo = false }: Props) {

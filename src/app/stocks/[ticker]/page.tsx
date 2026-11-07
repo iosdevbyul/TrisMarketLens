@@ -12,6 +12,7 @@ import { getSecurityMetadata } from "@/data/SecurityMetadataDataSource";
 import { getPredictionEvaluations } from "@/data/PredictionEvaluationDataSource";
 import { stockDisplayName, stockSectorLabel } from "@/domain/stock";
 import { getFeatureDataState, type FeatureDataState } from "@/domain/featureDataState";
+import { chartAnalysesForSource } from "@/domain/marketChartProvenance";
 
 interface StockDetailPageProps {
   params: Promise<{ ticker: string }>;
@@ -143,7 +144,8 @@ export default async function StockDetailPage({ params }: StockDetailPageProps) 
         <div className="panel-heading"><div><p className="eyebrow">{t("OHLC history")}</p><h2>{t("Price and volume")}</h2></div><span className="panel-count">{stateLabel(priceState)}</span></div>
         {prices.source === "mock" ? <div className="run-lock" role="status"><p>{t("Artificial OHLCV demo")}</p><span>{t("Example candles are not historical market prices.")}</span></div> : null}
         {prices.error ? <div className="run-lock" role="alert"><p>{t("Price data unavailable")}</p><span>{prices.error}</span></div> : null}
-        {priceState === "available" || priceState === "demo" ? <OhlcvChart ticker={ticker} bars={prices.data.bars} locale={locale} analyses={analysis.data.records} analysisIsDemo={analysis.source === "mock"} /> : priceState === "error" ? null : <p className="section-copy">{t(priceState === "disconnected" ? "Not connected" : "No validated price bars available yet.")}</p>}
+        {(priceState === "available" || priceState === "demo") && analysis.data.records.length>0 && !chartAnalysesForSource(prices.source,analysis.source,analysis.error) ? <p role="status" className="metric-detail">Analysis markers hidden: price and analysis sources are different or analysis publication is unavailable. No mixed demo/live signals are displayed.</p> : null}
+        {priceState === "available" || priceState === "demo" ? <OhlcvChart ticker={ticker} bars={prices.data.bars} locale={locale} analyses={chartAnalysesForSource(prices.source,analysis.source,analysis.error)?analysis.data.records:[]} analysisIsDemo={analysis.source === "mock" && prices.source === "mock"} /> : priceState === "error" ? null : <p className="section-copy">{t(priceState === "disconnected" ? "Not connected" : "No validated price bars available yet.")}</p>}
       </section>
     </>
   );

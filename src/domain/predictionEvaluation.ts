@@ -1,3 +1,4 @@
+import {isSourceCalendarDate} from "./sourceCalendarDate";
 export type EvaluationVerdict = "correct" | "incorrect" | "inconclusive" | "pending";
 export interface PredictionEvaluation {
   id: string;
@@ -15,7 +16,7 @@ export interface PredictionEvaluation {
   explanation: string | null;
 }
 export interface PredictionEvaluationSnapshot { ticker: string; evaluations: PredictionEvaluation[] }
-const date = (value: unknown) => typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value) && Number.isFinite(Date.parse(value));
+const date = isSourceCalendarDate;
 const timestamp = (value: unknown) => typeof value === "string" && /(Z|[+-]\d{2}:\d{2})$/.test(value) && Number.isFinite(Date.parse(value));
 export function isPredictionEvaluationSnapshot(value: unknown, ticker: string): value is PredictionEvaluationSnapshot {
   if (!value || typeof value !== "object") return false;
@@ -31,6 +32,7 @@ export function isPredictionEvaluationSnapshot(value: unknown, ticker: string): 
     if (!Number.isInteger(e.horizonSessions) || (e.horizonSessions as number) < 1 || (e.horizonSessions as number) > 1000) return false;
     if (!date(e.referenceDate) || (e.evaluationDate !== null && !date(e.evaluationDate))) return false;
     if (e.evaluatedAt !== null && !timestamp(e.evaluatedAt)) return false;
+    if (e.evaluationDate !== null && e.evaluationDate < e.referenceDate) return false;
     if (!["correct","incorrect","inconclusive","pending"].includes(String(e.verdict))) return false;
     for (const key of ["referencePrice","evaluationPrice","realizedReturn"]) {
       if (e[key] !== null && (typeof e[key] !== "number" || !Number.isFinite(e[key]))) return false;
