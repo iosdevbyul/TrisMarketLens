@@ -144,6 +144,37 @@ the stock list count matches the published universe, checks one stock-detail
 response, and finally confirms that Tris Market Lens itself reports a healthy HTTP
 backend connection.
 
+### 5. Audit backend/web feature readiness (local operator only)
+
+With both **locally running** servers and `MARKET_LENS_DATA_SOURCE=http`, run:
+
+```bash
+npm run verify:integration:audit
+```
+
+This is a separate **real HTTP, GET-only** audit. It checks the backend's immutable
+health, project/research coverage, models, evidence, blocked baseline, stock list,
+operational catalog, runs, freshness, alerts, screener; it then checks the web's
+health, operational catalog count parity, and six server-rendered pages.
+
+The JSON result distinguishes:
+
+- `available`: a response with a recognized contract, **not** research approval.
+- `empty`: a valid response with no records.
+- `unconfigured`: optional backend publication returned HTTP 503.
+- `failed`: transport, shape, parity, or web render failure.
+
+The CLI returns a failure exit status for partial or failed coverage. An operator
+must inspect each `checks` entry before claiming end-to-end real-data readiness.
+It never writes to the backend, executes models, trades, or substitutes demo
+records. The backend's `read_only` health response does **not** prove that
+optional publications are available or data is approved for investment.
+
+`npm run verify:next-queue` executes **offline fixture tests** of this audit
+alongside other script checks. CI passing those fixtures is *not* proof that
+an operator's private loopback backend or real market data were available.
+A live audit is possible only when both services are actually running locally.
+
 `/api/health` returns HTTP 503 in HTTP mode when the backend is missing,
 misconfigured, unreachable, or returns an unexpected health payload. The frontend
 does not silently fall back to mock data.
