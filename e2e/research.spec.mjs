@@ -25,7 +25,7 @@ test("screener filters demonstrate empty and restored results without live-API c
  await expect(page.getByText("No analyses match your filters.")).toBeVisible();
  await search.fill("");
  await expect(page.locator(".screener-table tbody tr").first()).toBeVisible();
- await page.getByLabel("Direction",{exact:true}).selectOption("up");
+ await page.locator(".screener-controls select").first().selectOption("up");
  await expect(page.getByText("matching analyses")).toBeVisible();
 });
 
