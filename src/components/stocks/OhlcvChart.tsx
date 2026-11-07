@@ -32,6 +32,12 @@ export function OhlcvChart({ ticker, bars, locale, analyses = [], analysisIsDemo
       <div className="ohlcv-toolbar" aria-label={locale === "ko" ? "차트 기간" : "Chart period"}>
         {(["1M","3M","6M","1Y"] as const).map(item => <button key={item} type="button" aria-pressed={period === item} onClick={() => { setPeriod(item); setSelectedDate(null); setSelectedMarkerDate(null); }}>{item}</button>)}
       </div>
+      <label className="ohlcv-date-picker">
+        <span>{locale === "ko" ? "거래일 선택" : "Select trading date"}</span>
+        <select aria-label={locale === "ko" ? "상세 OHLCV 거래일" : "Detailed OHLCV trading date"} value={selected.date} onChange={event => {setSelectedDate(event.target.value); setSelectedMarkerDate(null);}}>
+          {visible.map(bar => <option key={bar.date} value={bar.date}>{bar.date}</option>)}
+        </select>
+      </label>
       <div className="ohlcv-scroll" role="region" aria-label={locale === "ko" ? `${ticker} 가격 및 거래량 차트` : `${ticker} price and volume chart`} tabIndex={0}>
       <svg viewBox={`0 0 ${chartWidth} ${H}`} style={{ minWidth: chartWidth }} xmlns="http://www.w3.org/2000/svg" className="ohlcv-svg" aria-hidden="true">
         {ticks.map((n,i) => <g key={i}>
@@ -50,7 +56,7 @@ export function OhlcvChart({ ticker, bars, locale, analyses = [], analysisIsDemo
             {noTrade ? <circle cx={x} cy={priceY(b.close)} r={3} fill="none" stroke="var(--muted)" strokeWidth="1.5"/> : <line x1={x} y1={priceY(b.high)} x2={x} y2={priceY(b.low)} stroke={color} strokeWidth="1.5" />}
             {!noTrade ? <rect x={x-bodyWidth/2} y={y1} width={bodyWidth} height={Math.max(y2-y1,1.5)} rx="0.5" fill={color} /> : null}
             {!noTrade ? <rect x={x-bodyWidth/2} y={volumeY} width={bodyWidth} height={VOL_BOTTOM-volumeY} fill={color} opacity="0.45" /> : null}
-            <rect x={x-step/2} y={TOP} width={step} height={VOL_BOTTOM-TOP} fill="transparent" role="button" tabIndex={0} aria-label={`${b.date}: O ${b.open}, H ${b.high}, L ${b.low}, C ${b.close}, V ${b.volume}`} onClick={() => setSelectedDate(b.date)} onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setSelectedDate(b.date); } }} />
+            <rect x={x-step/2} y={TOP} width={step} height={VOL_BOTTOM-TOP} fill="transparent" onClick={() => setSelectedDate(b.date)} />
           </g>;
         })}
         {markers.map(marker => {
