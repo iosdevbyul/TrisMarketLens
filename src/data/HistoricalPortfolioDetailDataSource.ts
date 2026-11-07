@@ -28,6 +28,12 @@ export interface HistoricalPortfolioSummary extends PublishedPortfolio {
  limitations:string[];
  unavailable:Record<string,string>;
 }
+export interface HistoricalTrade {
+ eventId:string;
+ classification:"filled"|"pending"|"rejected"|"accepted"|"no_order";
+ terminalStatus:string|null;
+ evidence:Record<string,unknown>&{ticker:string;trading_date:string};
+}
 export interface HistoricalTradesPage {
  schemaVersion:"published_historical_portfolio_v1";
  researchOnly:true;
@@ -38,7 +44,7 @@ export interface HistoricalTradesPage {
  investmentSuitabilityVerified:false;
  brokerageEligible:false;
  reportId:string;
- items:Record<string,unknown>[];
+ items:HistoricalTrade[];
  total:number;
  offset:number;
  limit:number;
@@ -82,7 +88,16 @@ export function isHistoricalTradesPage(v:unknown,reportId:string,offset:number):
   !count(v.total)||(v.total as number)>100000||!Array.isArray(v.items)||
   v.items.length>10||v.items.length>Math.max(0,(v.total as number)-offset))return false;
  // Backend trade evidence is nested and versioned independently. Do not interpret it as broker executions.
- return v.items.every((row:unknown)=>object(row));
+ const ids=new Set<string>();
+ return v.items.every((row:unknown)=>{
+  if(!object(row)||typeof row.eventId!=="string"||!HASH.test(row.eventId)||
+   ids.has(row.eventId)||!["filled","pending","rejected","accepted","no_order"].includes(String(row.classification))||
+   !(row.terminalStatus===null||typeof row.terminalStatus==="string")||!object(row.evidence)||
+   typeof row.evidence.ticker!=="string"||!/^[0-9A-Z]{6}$/.test(row.evidence.ticker)||
+   typeof row.evidence.trading_date!=="string"||!/^\\d{4}-\\d{2}-\\d{2}$/.test(row.evidence.trading_date))return false;
+  ids.add(row.eventId);
+  return true;
+ });
 }
 async function request<T>(base:string,path:string,validate:(v:unknown)=>v is T,fetcher:typeof fetch):Promise<HistoricalResult<T>>{
  try{
