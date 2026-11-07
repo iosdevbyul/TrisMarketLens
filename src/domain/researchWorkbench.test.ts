@@ -1,5 +1,5 @@
 import {describe,expect,it} from "vitest";
-import {evidenceForTicker,publishedModelStatus,researchState,selectedResearchModel,validResearchTicker} from "./researchWorkbench";
+import {evidenceForTicker,publicationCrossCheck,publishedModelStatus,researchState,selectedResearchModel,validResearchTicker} from "./researchWorkbench";
 import type {ScreenerEntry} from "./screener";
 import type {StockAnalysisRecord} from "./stockAnalysis";
 import type {ModelSummary} from "./research";
@@ -42,6 +42,28 @@ describe("Research evidence workbench",()=>{
   expect(publishedModelStatus(models,"down")).toBeNull();
   const cross=evidenceForTicker([entry],"005930",[{...record,modelId:"Global Up"}]);
   expect(cross.matched).toBe(false);
+ });
+ it("requires both independent publications to originate from HTTP and be error-free",()=>{
+  const screener={source:"http" as const,error:null,entries:[entry]};
+  const analysis={source:"http" as const,error:null,records:[record]};
+  expect(publicationCrossCheck("005930",screener,analysis).state).toBe("corroborated");
+  const mixed=publicationCrossCheck("005930",{...screener,source:"mock"},analysis);
+  expect(mixed).toEqual({state:"source_mismatch",entries:[],records:[]});
+  const reverse=publicationCrossCheck("005930",screener,{...analysis,source:"mock"});
+  expect(reverse).toEqual({state:"source_mismatch",entries:[],records:[]});
+  const fake=publicationCrossCheck("005930",{...screener,source:"mock"},{...analysis,source:"mock"});
+  expect(fake.state).toBe("demo");
+  expect(fake.records).toHaveLength(1);
+  expect(publicationCrossCheck("005930",screener,{...analysis,error:"HTTP 503"}).state).toBe("unavailable");
+  expect(publicationCrossCheck("005930",{...screener,source:"disconnected"},analysis).state).toBe("unavailable");
+  expect(publicationCrossCheck("005930",null,analysis).state).toBe("unavailable");
+ });
+ it("never certifies mismatched metadata as verified even with real HTTP endpoints",()=>{
+  const s={source:"http" as const,error:null,entries:[entry]};
+  const a={source:"http" as const,error:null,records:[{...record,score:0.15}]};
+  expect(publicationCrossCheck("005930",s,a).state).toBe("not_confirmed");
+  expect(publicationCrossCheck("000660",s,a).state).toBe("not_confirmed");
+  expect(publicationCrossCheck("../../",s,a).state).toBe("unavailable");
  });
  it("never shows a screener entry as evidence for a different ticker",()=>{
   expect(evidenceForTicker([entry],"000660",[{...record,ticker:"000660"}]).entries).toEqual([]);

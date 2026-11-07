@@ -4,7 +4,7 @@ import {getDataSource} from "@/data/getDataSource";
 import {getScreener} from "@/data/ScreenerDataSource";
 import {getStockAnalysis} from "@/data/StockAnalysisDataSource";
 import {getFeatureDataState} from "@/domain/featureDataState";
-import {evidenceForTicker,selectedResearchModel,validResearchTicker} from "@/domain/researchWorkbench";
+import {publicationCrossCheck,selectedResearchModel,validResearchTicker} from "@/domain/researchWorkbench";
 import type {CoverageSummary,ModelSummary,ModelDetail} from "@/domain/research";
 import type {EvidenceLayerSummary} from "@/domain/evidence";
 
@@ -35,8 +35,10 @@ export default async function ResearchWorkbenchPage({
  const stock=stockResult.status==="fulfilled"?stockResult.value:null;
  const mode=process.env.MARKET_LENS_DATA_SOURCE??"mock";
  const state=screener?getFeatureDataState(screener.source,screener.error,screener.data.entries.length):"error";
- const recordEvidence=validTicker&&ticker&&stock&&screener?
-  evidenceForTicker(screener.data.entries,ticker,stock.data.records):null;
+ const recordEvidence=validTicker&&ticker?publicationCrossCheck(ticker,
+  screener?{source:screener.source,error:screener.error,entries:screener.data.entries}:null,
+  stock?{source:stock.source,error:stock.error,records:stock.data.records}:null
+ ):null;
  const errors=[
   modelsResult.status==="rejected"?"Model catalog: "+errorDetail(modelsResult.reason):null,
   coverageResult.status==="rejected"?"Research coverage: "+errorDetail(coverageResult.reason):null,
@@ -106,9 +108,11 @@ export default async function ResearchWorkbenchPage({
    <div className="panel-heading"><h2>Published security analysis</h2><span className="panel-count">{ticker||"No ticker selected"}</span></div>
    {ticker&&!validTicker?<p role="alert">Invalid ticker.</p>:null}
    {!ticker?<p className="section-copy">Enter a ticker to inspect recorded security analysis against the published screener.</p>:null}
-   {ticker&&validTicker?<p className="section-copy">Screener records: {entries.length} · Per-ticker records: {records.length}. Exact published record correspondence: {recordEvidence?.matched?"Found":"Not confirmed"}. A score is displayed only when the backend verifies the individual record; this does not certify investment suitability.</p>:null}
+   {ticker&&validTicker?<p className="section-copy">Screener records: {entries.length} · Per-ticker records: {records.length}. Exact published record correspondence: {recordEvidence?.state==="corroborated"?"Verified source correspondence":recordEvidence?.state==="source_mismatch"?"Not comparable: different data sources":recordEvidence?.state==="demo"?"Fictional demo only":recordEvidence?.state==="unavailable"?"Unavailable": "Not confirmed"}. A score is displayed only when the backend verifies the individual record; this does not certify investment suitability.</p>:null}
+   {recordEvidence?.state==="source_mismatch"?<p role="alert" className="metric-detail">Screener and ticker analysis use different sources. Their records are hidden to prevent presenting demonstration IDs as published HTTP evidence.</p>:null}
+   {recordEvidence?.state==="unavailable"&&ticker&&validTicker?<p role="status" className="metric-detail">Source correspondence cannot be verified: one or both publications are disconnected, invalid or unavailable.</p>:null}
    {stock?.source==="mock"||screener?.source==="mock"?<p role="status" className="metric-detail">Fictional demonstration analysis — not market observations.</p>:null}
-   {ticker&&validTicker&&entries.length===0&&records.length===0?<p className="metric-detail">No published research analysis for this ticker; this is not a neutral model prediction.</p>:null}
+   {ticker&&validTicker&&entries.length===0&&records.length===0&&recordEvidence?.state==="not_confirmed"?<p className="metric-detail">No matching published research analysis for this ticker; this is not a neutral model prediction.</p>:null}
    {records.map(item=><article className="operations-run" key={item.id}>
     <div>
      <strong>{item.modelId} · {item.modelVersion}</strong>
@@ -118,7 +122,7 @@ export default async function ResearchWorkbenchPage({
      {item.explanation?<p className="metric-detail">{item.explanation}</p>:null}
     </div><span className="status-pill" data-state={item.validation==="verified"?"verified":"blocked"}>{item.validation}</span>
    </article>)}
-   {entries.length>0&&records.length===0?<p className="metric-detail">Published screener entries exist but per-ticker analysis is absent or inaccessible. They are not substituted for a ticker publication.</p>:null}
+   {entries.length>0&&records.length===0&&recordEvidence?.state==="not_confirmed"?<p className="metric-detail">Published screener entries exist but per-ticker analysis is absent. They are not substituted for a ticker publication.</p>:null}
    {ticker&&validTicker?<p><Link href={"/stocks/"+ticker}>View ticker history, evaluation and source metadata</Link></p>:null}
    <p><Link href="/screener">Browse all published screener records</Link></p>
   </section>

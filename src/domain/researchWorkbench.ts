@@ -32,3 +32,24 @@ export function evidenceForTicker(
 export function publishedModelStatus(models:readonly ModelSummary[],direction:"up"|"down"){
  return models.find(model=>model.id===direction)??null;
 }
+
+export type PublicationSource = "http"|"mock"|"disconnected";
+export type PublicationCrossCheck = "corroborated"|"not_confirmed"|"unavailable"|"source_mismatch"|"demo";
+/**
+ * Verification means an exact cross-reference between two independent published
+ * HTTP projections. A matching ID between mock and HTTP (or disconnected)
+ * never certifies a publication. Errors invalidate the comparison.
+ */
+export function publicationCrossCheck(
+ ticker:string,
+ screener:{source:PublicationSource;error:string|null;entries:readonly ScreenerEntry[]}|null,
+ analysis:{source:PublicationSource;error:string|null;records:readonly StockAnalysisRecord[]}|null
+):{state:PublicationCrossCheck;entries:ScreenerEntry[];records:StockAnalysisRecord[]}{
+ if(!validResearchTicker(ticker)||!screener||!analysis||
+  screener.error||analysis.error||screener.source==="disconnected"||analysis.source==="disconnected")
+  return {state:"unavailable",entries:[],records:[]};
+ if(screener.source!==analysis.source)return {state:"source_mismatch",entries:[],records:[]};
+ const matched=evidenceForTicker(screener.entries,ticker,analysis.records);
+ if(screener.source==="mock")return {state:"demo",entries:matched.entries,records:matched.records};
+ return {state:matched.matched?"corroborated":"not_confirmed",entries:matched.entries,records:matched.records};
+}
