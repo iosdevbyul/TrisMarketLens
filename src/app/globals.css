@@ -1527,3 +1527,35 @@ h1 {
 .recorded-run-pipeline-coverage td .recorded-run-pipeline-drilldown[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
 .recorded-run-pipeline-coverage td .recorded-run-pipeline-drilldown:disabled{opacity:.45;cursor:default}
 .recorded-run-pipeline-coverage td .recorded-run-pipeline-drilldown:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Read-only workflow accessibility: clear keyboard focus and honest source state. */
+.skip-link{position:absolute;left:12px;top:8px;z-index:100;transform:translateY(-200%);padding:11px 16px;border-radius:8px;background:var(--surface);color:var(--text);border:2px solid var(--accent)}
+.skip-link:focus-visible{transform:translateY(0)}
+.content{min-width:0}
+.content:focus{outline:none}
+.content :is(a,button,input,select,textarea):focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.panel,.operations-run,.model-card,.metric-card,.stock-analysis-item{min-width:0}
+.panel :is(p,strong,code,dd),.operations-run :is(p,strong,code){overflow-wrap:anywhere}
+.live-dot[data-source="http"]{background:var(--warning);box-shadow:none}
+.live-dot[data-source="disconnected"]{background:var(--danger);box-shadow:none}
+.source-retry{margin-top:12px}
+.source-retry-button{min-height:40px;border:1px solid var(--border);border-radius:8px;background:var(--surface-strong);color:var(--text);padding:8px 14px;cursor:pointer}
+.source-retry-button:disabled{opacity:.65;cursor:wait}
+.ohlcv-date-picker{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin:12px 0;color:var(--text);font-size:13px}
+.ohlcv-date-picker select{max-width:100%;min-height:42px;padding:7px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text)}
+.screener-table-wrap,.recorded-run-matrix-scroll{max-width:100%;scrollbar-gutter:stable}
+@media(max-width:960px){
+ .sidebar{padding:16px 20px}
+ .nav-list{display:flex;flex-wrap:nowrap;gap:8px;overflow-x:auto;max-width:100%;margin-top:14px;padding-bottom:10px;overscroll-behavior-x:contain;scrollbar-gutter:stable}
+ .nav-item{flex:0 0 auto;white-space:nowrap;min-height:42px}
+ .sidebar-note{display:flex;margin-top:10px}
+}
+@media(max-width:640px){
+ .content{padding:24px 16px}
+ .sidebar{padding:14px 16px}
+ .panel{padding:16px}
+ .panel-heading{gap:10px;flex-wrap:wrap}
+ .panel-count{max-width:100%;overflow-wrap:anywhere}
+ .stock-analysis-heading{flex-wrap:wrap}
+ .metric-list>div{min-width:0;flex-wrap:wrap}
+}
