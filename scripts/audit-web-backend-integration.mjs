@@ -42,7 +42,7 @@ async function checkJson(name,url,check,fetchImpl,checks,payloads){
  const value=await parse(response);
  if(!check(value)){checks.push(row(name,"failed","Response contract mismatch"));return;}
  payloads.set(name,value);
- const count=Array.isArray(value)?value.length:Array.isArray(value.items)?value.items.length:Array.isArray(value.entries)?value.entries.length:null;
+ const count=Array.isArray(value)?value.length:Array.isArray(value.items)?value.items.length:Array.isArray(value.entries)?value.entries.length:Array.isArray(value.records)?value.records.length:Array.isArray(value.bars)?value.bars.length:null;
  checks.push(row(name,count===0?"empty":"available",count===null?"Response shape verified":"Returned "+count+" records"));
 }
 /** Dynamic URLs are built only from validated identifiers returned by the backend. */
