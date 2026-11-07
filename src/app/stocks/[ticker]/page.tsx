@@ -45,6 +45,7 @@ export default async function StockDetailPage({ params }: StockDetailPageProps) 
         title={stockDisplayName(stock)}
       />
 
+      <p className="section-copy"><Link href={"/research-path?ticker="+encodeURIComponent(ticker)}>Trace this ticker through collection, research verification and historical portfolio evidence</Link>{" · "}<Link href={"/research-workbench?ticker="+encodeURIComponent(ticker)}>Review published model and ticker provenance</Link></p>
       <section className="panel single-panel" aria-label="Security identity evidence">
         <div className="panel-heading"><div><p className="eyebrow">Research evidence</p><h2>Security identity metadata</h2></div><span className="panel-count">{metadata.data ? "Source snapshot" : "Unavailable"}</span></div>
         <p className="section-copy">Current source-snapshot display metadata only. It does not establish a current listing, security type, point-in-time identity, or historical continuity.</p>
