@@ -152,10 +152,13 @@ With both **locally running** servers and `MARKET_LENS_DATA_SOURCE=http`, run:
 npm run verify:integration:audit
 ```
 
-This is a separate **real HTTP, GET-only** audit. It checks the backend's immutable
-health, project/research coverage, models, evidence, blocked baseline, stock list,
-operational catalog, runs, freshness, alerts, screener; it then checks the web's
-health, operational catalog count parity, and six server-rendered pages.
+This is a separate **real HTTP, GET-only** smoke audit. It checks backend health,
+project/research coverage, models, evidence, blocked baseline, stock list,
+operational catalog, runs, freshness, alerts, screener, historical portfolio catalog,
+and source-derived stock/model/evidence/portfolio detail endpoints. It also checks
+web health, two source-count consistency checks, 12 principal HTML routes and
+available per-ticker/model/archive detail pages. Dynamic paths are constructed only
+from validated source identifiers; a missing publication is never synthesized.
 
 The JSON result distinguishes:
 
@@ -163,9 +166,17 @@ The JSON result distinguishes:
 - `empty`: a valid response with no records.
 - `unconfigured`: optional backend publication returned HTTP 503.
 - `failed`: transport, shape, parity, or web render failure.
+- `not_tested`: the source is empty/unavailable, or the comparison endpoint requires
+  a request method outside this GET-only audit.
 
 The CLI returns a failure exit status for partial or failed coverage. An operator
 must inspect each `checks` entry before claiming end-to-end real-data readiness.
+The audit explicitly reports `browserInteractionsVerified: false` and
+`marketDataCorrectnessVerified: false`; a delivered HTML document is not a
+verified interactive browser journey, chart, or independently checked market price.
+Historical portfolio comparison uses a bounded read-only semantic POST and is
+**not executed** by this GET-only check. A full green result therefore does not
+certify all web interactions or investment data accuracy.
 It never writes to the backend, executes models, trades, or substitutes demo
 records. The backend's `read_only` health response does **not** prove that
 optional publications are available or data is approved for investment.
