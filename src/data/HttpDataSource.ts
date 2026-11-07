@@ -126,7 +126,7 @@ export class HttpDataSource implements DataSource {
         cache: "no-store",
         signal: AbortSignal.timeout(5000),
       });
-    } catch (error) {
+    } catch {
       throw new HttpDataSourceError({
         message: "DonghakStockVision API request failed or timed out.",
         status: 0,
