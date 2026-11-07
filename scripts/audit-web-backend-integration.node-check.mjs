@@ -6,7 +6,7 @@ const backend="http://127.0.0.1:8000",web="http://127.0.0.1:3000";
 const health={status:"ok",service:"DonghakStockVision",mode:"read_only"};
 const bBodies={
  "/api/v1/health":health,
- "/api/v1/project/status":{productName:"DonghakStockVision",metrics:[]},
+ "/api/v1/project/status":{productName:"DonghakStockVision",metrics:[],evidence:[],baseline:[]},
  "/api/v1/research/coverage":{universe:1},
  "/api/v1/models":[{id:"up",modelName:"Research"}],
  "/api/v1/models/up":{id:"up",provenance:{artifactSha256:"a".repeat(64)},validation:{averagePrecision:0.6},oos:{averagePrecision:0.5}},
@@ -21,9 +21,9 @@ const bBodies={
   schemaVersion:"operational_market_v1",evidenceStatus:"unreviewed",offset:0,limit:25,total:1,
   items:[{ticker:"005930",latestDataDate:"2026-11-06"}]
  },
- "/api/v1/operations/runs?offset=0&limit=25":{schemaVersion:"operations_v1",items:[]},
+ "/api/v1/operations/runs?offset=0&limit=25":{schemaVersion:"operations_v1",offset:0,limit:25,total:0,items:[]},
  "/api/v1/operations/freshness":{schemaVersion:"operations_v1",items:[]},
- "/api/v1/operations/alerts?offset=0&limit=25":{schemaVersion:"operations_v1",items:[]},
+ "/api/v1/operations/alerts?offset=0&limit=25":{schemaVersion:"operations_v1",offset:0,limit:25,total:0,items:[]},
  "/api/v1/analysis/screener":{entries:[]},
  "/api/v1/research/historical-portfolios?offset=0&limit=10":{schemaVersion:"published_historical_portfolio_v1",offset:0,limit:10,total:0,items:[]}
 };
