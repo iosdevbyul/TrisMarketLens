@@ -446,6 +446,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
      </table>
     </div>
     {handoffCopyStatus?<p className="metric-detail" role="status">{handoffCopyStatus}</p>:null}
+    {reviewLinkStatus?<p className="metric-detail" role="status">{reviewLinkStatus}</p>:null}
    </section>
    <button type="button" className="recorded-run-reset" onClick={downloadMatrixCsv}>Export matrix CSV</button>
    <p className="metric-detail">Counts use only the {runs.length} records returned by the API. Select a cell to filter by both dimensions, or a row/column total to inspect all evidence or execution states in that margin. Select an active cell or total again to clear it. Other search, date and attention filters still apply to results, so the list may be smaller than these totals. Recorded execution outcomes do not grant semantic approval.</p>
