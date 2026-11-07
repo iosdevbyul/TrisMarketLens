@@ -1,9 +1,9 @@
 "use client";
 import { useMemo, useState } from "react";
-import type { OhlcvBar } from "@/domain/ohlcv";
-import type { StockAnalysisRecord } from "@/domain/stockAnalysis";
-import { groupChartAnalyses } from "@/domain/chartSignals";
-import {filterOhlcvPeriod,type ChartPeriod} from "@/domain/marketChartProvenance";
+import type { OhlcvBar } from "../../domain/ohlcv";
+import type { StockAnalysisRecord } from "../../domain/stockAnalysis";
+import { groupChartAnalyses } from "../../domain/chartSignals";
+import {filterOhlcvPeriod,type ChartPeriod} from "../../domain/marketChartProvenance";
 interface Props { ticker: string; bars: OhlcvBar[]; locale: "en" | "ko"; analyses?: StockAnalysisRecord[]; analysisIsDemo?: boolean }
 
 const W = 960, H = 360, LEFT = 72, RIGHT = 26, TOP = 22, PRICE_BOTTOM = 258, VOL_TOP = 278, VOL_BOTTOM = 326;
