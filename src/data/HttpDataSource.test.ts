@@ -54,7 +54,7 @@ describe("HttpDataSource", () => {
     await expect(dataSource.getStocks()).rejects.toMatchObject({
       name: "HttpDataSourceError",
       status: 503,
-      responseBody: "backend unavailable",
+      responseBody: null,
     } satisfies Partial<HttpDataSourceError>);
   });
 
@@ -73,6 +73,19 @@ describe("HttpDataSource", () => {
     } satisfies Partial<HttpDataSourceError>);
   });
 
+  it("rejects remote, credential-bearing and misleading backend locations before requests", () => {
+    const fetcher = vi.fn();
+    for (const base of [
+      "https://example.com","http://example.com:8000","http://169.254.169.254",
+      "http://127.0.0.2:8000","http://localhost.evil.test:8000",
+      "http://user:secret@localhost:8000","http://localhost:8000/private",
+      "http://localhost:8000?token=secret","http://localhost:0",
+    ]) {
+      expect(() => new HttpDataSource(base,fetcher)).toThrow("local HTTP loopback");
+    }
+    expect(fetcher).not.toHaveBeenCalled();
+  });
+
   it("wraps network failures with the request URL", async () => {
     const fetcher = vi.fn(async () => {
       throw new Error("connection refused");
@@ -83,6 +96,7 @@ describe("HttpDataSource", () => {
       name: "HttpDataSourceError",
       status: 0,
       url: "http://localhost:8000/api/v1/backtests/baseline",
+      message: "DonghakStockVision API request failed or timed out.",
     } satisfies Partial<HttpDataSourceError>);
   });
 });

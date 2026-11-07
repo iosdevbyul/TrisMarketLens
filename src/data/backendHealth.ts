@@ -1,3 +1,4 @@
+import {normalizeLocalBackendUrl} from "./localBackendUrl";
 export type BackendHealth =
   | { status: "ok"; service: string; mode: "read_only" }
   | { status: "misconfigured"; detail: string }
@@ -12,12 +13,12 @@ export async function checkBackendHealth(
   apiBaseUrl: string | undefined,
   fetcher: HealthFetcher = fetch,
 ): Promise<BackendHealth> {
-  const baseUrl = apiBaseUrl?.trim().replace(/\/+$/, "");
+  const baseUrl = normalizeLocalBackendUrl(apiBaseUrl);
 
   if (!baseUrl) {
     return {
       status: "misconfigured",
-      detail: "DONGHAK_API_BASE_URL is required in HTTP mode.",
+      detail: "DONGHAK_API_BASE_URL must be a local loopback HTTP endpoint in HTTP mode.",
     };
   }
 
@@ -25,6 +26,7 @@ export async function checkBackendHealth(
     const response = await fetcher(baseUrl + "/api/v1/health", {
       headers: { Accept: "application/json" },
       cache: "no-store",
+      signal: AbortSignal.timeout(5000),
     });
 
     if (!response.ok) {
@@ -42,7 +44,7 @@ export async function checkBackendHealth(
       !("status" in payload) ||
       payload.status !== "ok" ||
       !("service" in payload) ||
-      typeof payload.service !== "string" ||
+      payload.service !== "DonghakStockVision" ||
       !("mode" in payload) ||
       payload.mode !== "read_only"
     ) {
@@ -57,13 +59,10 @@ export async function checkBackendHealth(
       service: payload.service,
       mode: "read_only",
     };
-  } catch (error) {
+  } catch {
     return {
       status: "unreachable",
-      detail:
-        error instanceof Error
-          ? `DonghakStockVision health request failed: ${error.message}`
-          : "DonghakStockVision health request failed.",
+      detail: "DonghakStockVision health request failed or timed out.",
     };
   }
 }

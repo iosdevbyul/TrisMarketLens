@@ -32,8 +32,24 @@ describe("checkBackendHealth", () => {
   it("fails closed when the API URL is missing", async () => {
     await expect(checkBackendHealth(undefined)).resolves.toEqual({
       status: "misconfigured",
-      detail: "DONGHAK_API_BASE_URL is required in HTTP mode.",
+      detail: "DONGHAK_API_BASE_URL must be a local loopback HTTP endpoint in HTTP mode.",
     });
+  });
+
+  it("rejects remote or credentialed URL without making a health request", async () => {
+    const fetcher = vi.fn();
+    for(const url of ["https://remote.example:443","http://localhost.evil.example:8000","http://user:pass@localhost:8000","http://localhost:8000/secret"]) {
+      const result = await checkBackendHealth(url, fetcher);
+      expect(result.status).toBe("misconfigured");
+    }
+    expect(fetcher).not.toHaveBeenCalled();
+  });
+
+  it("rejects a different read-only service identity", async () => {
+    const result = await checkBackendHealth("http://localhost:8000", async () => Response.json({
+      status:"ok",service:"ImpersonatingService",mode:"read_only"
+    }));
+    expect(result.status).toBe("unreachable");
   });
 
   it("reports an unexpected backend payload", async () => {
@@ -56,7 +72,7 @@ describe("checkBackendHealth", () => {
       checkBackendHealth("http://127.0.0.1:8000", fetcher),
     ).resolves.toMatchObject({
       status: "unreachable",
-      detail: expect.stringContaining("connection refused"),
+      detail: "DonghakStockVision health request failed or timed out.",
     });
   });
 });

@@ -295,6 +295,16 @@ settings. Verify actual backend on the operator's machine before calling any
 live market screen ready. CI validates markup/contract and build only; it does
 not run interactive screen reader/device tests or operator-owned live HTTP.
 
+## Deployment and access policy
+
+The supported environment is **a single operator's local machine only**. Both
+Next.js (`npm run dev` / `npm run start`) and DonghakStockVision must remain on
+loopback. Enabling any HTTP research source with an external backend URL fails
+startup. There is no authentication or remote access gateway; LAN/cloud/public
+hosting is **NO-GO** without a separately approved identity-aware deployment.
+See [P4 deployment readiness and release gate](docs/deployment-readiness-p4.md)
+for security scope, exact prerequisites, negative tests and manual checks.
+
 ## Validation
 
 ```bash

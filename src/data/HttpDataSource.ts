@@ -14,6 +14,7 @@ import type {
 import type { StockDetail, StockSummary } from "@/domain/stock";
 
 import type { DataSource } from "./DataSource";
+import { requireLocalBackendUrl } from "./localBackendUrl";
 import {isBaseline,isCoverage,isEvidenceDetail,isEvidenceSummary,isModelDetail,isModelSummary,isProjectStatus,isStockDetail,isStockSummary} from "./researchResponseValidators";
 
 export type Fetcher = (
@@ -50,11 +51,7 @@ export class HttpDataSource implements DataSource {
   private readonly fetcher: Fetcher;
 
   constructor(baseUrl: string, fetcher: Fetcher = fetch) {
-    const normalizedBaseUrl = baseUrl.trim().replace(/\/+$/, "");
-
-    if (!normalizedBaseUrl) {
-      throw new Error("DonghakStockVision API base URL is required.");
-    }
+    const normalizedBaseUrl = requireLocalBackendUrl(baseUrl);
 
     this.baseUrl = normalizedBaseUrl;
     this.fetcher = fetcher;
@@ -129,12 +126,9 @@ export class HttpDataSource implements DataSource {
         cache: "no-store",
         signal: AbortSignal.timeout(5000),
       });
-    } catch (error) {
+    } catch {
       throw new HttpDataSourceError({
-        message:
-          error instanceof Error
-            ? "DonghakStockVision API request failed: " + error.message
-            : "DonghakStockVision API request failed.",
+        message: "DonghakStockVision API request failed or timed out.",
         status: 0,
         url,
       });
@@ -145,8 +139,6 @@ export class HttpDataSource implements DataSource {
     }
 
     if (!response.ok) {
-      const responseBody = await response.text().catch(() => null);
-
       throw new HttpDataSourceError({
         message:
           "DonghakStockVision API returned HTTP " +
@@ -156,7 +148,6 @@ export class HttpDataSource implements DataSource {
           ".",
         status: response.status,
         url,
-        responseBody,
       });
     }
 
