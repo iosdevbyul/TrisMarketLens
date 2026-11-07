@@ -9,9 +9,14 @@ const bBodies={
  "/api/v1/project/status":{productName:"DonghakStockVision",metrics:[]},
  "/api/v1/research/coverage":{universe:1},
  "/api/v1/models":[{id:"up",modelName:"Research"}],
- "/api/v1/evidence":[{id:"calendar"}],
+ "/api/v1/models/up":{id:"up",provenance:{artifactSha256:"a".repeat(64)},validation:{averagePrecision:0.6},oos:{averagePrecision:0.5}},
+ "/api/v1/evidence":[{id:"calendar",title:"Calendar"}],
+ "/api/v1/evidence/calendar":{id:"calendar",findings:[],metrics:[]},
  "/api/v1/backtests/baseline":{id:"baseline",performanceAvailable:false},
  "/api/v1/stocks":[{ticker:"005930"}],
+ "/api/v1/stocks/005930":{ticker:"005930",dataStatus:"api"},
+ "/api/v1/stocks/005930/analysis":{ticker:"005930",records:[]},
+ "/api/v1/stocks/005930/ohlcv":{ticker:"005930",bars:[]},
  "/api/v1/operational/stocks?offset=0&limit=25":{
   schemaVersion:"operational_market_v1",evidenceStatus:"unreviewed",offset:0,limit:25,total:1,
   items:[{ticker:"005930",latestDataDate:"2026-11-06"}]
@@ -19,7 +24,8 @@ const bBodies={
  "/api/v1/operations/runs?offset=0&limit=25":{schemaVersion:"operations_v1",items:[]},
  "/api/v1/operations/freshness":{schemaVersion:"operations_v1",items:[]},
  "/api/v1/operations/alerts?offset=0&limit=25":{schemaVersion:"operations_v1",items:[]},
- "/api/v1/analysis/screener":{entries:[]}
+ "/api/v1/analysis/screener":{entries:[]},
+ "/api/v1/research/historical-portfolios?offset=0&limit=10":{schemaVersion:"published_historical_portfolio_v1",offset:0,limit:10,total:0,items:[]}
 };
 const wHealth={
  status:"ok",app:"TrisMarketLens",dataSource:"http",backend:{status:"ok"},
@@ -83,6 +89,31 @@ test("distinguishes unavailable services and broken HTML pages",async()=>{
  const report=await auditWebBackendIntegration(args(fetchImpl));
  assert.equal(report.checks.find(x=>x.name==="stocks").status,"failed");
  assert.equal(report.checks.find(x=>x.name==="page:/").status,"failed");
+});
+test("follows source-validated ticker, model and evidence IDs to real detail routes",async()=>{
+ const {calls,fetchImpl}=mockFetch();
+ const report=await auditWebBackendIntegration(args(fetchImpl));
+ for(const name of ["stock-detail","ticker-analysis","stock-ohlcv","model-detail:up","evidence-detail:calendar","page:/stocks/[ticker]","page:/research-workbench?ticker"]){
+  assert.equal(report.checks.find(x=>x.name===name)?.status===("ticker-analysis"===name||"stock-ohlcv"===name?"empty":"available"),true,name);
+ }
+ assert.ok(calls.some(([url])=>url===backend+"/api/v1/stocks/005930/analysis"));
+ assert.ok(calls.some(([url])=>url===web+"/research-path?ticker=005930"));
+ assert.equal(report.checks.find(x=>x.name==="portfolio-comparison").status,"not_tested");
+ assert.equal(report.browserInteractionsVerified,false);
+ assert.equal(report.marketDataCorrectnessVerified,false);
+});
+test("missing optional publication stays unconfigured and prevents full readiness",async()=>{
+ const {fetchImpl}=mockFetch({unconfiguredPath:"/api/v1/research/historical-portfolios?offset=0&limit=10"});
+ const report=await auditWebBackendIntegration(args(fetchImpl));
+ assert.equal(report.checks.find(x=>x.name==="historical-portfolio-catalog").status,"unconfigured");
+ assert.equal(report.checks.find(x=>x.name==="historical-portfolio-detail").status,"not_tested");
+ assert.equal(report.fullyConfigured,false);
+});
+test("detects broken model detail contract and research catalog parity",async()=>{
+ const {fetchImpl}=mockFetch({invalidPath:"/api/v1/models/up"});
+ const report=await auditWebBackendIntegration(args(fetchImpl));
+ assert.equal(report.checks.find(x=>x.name==="model-detail:up").status,"failed");
+ assert.equal(report.result,"failed");
 });
 test("requires actual read-only backend, rejects remote hosts and demo mode before any request",async()=>{
  const {calls,fetchImpl}=mockFetch();
