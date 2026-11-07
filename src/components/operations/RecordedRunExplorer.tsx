@@ -22,7 +22,7 @@ import {selectPipelineEvidence} from "../../domain/pipelineEvidenceSelection";
 import {orderPipelineCoverage,type PipelineCoverageOrder} from "../../domain/pipelineCoverageOrdering";
 import {formatPipelineTriageHandoff} from "../../domain/pipelineTriageHandoff";
 import {selectOldestMissingEvidenceReview} from "../../domain/oldestMissingEvidenceReview";
-import {selectPipelineQualityReview,type ReviewableEvidence} from "../../domain/pipelineQualityReview";
+import {pipelineQualityReviewUrl,selectPipelineQualityReview,type ReviewableEvidence} from "../../domain/pipelineQualityReview";
 import type {CoveragePipeline} from "../../domain/pipelineEvidenceCoverage";
 import {selectMissingPipelineEvidence} from "../../domain/pipelineMissingEvidenceSelection";
 import {summarizePipelineEvidenceCoverage} from "../../domain/pipelineEvidenceCoverage";
@@ -96,6 +96,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  const [summaryCopyErrorId,setSummaryCopyErrorId]=useState<string|null>(null);
  const [handoffCopyStatus,setHandoffCopyStatus]=useState<string|null>(null);
  const [overviewCopyStatus,setOverviewCopyStatus]=useState<string|null>(null);
+ const [reviewLinkStatus,setReviewLinkStatus]=useState<string|null>(null);
  const [coverageOrder,setCoverageOrder]=useState<PipelineCoverageOrder>("default");
  useEffect(()=>{
   const timer=window.setTimeout(()=>{
@@ -272,6 +273,19 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   setAttentionOnly(selected.attention);
   setAttentionReason(selected.attentionReason as AttentionReason|null);
  };
+ const copyPipelineIssuesReviewLink=async(selectedPipeline:CoveragePipeline)=>{
+  const url=pipelineQualityReviewUrl(
+   window.location.href,
+   {query,pipeline,state,evidence,sort,from,to,attention:attentionOnly,attentionReason},
+   selectedPipeline,"issues"
+  );
+  try{
+   await navigator.clipboard.writeText(url);
+   setReviewLinkStatus(selectedPipeline+" review link copied");
+  }catch{
+   setReviewLinkStatus("Review link copy unavailable");
+  }
+ };
  const filterPipelineQuality=(selectedPipeline:CoveragePipeline,selectedEvidence:RecordedEvidence|"issues")=>{
   const selected=selectPipelineEvidence({pipeline,evidence},selectedPipeline,selectedEvidence);
   setPipeline(selected.pipeline);
@@ -427,7 +441,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
        })}<td>{row.recordedPercent===null?"—":row.recordedPercent+"%"}</td><td>{(()=>{const share=summarizePipelineEvidenceIssueShare(pipelineEvidenceQuality.filter(quality=>quality.pipeline===row.pipeline));return <button type="button" className="recorded-run-pipeline-drilldown" disabled={share.issues===0} aria-pressed={pipeline===row.pipeline&&evidence==="issues"} aria-label={`Filter ${row.pipeline} executions with invalid or unavailable evidence (${share.issues} of ${share.returned} records)`} onClick={()=>filterPipelineQuality(row.pipeline,"issues")}>{share.percent===null?"—":share.percent+"%"}</button>;})()}</td><td>{missingEvidenceTriage.find(item=>item.pipeline===row.pipeline)?.oldestStartedAt?.replace("T"," ").replace(".000Z"," UTC")??"—"}</td><td>{missingEvidenceTriage.find(item=>item.pipeline===row.pipeline)?.missingStartTimes??0}</td><td>{evidenceIssueAges.find(item=>item.pipeline===row.pipeline)?.oldestStartedAt?.replace("T"," ").replace(".000Z"," UTC")??"—"}</td><td>{evidenceIssueAges.find(item=>item.pipeline===row.pipeline)?.missingStartTimes??0}</td><td><button type="button" className="recorded-run-reset" disabled={row.notRecorded===0} aria-label={`Review oldest missing evidence for ${row.pipeline} (${row.notRecorded} records)`} onClick={()=>reviewOldestMissingEvidence(row.pipeline)}>Review oldest</button></td><td>{(["invalid","unavailable"] as const).map(item=>{
         const count=pipelineEvidenceQuality.find(quality=>quality.pipeline===row.pipeline)?.[item]??0;
         return <button type="button" key={item} className="recorded-run-reset" disabled={count===0} aria-label={`Review ${item} evidence for ${row.pipeline} (${count} records), oldest first`} onClick={()=>reviewPipelineQuality(row.pipeline,item)}>Review {item} ({count})</button>;
-       })}{(()=>{const quality=pipelineEvidenceQuality.find(item=>item.pipeline===row.pipeline);const count=(quality?.invalid??0)+(quality?.unavailable??0);return <button type="button" className="recorded-run-reset" disabled={count===0} aria-label={`Review invalid and unavailable evidence for ${row.pipeline} (${count} records), oldest first`} onClick={()=>reviewPipelineQuality(row.pipeline,"issues")}>Review both ({count})</button>;})()}</td><td><button type="button" className="recorded-run-reset" disabled={row.total===0} aria-label={`Copy evidence triage handoff for ${row.pipeline}`} onClick={()=>void copyPipelineHandoff(row.pipeline)}>Copy handoff</button></td><td><button type="button" className="recorded-run-reset" disabled={(evidenceIssueAges.find(item=>item.pipeline===row.pipeline)?.issues??0)===0} aria-label={`Copy explicit evidence issues handoff for ${row.pipeline}`} onClick={()=>void copyEvidenceIssueHandoff(row.pipeline)}>Copy issue handoff</button></td><td><button type="button" className="recorded-run-reset" disabled={(pipelineEvidenceQuality.find(quality=>quality.pipeline===row.pipeline)?.invalid??0)+(pipelineEvidenceQuality.find(quality=>quality.pipeline===row.pipeline)?.unavailable??0)===0} aria-label={`Export invalid and unavailable evidence CSV for ${row.pipeline}`} onClick={()=>downloadPipelineEvidenceIssuesCsv(row.pipeline)}>Export issues CSV</button></td><td><button type="button" className="recorded-run-reset" disabled={row.notRecorded===0} aria-label={`Export missing evidence CSV for ${row.pipeline} (${row.notRecorded} records)`} onClick={()=>downloadPipelineMissingEvidenceCsv(row.pipeline)}>Export missing CSV</button></td>
+       })}{(()=>{const quality=pipelineEvidenceQuality.find(item=>item.pipeline===row.pipeline);const count=(quality?.invalid??0)+(quality?.unavailable??0);return <button type="button" className="recorded-run-reset" disabled={count===0} aria-label={`Review invalid and unavailable evidence for ${row.pipeline} (${count} records), oldest first`} onClick={()=>reviewPipelineQuality(row.pipeline,"issues")}>Review both ({count})</button>;})()}{(()=>{const quality=pipelineEvidenceQuality.find(item=>item.pipeline===row.pipeline);const count=(quality?.invalid??0)+(quality?.unavailable??0);return <button type="button" className="recorded-run-reset" disabled={count===0} aria-label={`Copy oldest-first combined evidence issues review link for ${row.pipeline} (${count} records)`} onClick={()=>void copyPipelineIssuesReviewLink(row.pipeline)}>Copy review link</button>;})()}</td><td><button type="button" className="recorded-run-reset" disabled={row.total===0} aria-label={`Copy evidence triage handoff for ${row.pipeline}`} onClick={()=>void copyPipelineHandoff(row.pipeline)}>Copy handoff</button></td><td><button type="button" className="recorded-run-reset" disabled={(evidenceIssueAges.find(item=>item.pipeline===row.pipeline)?.issues??0)===0} aria-label={`Copy explicit evidence issues handoff for ${row.pipeline}`} onClick={()=>void copyEvidenceIssueHandoff(row.pipeline)}>Copy issue handoff</button></td><td><button type="button" className="recorded-run-reset" disabled={(pipelineEvidenceQuality.find(quality=>quality.pipeline===row.pipeline)?.invalid??0)+(pipelineEvidenceQuality.find(quality=>quality.pipeline===row.pipeline)?.unavailable??0)===0} aria-label={`Export invalid and unavailable evidence CSV for ${row.pipeline}`} onClick={()=>downloadPipelineEvidenceIssuesCsv(row.pipeline)}>Export issues CSV</button></td><td><button type="button" className="recorded-run-reset" disabled={row.notRecorded===0} aria-label={`Export missing evidence CSV for ${row.pipeline} (${row.notRecorded} records)`} onClick={()=>downloadPipelineMissingEvidenceCsv(row.pipeline)}>Export missing CSV</button></td>
       </tr>)}</tbody>
      </table>
     </div>
