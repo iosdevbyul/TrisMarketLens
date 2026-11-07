@@ -5,7 +5,8 @@ import {getScreener} from "@/data/ScreenerDataSource";
 import {getStockAnalysis} from "@/data/StockAnalysisDataSource";
 import {getFeatureDataState} from "@/domain/featureDataState";
 import {evidenceForTicker,selectedResearchModel,validResearchTicker} from "@/domain/researchWorkbench";
-import type {CoverageSummary,ModelSummary,EvidenceLayerSummary,ModelDetail} from "@/domain/research";
+import type {CoverageSummary,ModelSummary,ModelDetail} from "@/domain/research";
+import type {EvidenceLayerSummary} from "@/domain/evidence";
 
 function errorDetail(error:unknown):string{
  return error instanceof Error?error.message:"Research backend is unavailable.";
