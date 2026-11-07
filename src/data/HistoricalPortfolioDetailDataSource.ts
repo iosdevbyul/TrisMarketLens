@@ -94,7 +94,7 @@ export function isHistoricalTradesPage(v:unknown,reportId:string,offset:number):
    ids.has(row.eventId)||!["filled","pending","rejected","accepted","no_order"].includes(String(row.classification))||
    !(row.terminalStatus===null||typeof row.terminalStatus==="string")||!object(row.evidence)||
    typeof row.evidence.ticker!=="string"||!/^[0-9A-Z]{6}$/.test(row.evidence.ticker)||
-   typeof row.evidence.trading_date!=="string"||!/^\\d{4}-\\d{2}-\\d{2}$/.test(row.evidence.trading_date))return false;
+   typeof row.evidence.trading_date!=="string"||! /^\d{4}-\d{2}-\d{2}$/.test(row.evidence.trading_date))return false;
   ids.add(row.eventId);
   return true;
  });
