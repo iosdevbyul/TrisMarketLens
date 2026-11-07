@@ -313,6 +313,15 @@ backend/browser checks, comparison POST and network-isolation tests remain
 explicitly unverified. Published research must not be treated as executable
 trading or approved investment performance.
 
+## Automatic Chromium browser E2E
+
+Every PR and `main` push now runs **actual Playwright Chromium browser interactions**
+(in desktop and mobile-emulated viewports) inside the existing CI `checks` job,
+after lint/TypeScript/Vitest/production build. Failure traces/screenshots are
+uploaded as CI artifacts. See [browser E2E setup and test coverage](docs/playwright-browser-e2e.md).
+These tests use explicit **mock/demo-only** data and are not evidence that the
+operator-owned backend, real market values or public deployment passed validation.
+
 ## Validation
 
 ```bash
