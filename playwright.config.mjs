@@ -20,7 +20,7 @@ export default defineConfig({
  },
  projects:[
   {name:"chromium-desktop",use:{...devices["Desktop Chrome"],locale:"en-US"}},
-  {name:"chromium-mobile",use:{...devices["Desktop Chrome"],viewport:{width:390,height:844},deviceScaleFactor:1,isMobile:true,hasTouch:true,locale:"en-US"}}
+  {name:"chromium-mobile-width",use:{...devices["Desktop Chrome"],viewport:{width:390,height:844},deviceScaleFactor:1,isMobile:false,hasTouch:false,locale:"en-US"}}
  ],
  webServer:{
   command:"npm run start",
