@@ -1,3 +1,4 @@
+import {isSourceCalendarDate} from "./sourceCalendarDate";
 export type EvaluationVerdict = "correct" | "incorrect" | "inconclusive" | "pending";
 export interface PredictionEvaluation {
   id: string;
@@ -31,6 +32,7 @@ export function isPredictionEvaluationSnapshot(value: unknown, ticker: string): 
     if (!Number.isInteger(e.horizonSessions) || (e.horizonSessions as number) < 1 || (e.horizonSessions as number) > 1000) return false;
     if (!date(e.referenceDate) || (e.evaluationDate !== null && !date(e.evaluationDate))) return false;
     if (e.evaluatedAt !== null && !timestamp(e.evaluatedAt)) return false;
+    if (e.evaluationDate !== null && e.evaluationDate < e.referenceDate) return false;
     if (!["correct","incorrect","inconclusive","pending"].includes(String(e.verdict))) return false;
     for (const key of ["referencePrice","evaluationPrice","realizedReturn"]) {
       if (e[key] !== null && (typeof e[key] !== "number" || !Number.isFinite(e[key]))) return false;
