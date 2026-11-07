@@ -13,7 +13,7 @@ import {createOperationsTrace,type TraceInputs} from "@/domain/operationsTrace";
 export default async function OperationsTracePage(){
  const mode=process.env.MARKET_LENS_DATA_SOURCE??"mock";
  const api=process.env.DONGHAK_API_BASE_URL;
- const dataSource=mode==="http"?getDataSource():null;
+ const dataSource=mode==="http"&&api?.trim()?getDataSource():null;
  const [pinned,catalog,operations,freshness,alerts,scheduler,research,screener]=await Promise.allSettled([
   mode==="http"?loadPinnedMarketSummary(api):Promise.resolve(null),
   mode==="http"?loadOperationalCatalog(api):Promise.resolve(null),
@@ -49,7 +49,7 @@ export default async function OperationsTracePage(){
    universe:coverage.universe,unresolvedSecurities:coverage.unresolvedSecurities,
    unexplainedTickerSessions:coverage.unexplainedTickerSessions
   }:null,
-  researchError:failed(research),
+  researchError:failed(research)??(mode==="http"&&!dataSource?"Research API base URL is not configured.":null),
   screener:{
    count:screenerValue?.data.entries.length??0,
    error:failed(screener)??screenerValue?.error??null,
