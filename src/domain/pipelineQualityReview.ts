@@ -1,5 +1,5 @@
 import type {CoveragePipeline} from "./pipelineEvidenceCoverage";
-import type {SharedRunFilters} from "./sharedRunFilters";
+import {serializeSharedRunFilters,type SharedRunFilters} from "./sharedRunFilters";
 
 export type ReviewableEvidence="invalid"|"unavailable";
 
@@ -11,4 +11,13 @@ export function selectPipelineQualityReview(
   ...current,pipeline,evidence,sort:"oldest",
   query:"",state:"all",from:"",to:"",attention:false,attentionReason:null
  };
+}
+
+/** Create a direct review URL without changing the current page or its active filters. */
+export function pipelineQualityReviewUrl(
+ currentUrl:string,current:SharedRunFilters,pipeline:CoveragePipeline,evidence:ReviewableEvidence|"issues"
+):string{
+ const url=new URL(currentUrl);
+ url.search=serializeSharedRunFilters(url.search,selectPipelineQualityReview(current,pipeline,evidence));
+ return url.toString();
 }
