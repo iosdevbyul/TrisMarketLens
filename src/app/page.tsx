@@ -25,6 +25,8 @@ export default async function Home() {
         title={status.productName}
       />
 
+      <section className="panel single-panel" aria-label="Research evidence journey"><div className="panel-heading"><h2>Follow the research evidence</h2><span className="status-pill" data-state="blocked">Read-only</span></div><p className="section-copy">Start at a security, inspect its published analysis and model validation, review unresolved source evidence, then compare pinned historical portfolios. Collected KRX observations are never promoted to approved research.</p><Link href="/research-path">Open integrated research path</Link></section>
+
       <section className="metric-grid" aria-label={t("Research summary")}>
         {status.metrics.map((metric) => (
           <WakMetricCard key={t(metric.label)} label={t(metric.label)} value={metric.value} detail={t(metric.detail)} />
