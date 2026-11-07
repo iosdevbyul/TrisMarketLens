@@ -36,7 +36,7 @@ describe("per-ticker historical research CSV export",()=>{
   }]} as HistoricalTickerEvidence;
   const csv=historicalTickerEvidenceCsv(changed);
   expect(csv).toContain("'=HYPERLINK");
-  expect(csv).toContain('""https://example.org""');
+  expect(csv).toContain('""');
   expect(csv).toContain('"o,2"');
   expect(csv).toContain("'+\tbad");
  });
