@@ -1,15 +1,13 @@
 "use client";
 import {useRouter} from "next/navigation";
-import {useState} from "react";
+import {useTransition} from "react";
 
 /** A retry re-requests server-owned data. It never replaces HTTP errors with demo records. */
 export function RetrySource({locale,description}:{locale:"en"|"ko";description?:string}){
  const router=useRouter();
- const [retrying,setRetrying]=useState(false);
+ const [retrying,startTransition]=useTransition();
  function retry(){
-  setRetrying(true);
-  router.refresh();
-  // Reset on next navigation is handled by mounting the server-owned view again.
+  startTransition(() => router.refresh());
  }
  return <div className="source-retry">
   {description?<p className="metric-detail">{description}</p>:null}
