@@ -269,6 +269,32 @@ entries and open positions afterward without generating new signals, followed by
 the settlement tail. Performance fields remain empty until the immutable run is
 actually executed.
 
+## Responsive UX and accessibility verification
+
+The primary navigation provides a keyboard skip-to-main link, accurate current-page
+semantics, a horizontally scrollable compact menu on narrow viewports, and source
+mode wording that distinguishes mock, disconnected, and **configured** HTTP.
+Configured HTTP is **not** a verified network connection.
+
+The stock OHLCV visualization remains decorative to assistive technology; a native
+keyboard/screen-reader trading-day selector provides access to original date, OHLC
+and volume readouts without keyboard traps inside an aria-hidden SVG. Chart
+periods and analysis markers retain their existing provenance restrictions.
+Source failures on the stock detail screen provide an explicit read-only Retry
+control via server refresh; errors are never replaced by mock prices or model
+predictions. The screener and operations tables keep horizontal scrolling inside
+their panel on narrow viewports rather than making the entire page wider.
+
+Manual smoke-test checklist (not claimed as executed by CI): with mobile
+320/375/390 px, tablet 768 px and desktop 1280 px viewports, check keyboard
+Tab/Shift+Tab from skip link to main content, long horizontal sidebar navigation,
+screener/operations table scrolling, native chart date change and visible OHLC
+readout, stock HTTP 503 retry, English/Korean control labels, and pinned
+historical comparison navigation. Also check 200% zoom and reduced motion
+settings. Verify actual backend on the operator's machine before calling any
+live market screen ready. CI validates markup/contract and build only; it does
+not run interactive screen reader/device tests or operator-owned live HTTP.
+
 ## Validation
 
 ```bash
