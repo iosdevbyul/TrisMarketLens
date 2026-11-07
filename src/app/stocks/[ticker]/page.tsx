@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { PageHeader } from "@/components/common/PageHeader";
 import { OhlcvChart } from "@/components/stocks/OhlcvChart";
+import {RetrySource} from "@/components/common/RetrySource";
 import { getOhlcv } from "@/data/OhlcvDataSource";
 import { getLocale } from "@/i18n/server";
 import { getDataSource } from "@/data/getDataSource";
@@ -69,7 +70,7 @@ export default async function StockDetailPage({ params }: StockDetailPageProps) 
           <span className="panel-count">{stateLabel(analysisState)}</span>
         </div>
         {analysis.source === "mock" ? <div className="run-lock" role="status"><p>{t("Demonstration predictions")}</p><span>{t("These scores are examples and must not be used for investment decisions.")}</span></div> : null}
-        {analysis.error ? <div className="run-lock" role="alert"><p>{t("Analysis unavailable")}</p><span>{analysis.error}</span></div> : null}
+        {analysis.error ? <div className="run-lock" role="alert"><p>{t("Analysis unavailable")}</p><span>{analysis.error}</span><RetrySource locale={locale}/></div> : null}
         {analysisState === "disconnected" ? <p className="section-copy">{t("Not connected")}</p> : analysisState === "empty" ? <p className="section-copy">{t("No verified model analysis is available for this ticker.")}</p> : analysisState === "error" ? null :
           <div className="stock-analysis-list">{analysis.data.records.map(record => <article className="stock-analysis-item" key={record.id}>
             <div className="stock-analysis-heading">
@@ -91,7 +92,7 @@ export default async function StockDetailPage({ params }: StockDetailPageProps) 
         </div>
         <p className="section-copy">{t("Evaluation outcomes are supplied by the research backend, not inferred by the web interface.")}</p>
         {evaluation.source === "mock" ? <div className="run-lock" role="status"><p>{t("Demonstration evaluations")}</p><span>{t("All evaluation prices and returns below are fictional examples.")}</span></div> : null}
-        {evaluation.error ? <div className="run-lock" role="alert"><p>{t("Evaluation unavailable")}</p><span>{evaluation.error}</span></div> : null}
+        {evaluation.error ? <div className="run-lock" role="alert"><p>{t("Evaluation unavailable")}</p><span>{evaluation.error}</span><RetrySource locale={locale}/></div> : null}
         {evaluationState === "disconnected" ? <p className="section-copy">{t("Not connected")}</p> : evaluationState === "empty" ? <p className="section-copy">{t("No evaluated predictions available.")}</p> : evaluationState === "error" ? null :
           <div className="evaluation-list">{evaluation.data.evaluations.map(item => <article className="evaluation-item" key={item.id}>
             <div className="stock-analysis-heading"><div><strong>{item.analysisId}</strong><p className="metric-detail">{item.policyId} · {item.referenceDate}</p></div>
@@ -143,7 +144,7 @@ export default async function StockDetailPage({ params }: StockDetailPageProps) 
       <section className="panel single-panel">
         <div className="panel-heading"><div><p className="eyebrow">{t("OHLC history")}</p><h2>{t("Price and volume")}</h2></div><span className="panel-count">{stateLabel(priceState)}</span></div>
         {prices.source === "mock" ? <div className="run-lock" role="status"><p>{t("Artificial OHLCV demo")}</p><span>{t("Example candles are not historical market prices.")}</span></div> : null}
-        {prices.error ? <div className="run-lock" role="alert"><p>{t("Price data unavailable")}</p><span>{prices.error}</span></div> : null}
+        {prices.error ? <div className="run-lock" role="alert"><p>{t("Price data unavailable")}</p><span>{prices.error}</span><RetrySource locale={locale}/></div> : null}
         {(priceState === "available" || priceState === "demo") && analysis.data.records.length>0 && !chartAnalysesForSource(prices.source,analysis.source,analysis.error) ? <p role="status" className="metric-detail">Analysis markers hidden: price and analysis sources are different or analysis publication is unavailable. No mixed demo/live signals are displayed.</p> : null}
         {priceState === "available" || priceState === "demo" ? <OhlcvChart ticker={ticker} bars={prices.data.bars} locale={locale} analyses={chartAnalysesForSource(prices.source,analysis.source,analysis.error)?analysis.data.records:[]} analysisIsDemo={analysis.source === "mock" && prices.source === "mock"} /> : priceState === "error" ? null : <p className="section-copy">{t(priceState === "disconnected" ? "Not connected" : "No validated price bars available yet.")}</p>}
       </section>
