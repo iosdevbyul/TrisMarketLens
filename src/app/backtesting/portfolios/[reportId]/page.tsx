@@ -51,6 +51,12 @@ export default async function PortfolioDetailPage({
    <p className="metric-detail">Archive integrity verified; offline authoritative replay passed. Research only; brokerage and live trading eligibility denied.</p>
    <p className="metric-detail">Evidence scope: {report.evidenceScope} · Data origin: {report.dataOrigin}</p>
    {report.limitations.length>0?<div><h3>Recorded limitations</h3>{report.limitations.map((item,index)=><p className="metric-detail" key={index}>{item}</p>)}</div>:null}
+   <div className="operations-runs" aria-label="Per-ticker historical evidence">
+    <h3>Per-ticker position and timeline review</h3>
+    {report.tickers.map(ticker=><p key={ticker}>
+     <Link href={"/backtesting/portfolios/"+reportId+"/tickers/"+ticker}>{ticker} · View recorded positions and opportunities</Link>
+    </p>)}
+   </div>
   </section>:null}
   {report?<section className="panel single-panel" aria-label="Historical decision and trade evidence">
    <div className="panel-heading"><h2>Recorded decision and order outcomes</h2><span className="panel-count">{history?history.total+" records":"Unavailable"}</span></div>
