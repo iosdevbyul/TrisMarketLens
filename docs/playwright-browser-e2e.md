@@ -15,7 +15,7 @@ runner and Chromium on ubuntu-latest. On failure it uploads the HTML report,
 screenshots and Playwright traces as a seven-day `playwright-e2e-failures`
 artifact.
 
-The runner is installed into CI with `npm install --no-save
+The pinned runner is installed into a separate temporary npm prefix (and symlinked into the local workspace) with `npm install --no-save
 --package-lock=false --ignore-scripts @playwright/test@1.56.1`. It is
 intentionally separate from the application's production dependencies and does
 not modify `package-lock.json`; the browser/test-runner version is pinned.
@@ -43,7 +43,13 @@ dependencies available. Do not add or commit local secrets.
 ```bash
 npm ci
 npm run build
-npm install --no-save --package-lock=false --ignore-scripts @playwright/test@1.56.1
+runner_dir="$(mktemp -d)"
+npm install --prefix "$runner_dir" --no-save --package-lock=false --ignore-scripts @playwright/test@1.56.1
+mkdir -p node_modules/@playwright
+ln -s "$runner_dir/node_modules/@playwright/test" node_modules/@playwright/test
+ln -s "$runner_dir/node_modules/playwright" node_modules/playwright
+ln -s "$runner_dir/node_modules/playwright-core" node_modules/playwright-core
+ln -s "$runner_dir/node_modules/.bin/playwright" node_modules/.bin/playwright
 npx playwright install chromium
 npm run test:e2e
 ```
