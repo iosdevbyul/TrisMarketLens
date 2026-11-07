@@ -179,6 +179,36 @@ A live audit is possible only when both services are actually running locally.
 misconfigured, unreachable, or returns an unexpected health payload. The frontend
 does not silently fall back to mock data.
 
+## Integrated research evidence path
+
+Open `/research-path` from the sidebar or the overview. Optionally select a
+six-character ticker to follow the existing **read-only** feature path:
+
+1. Collected, unreviewed KRX snapshot (`/operational-market`)
+2. Published research universe and stock identity (`/stocks/[ticker]`)
+3. Global model validation/OOS artifacts (`/models`)
+4. Explicit ticker publication evidence (`/research-workbench?ticker=...`)
+5. Research lifecycle and source blockers (`/evidence`)
+6. Pinned historical portfolio results and comparisons (`/backtesting/portfolios`)
+7. Recorded acquisition, scheduler and alert trace (`/operations/trace`)
+
+Each stage reports its own source status: `observed`, `empty`,
+`unavailable`, `blocked`, or `demo`. An observed stage means records were
+returned; it **never** indicates an approved market prediction, verified
+point-in-time validity, broker execution or investment suitability. Model-wide
+metrics and the ticker's published `modelId` remain distinct identities.
+
+In HTTP mode, optional API 503s and transport failures remain unavailable;
+they are not replaced with demonstration values. In mock mode the entire
+path is clearly marked as fictional. Historical report comparison selections
+are retained when returning from the comparison view.
+
+Unit/contract tests cover URL validation, source separation, missing or
+unconfigured services, research blockers, demo safety, and the navigation
+path. CI verifies build and offline fixtures, **not** a live operator-owned
+market backend. Run `npm run verify:integration:audit` only with an actually
+running loopback backend and web server to test live HTTP integration.
+
 ## Current routes
 
 - / research overview
