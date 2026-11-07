@@ -305,6 +305,14 @@ hosting is **NO-GO** without a separately approved identity-aware deployment.
 See [P4 deployment readiness and release gate](docs/deployment-readiness-p4.md)
 for security scope, exact prerequisites, negative tests and manual checks.
 
+## Final release verification (P5)
+
+See [P5 release regression matrix and manual go/no-go checklist](docs/release-verification-p5.md).
+GitHub CI checks the offline domain and application build; real operator
+backend/browser checks, comparison POST and network-isolation tests remain
+explicitly unverified. Published research must not be treated as executable
+trading or approved investment performance.
+
 ## Validation
 
 ```bash
