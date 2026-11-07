@@ -18,8 +18,9 @@ export function formatPipelineEvidenceIssueOverviewHandoff(
   "Evidence invalid (explicitly recorded): "+overview.invalid,
   "Evidence unavailable (explicitly recorded): "+overview.unavailable,
   "Total explicit evidence issues: "+overview.total,
+  "Explicit issue share of API-returned executions: "+(returnedExecutions===0?"Unavailable":Math.round(overview.total/returnedExecutions*100)+"%")+" ("+overview.total+" / "+returnedExecutions+")",
   "Oldest issue execution start (UTC): "+(overview.oldestStartedAt??"Unavailable"),
   "Issue executions without a usable start time: "+overview.missingStartTimes,
-  "Note: This is an execution start, not incident discovery. No severity, SLA, validation or approval is inferred."
+  "Note: The issue share is not incident frequency, failure rate or whole-history coverage. The oldest start is not incident discovery. No severity, SLA, validation or approval is inferred."
  ].join("\n");
 }
