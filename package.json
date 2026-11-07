@@ -19,7 +19,8 @@
     "verify:operational:web": "node --env-file=.env.local scripts/verify-operational-web-e2e.mjs",
     "verify:krx-scheduler:web": "node --env-file=.env.local scripts/verify-krx-scheduler-web-http.mjs",
     "verify:next-queue": "node --test scripts/select-approved-next-task.node-check.mjs scripts/verify-operational-web-e2e.node-check.mjs scripts/audit-web-backend-integration.node-check.mjs",
-    "verify:integration:audit": "node --env-file=.env.local scripts/audit-web-backend-integration.mjs"
+    "verify:integration:audit": "node --env-file=.env.local scripts/audit-web-backend-integration.mjs",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "next": "16.4.3",
