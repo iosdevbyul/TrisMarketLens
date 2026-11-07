@@ -19,11 +19,12 @@ const navigation = [
   { href: "/diagnostics", label: "Diagnostics" },
 ];
 
-export function Sidebar({ locale }: { locale: Locale }) {
+export function Sidebar({ locale, sourceMode }: { locale: Locale; sourceMode: "http" | "mock" | "disconnected" }) {
   const pathname = usePathname();
 
   return (
     <aside className="sidebar">
+      <a className="skip-link" href="#main-content">{locale === "ko" ? "본문으로 건너뛰기" : "Skip to main content"}</a>
       <Link className="brand" href="/">
         <span className="brand-mark">T</span>
         <span>
@@ -36,7 +37,7 @@ export function Sidebar({ locale }: { locale: Locale }) {
       <nav className="nav-list" aria-label="Primary navigation">
         {navigation.map((item) => {
           const active =
-            item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+            item.href === "/" ? pathname === "/" : pathname === item.href || pathname.startsWith(item.href + "/");
 
           return (
             <Link
@@ -52,9 +53,9 @@ export function Sidebar({ locale }: { locale: Locale }) {
         })}
       </nav>
 
-      <div className="sidebar-note">
-        <span className="live-dot" />
-        {translate(locale, "Mock research data")}
+      <div className="sidebar-note" role="status">
+        <span className="live-dot" data-source={sourceMode} aria-hidden="true" />
+        {sourceMode === "http" ? (locale === "ko" ? "HTTP 연구 소스 설정됨 · 연결 상태는 진단에서 확인" : "HTTP research configured · verify connection in Diagnostics") : sourceMode === "mock" ? translate(locale, "Mock research data") : (locale === "ko" ? "연구 소스 연결 안 됨" : "Research source disconnected")}
       </div>
     </aside>
   );
