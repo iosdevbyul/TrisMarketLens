@@ -47,6 +47,7 @@ export default async function OperationsPage() {
         description={t("Monitor market data collection, validation, inference and the operational history supplied by DonghakStockVision.")} />
       {source === "mock" ? <div className="run-lock" role="status"><p>{t("Demonstration mode")}</p><span>{t("The timestamps and run records below are examples, not actual market processing.")}</span></div> : null}
       {error ? <div className="run-lock" role="alert"><p>{t("Operations unavailable")}</p><span>{error}</span></div> : null}
+      <p className="section-copy"><Link href="/operations/trace">Trace KRX collection, operational blockers and separate research publications</Link></p>
       <section className="panel single-panel" aria-label="Collected market observations">
         <div className="panel-heading"><h2>Collected KRX observations</h2><span className="panel-count">{operational.data ? operational.data.total.toLocaleString() + " observed tickers" : "Unavailable"}</span></div>
         <p className="section-copy">Separate, unreviewed operational SQLite snapshot. This count is not the approved research universe, and collection does not establish market completeness.</p>
