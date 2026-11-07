@@ -12,7 +12,7 @@ describe("accessible market chart",()=>{
   const html=renderToStaticMarkup(createElement(OhlcvChart,{ticker:"005930",bars,locale:"en"}));
   expect(html).toContain('aria-label="Detailed OHLCV trading date"');
   expect(html).toContain('<select');
-  expect(html).toContain('value="2026-11-03"');
+  expect(html).toContain('<option value="2026-11-03"');
   expect(html).toContain('aria-hidden="true"');
   expect(html).toContain('2026-11-02');
   expect(html).toContain('2026-11-03');
