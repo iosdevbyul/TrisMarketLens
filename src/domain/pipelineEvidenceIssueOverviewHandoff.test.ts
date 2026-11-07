@@ -25,21 +25,36 @@ describe("Operations evidence issues overview handoff",()=>{
   expect(summary).toContain("Evidence invalid (explicitly recorded): 2");
   expect(summary).toContain("Evidence unavailable (explicitly recorded): 1");
   expect(summary).toContain("Total explicit evidence issues: 3");
+  expect(summary).toContain("Explicit issue share of API-returned executions: 75% (3 / 4)");
+  expect(summary).toContain("not incident frequency, failure rate or whole-history coverage");
   expect(summary).toContain("2026-11-02T00:00:00.000Z");
   expect(summary).toContain("without a usable start time: 1");
   expect(summary).toContain("not incident discovery");
  });
  it("does not invent timestamps in an empty or unknown-start-only window",()=>{
   expect(handoff([])).toContain("Total explicit evidence issues: 0");
+  expect(handoff([])).toContain("Explicit issue share of API-returned executions: Unavailable (0 / 0)");
   expect(handoff([])).toContain("Oldest issue execution start (UTC): Unavailable");
   expect(handoff([run("x","Other","Evidence: invalid",null)])).toContain(
    "Issue executions without a usable start time: 1"
   );
+ });
+ it("uses all returned executions rather than only explicitly recorded issue rows",()=>{
+  const result=handoff([
+   run("a","Market collection","Evidence: invalid",null),
+   run("b","DART session","Evidence: partial",null),
+   run("c","DART batch acquisition","Evidence: unavailable",null),
+   run("d","Market collection","Evidence: validated",null),
+   run("e","Other",null,null),
+  ]);
+  expect(result).toContain("Explicit issue share of API-returned executions: 40% (2 / 5)");
  });
  it("rejects contradictory totals and out-of-scope records",()=>{
   const valid={invalid:1,unavailable:0,total:1,missingStartTimes:1,oldestStartedAt:null};
   expect(()=>formatPipelineEvidenceIssueOverviewHandoff({...valid,total:2},2)).toThrow();
   expect(()=>formatPipelineEvidenceIssueOverviewHandoff(valid,0)).toThrow();
   expect(()=>formatPipelineEvidenceIssueOverviewHandoff({...valid,missingStartTimes:0},1)).toThrow();
+  expect(()=>formatPipelineEvidenceIssueOverviewHandoff({...valid,total:0},1)).toThrow();
+  expect(()=>formatPipelineEvidenceIssueOverviewHandoff({...valid,invalid:2,total:2},1)).toThrow();
  });
 });
