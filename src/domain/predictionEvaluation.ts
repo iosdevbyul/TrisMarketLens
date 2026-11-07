@@ -16,7 +16,7 @@ export interface PredictionEvaluation {
   explanation: string | null;
 }
 export interface PredictionEvaluationSnapshot { ticker: string; evaluations: PredictionEvaluation[] }
-const date = (value: unknown) => typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value) && Number.isFinite(Date.parse(value));
+const date = isSourceCalendarDate;
 const timestamp = (value: unknown) => typeof value === "string" && /(Z|[+-]\d{2}:\d{2})$/.test(value) && Number.isFinite(Date.parse(value));
 export function isPredictionEvaluationSnapshot(value: unknown, ticker: string): value is PredictionEvaluationSnapshot {
   if (!value || typeof value !== "object") return false;
