@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { translate, type Locale } from "@/i18n/translations";
+import { translate, type Locale } from "../../i18n/translations";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { usePathname } from "next/navigation";
 
