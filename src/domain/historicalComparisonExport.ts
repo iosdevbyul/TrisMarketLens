@@ -55,5 +55,5 @@ export function historicalComparisonCsv(comparison:HistoricalPortfolioComparison
   const escaped=/^[\s]*[=+\-@\t\r]/.test(raw)?"'"+raw:raw;
   return '"'+escaped.replaceAll('"','""')+'"';
  };
- return "\uFEFF"+rows.map(row=>Array.from({length:width},(_,index)=>safe(row[index]??"")).join(",")).join("\r\n")+"\r\n";
+ return "\uFEFF"+rows.map(row=>Array.from({length:width},(_,index)=>safe(index<row.length?row[index]:"")).join(",")).join("\r\n")+"\r\n";
 }
