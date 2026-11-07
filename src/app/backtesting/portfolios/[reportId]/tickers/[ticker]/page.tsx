@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {PageHeader} from "@/components/common/PageHeader";
+import {HistoricalTickerEvidenceExport} from "@/components/backtesting/HistoricalTickerEvidenceExport";
 import {loadHistoricalTickerEvidence} from "@/data/HistoricalPortfolioTickerDataSource";
 
 function textValue(value:unknown):string {
@@ -43,6 +44,7 @@ export default async function PortfolioTickerPage({
   {data?<section className="panel single-panel" aria-label="Published ticker timeline">
    <div className="panel-heading"><h2>Research opportunity timeline</h2><span className="panel-count">{data.total} recorded opportunities</span></div>
    <p className="section-copy">Each row represents the original examined opportunity, including HOLD/WAIT and no-order outcomes. Timeline entries are not brokerage execution confirmations.</p>
+   <HistoricalTickerEvidenceExport evidence={data}/>
    {data.timeline.length===0?<p className="metric-detail">No timeline evidence on this page.</p>:null}
    {data.timeline.map((event,index)=><article className="operations-run" key={String(event.opportunity_id??offset+index)}>
     <div>
