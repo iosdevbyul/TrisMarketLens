@@ -15,10 +15,10 @@ runner and Chromium on ubuntu-latest. On failure it uploads the HTML report,
 screenshots and Playwright traces as a seven-day `playwright-e2e-failures`
 artifact.
 
-The pinned runner is installed into a separate temporary npm prefix (and symlinked into the local workspace) with `npm install --no-save
---package-lock=false --ignore-scripts @playwright/test@1.56.1`. It is
-intentionally separate from the application's production dependencies and does
-not modify `package-lock.json`; the browser/test-runner version is pinned.
+The pinned Playwright runner is installed in a separate temporary npm prefix,
+then its modules and CLI are symlinked into the checkout for the E2E job.
+This avoids modifying the dependency graph installed by `npm ci`, keeps the
+application lockfile unchanged, and does not add Playwright to production.
 
 Browsers: Chromium desktop (1280x720, English) and Chromium mobile-emulated
 390x844 (English). They are **emulations**, not physical iPhone or Android tests.
