@@ -34,6 +34,7 @@ export default async function PublishedPortfoliosPage({
     <div>
      <strong>{item.modelFamily.toUpperCase()} · {item.tickers.join(", ")}</strong>
      <p className="metric-detail">Report ID: <code>{item.reportId}</code></p>
+     <p><Link href={"/backtesting/portfolios/"+item.reportId}>View published summary and decision history</Link></p>
      <p className="metric-detail">Published: {item.publishedAt} · Initial virtual cash: {item.initialVirtualCash}</p>
      <p className="metric-detail">Evidence scope: {item.evidenceScope} · Final portfolio valuation: {item.portfolioValuationAvailable?"Recorded":"Unavailable"}</p>
      <p className="metric-detail">Archive integrity verified; offline replay verified. PIT/OOS and trading approval: not verified.</p>
