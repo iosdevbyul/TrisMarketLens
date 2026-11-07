@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {PageHeader} from "@/components/common/PageHeader";
+import {HistoricalComparisonExport} from "@/components/backtesting/HistoricalComparisonExport";
 import {comparePublishedHistoricalPortfolios} from "@/data/HistoricalPortfolioComparisonDataSource";
 
 const unavailable=(value:string|null)=>value??"Unavailable";
@@ -56,6 +57,7 @@ export default async function HistoricalPortfolioComparePage({
   </section>:null}
   {data?<section className="panel single-panel" aria-label="Published portfolio side by side comparison">
    <div className="panel-heading"><h2>Recorded portfolio fields</h2><span className="panel-count">{items.length} publications</span></div>
+   <HistoricalComparisonExport comparison={data}/>
    <p className="section-copy">Values below are backend-published historical evidence, not current balances or independently calculated returns. A missing field is never estimated. The columns follow the selected report order, not performance rank.</p>
    <div style={{overflowX:"auto"}}>
     <table style={{width:"100%",borderCollapse:"collapse",textAlign:"left"}}>
