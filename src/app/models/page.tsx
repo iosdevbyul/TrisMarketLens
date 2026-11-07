@@ -27,6 +27,8 @@ export default async function ModelsPage() {
         title={t("Models")}
       />
 
+      <p className="section-copy"><Link href="/research-workbench">Explore models, research blockers and published per-ticker evidence in one workbench</Link></p>
+
       <section className="model-grid">
         {models.map((model) => (
           <Link className="panel model-card model-link" href={"/models/" + model.id} key={model.id}>

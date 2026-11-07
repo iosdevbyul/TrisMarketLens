@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getFeatureDataState } from "@/domain/featureDataState";
 import {PageHeader} from "@/components/common/PageHeader";
 import {WakPanel} from "@/components/design-system/WakPanel";
@@ -12,5 +13,6 @@ export default async function ScreenerPage(){
  {result.error?<div className="run-lock" role="alert"><p>{t("Screener unavailable")}</p><span>{result.error}</span></div>:null}
  {state==="disconnected"?<p className="section-copy">{t("Not connected")}</p>:null}
  {state==="empty"?<p className="section-copy">{t("No verified model analysis is available for this ticker.")}</p>:null}
+ <p className="section-copy"><Link href="/research-workbench">Review model qualification, research blockers and individual published analyses together</Link></p>
  <WakPanel as="section" className="single-panel"><ScreenerExplorer entries={result.data.entries} locale={locale}/></WakPanel></>;
 }
