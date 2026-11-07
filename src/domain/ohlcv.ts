@@ -9,7 +9,7 @@ export function isOhlcvSeries(input: unknown, ticker: string): input is OhlcvSer
   return value.bars.every((item: unknown) => {
     if (!item || typeof item !== "object") return false;
     const bar = item as Record<string, unknown>;
-    if (typeof bar.date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(bar.date) || !Number.isFinite(Date.parse(bar.date)) || bar.date <= previous || new Date(bar.date + "T00:00:00Z").toISOString().slice(0, 10) !== bar.date) return false;
+    if (!isSourceCalendarDate(bar.date) || bar.date <= previous) return false;
     previous = bar.date;
     const numbers = ["open","high","low","close","volume"];
     if (!numbers.every(key => typeof bar[key] === "number" && Number.isFinite(bar[key]) && Number.isSafeInteger(bar[key]) && (bar[key] as number) >= 0)) return false;
