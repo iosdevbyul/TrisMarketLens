@@ -8,6 +8,7 @@ vi.mock("@/data/OperationalMarketDataSource",()=>({loadOperationalCatalog:vi.fn(
 
 describe("health endpoint operational market status",()=>{
  beforeEach(()=>{
+  vi.clearAllMocks();
   vi.stubEnv("MARKET_LENS_DATA_SOURCE","http");
   vi.stubEnv("DONGHAK_API_BASE_URL","http://127.0.0.1:8000");
   vi.mocked(checkBackendHealth).mockResolvedValue({status:"ok",service:"DonghakStockVision",mode:"read_only"});
