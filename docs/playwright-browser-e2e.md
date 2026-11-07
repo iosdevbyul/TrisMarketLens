@@ -20,8 +20,10 @@ then its modules and CLI are symlinked into the checkout for the E2E job.
 This avoids modifying the dependency graph installed by `npm ci`, keeps the
 application lockfile unchanged, and does not add Playwright to production.
 
-Browsers: Chromium desktop (1280x720, English) and Chromium mobile-emulated
-390x844 (English). They are **emulations**, not physical iPhone or Android tests.
+Browsers: Chromium desktop (1280x720, English) and Chromium responsive
+mobile-width viewport (390x844, English). The narrow viewport tests layout
+and mouse/keyboard interaction, **not real mobile touch emulation** or physical
+iPhone or Android behavior.
 
 ## What it actually checks
 
