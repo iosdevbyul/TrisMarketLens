@@ -48,8 +48,18 @@ jobs:
 
       # Browser tests are part of the same required checks job, so PR auto-merge
       # cannot declare the existing CI job successful before Chromium passes.
-      - name: Install pinned Playwright runner (browser tests only)
-        run: npm install --no-save --package-lock=false --ignore-scripts @playwright/test@1.56.1
+      - name: Install pinned Playwright runner (isolated from npm ci tree)
+        shell: bash
+        run: |
+          set -euo pipefail
+          runner_dir="$RUNNER_TEMP/tris-playwright-runner"
+          mkdir -p "$runner_dir"
+          npm install --prefix "$runner_dir" --no-save --package-lock=false --ignore-scripts @playwright/test@1.56.1
+          mkdir -p node_modules/@playwright
+          ln -s "$runner_dir/node_modules/@playwright/test" node_modules/@playwright/test
+          ln -s "$runner_dir/node_modules/playwright" node_modules/playwright
+          ln -s "$runner_dir/node_modules/playwright-core" node_modules/playwright-core
+          ln -s "$runner_dir/node_modules/.bin/playwright" node_modules/.bin/playwright
 
       - name: Install Chromium browser and system libraries
         run: npx playwright install --with-deps chromium
