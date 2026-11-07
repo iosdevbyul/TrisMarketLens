@@ -41,6 +41,18 @@ export default async function BacktestingPage() {
         </WakPanel>
       </section>
 
+      <section className="panel single-panel" aria-label="Published historical research portfolios">
+        <div className="panel-heading">
+          <div>
+            <p className="eyebrow">Published archives</p>
+            <h2>Historical portfolio research results</h2>
+          </div>
+          <span className="status-pill" data-state="blocked">Research only</span>
+        </div>
+        <p className="section-copy">Read operator-pinned historical portfolio publications from the existing local DonghakStockVision API. No mock portfolio returns or live-trading approval are inferred.</p>
+        <Link href="/backtesting/portfolios">Browse published historical portfolios</Link>
+      </section>
+
       <WakPanel as="section" className="single-panel">
         <p className="eyebrow">{t("Performance")}</p>
         <h2>{t("No historical results yet")}</h2>
