@@ -330,4 +330,9 @@ Object.assign(ko, {
   "At least one overview input contains fictional demo records.": "종합 요약에 사용된 데이터 중 가상의 데모 기록이 포함되어 있습니다.",
   "One or more sources are missing or unavailable. Unknown is not healthy.": "하나 이상의 데이터 소스를 사용할 수 없습니다. 미확인을 정상으로 취급하지 않습니다."
 });
+Object.assign(ko, {
+  "Research Path": "연구 흐름",
+  "Follow the evidence": "연구 근거 추적",
+  "Integrated research steps": "통합 연구 단계"
+});
 export function translate(locale: Locale, text: string): string { return locale === "ko" ? (ko[text] ?? ko[text.replace(/\s+/g, " ").trim()] ?? text) : text; }

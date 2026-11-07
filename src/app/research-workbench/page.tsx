@@ -52,6 +52,7 @@ export default async function ResearchWorkbenchPage({
   <PageHeader eyebrow="AI research" title="Research evidence workbench"
    badge={mode==="mock"?"Demonstration":errors.length?"Partial evidence":"Read-only research"}
    description="Follow published model qualification, evidence blockers and explicitly published security analysis. Global Up/Down model statistics do not identify a ticker's inference model or constitute investment advice."/>
+  <p className="section-copy"><Link href={"/research-path"+(ticker&&validTicker?"?ticker="+encodeURIComponent(ticker):"")}>Return to full research evidence path</Link> · <Link href="/backtesting/portfolios">Review archived historical portfolios</Link></p>
   <section className="panel single-panel" aria-label="Source and research status">
    <div className="panel-heading"><h2>Research publication readiness</h2><span className="panel-count">{state}</span></div>
    <p className="section-copy">Data source: {mode}. {mode==="mock"?"All demonstration model and signal records are fictional and must not be mistaken for actual predictions.":"Only explicitly published backend snapshots are shown. Missing publications are never replaced by demo predictions."}</p>

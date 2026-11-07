@@ -1,6 +1,8 @@
 import Link from "next/link";
 import {PageHeader} from "@/components/common/PageHeader";
 import {HistoricalComparisonExport} from "@/components/backtesting/HistoricalComparisonExport";
+import {historicalCatalogHref} from "@/domain/historicalPortfolioSelection";
+import {validComparisonSelection} from "@/data/HistoricalPortfolioComparisonDataSource";
 import {comparePublishedHistoricalPortfolios} from "@/data/HistoricalPortfolioComparisonDataSource";
 
 const unavailable=(value:string|null)=>value??"Unavailable";
@@ -37,7 +39,7 @@ export default async function HistoricalPortfolioComparePage({
   {name:"Valuation policy",values:items.map(()=>"Unavailable")}
  ]:[];
  return <>
-  <Link className="back-link" href="/backtesting/portfolios">← Back to published portfolios</Link>
+  <Link className="back-link" href={historicalCatalogHref(0,validComparisonSelection(reportIds)?reportIds:[])}>← Back to selected published portfolios</Link>
   <PageHeader eyebrow="Historical research" title="Published portfolio comparison"
    badge={data?"Research only":"Unavailable"}
    description="Side-by-side recorded historical research. No ranking, trading recommendation or inferred performance. Different periods, missing valuation marks and unavailable policies can make economic comparison invalid."/>
