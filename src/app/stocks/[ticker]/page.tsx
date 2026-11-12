@@ -9,6 +9,9 @@ import { getOhlcv } from "@/data/OhlcvDataSource";
 import { getLocale } from "@/i18n/server";
 import { getDataSource } from "@/data/getDataSource";
 import { getStockAnalysis } from "@/data/StockAnalysisDataSource";
+import { getDailyResearch } from "@/data/DailyResearchDataSource";
+import { DailyResearchPanel } from "@/components/stocks/DailyResearchPanel";
+import type { DailyResearchFilters } from "@/data/DailyResearchDataSource";
 import { getSecurityMetadata } from "@/data/SecurityMetadataDataSource";
 import { getPredictionEvaluations } from "@/data/PredictionEvaluationDataSource";
 import { stockDisplayName, stockSectorLabel } from "@/domain/stock";
@@ -17,13 +20,23 @@ import { chartAnalysesForSource } from "@/domain/marketChartProvenance";
 
 interface StockDetailPageProps {
   params: Promise<{ ticker: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
-export default async function StockDetailPage({ params }: StockDetailPageProps) {
+export default async function StockDetailPage({ params, searchParams }: StockDetailPageProps) {
   const t = await getTranslator();
   const dataSource = getDataSource();
   const { ticker } = await params;
-  const [stock, analysis, prices, locale, evaluation, metadata] = await Promise.all([dataSource.getStock(ticker), getStockAnalysis(ticker), getOhlcv(ticker), getLocale(), getPredictionEvaluations(ticker), getSecurityMetadata(ticker)]);
+  const query = await searchParams;
+  const first = (key: string) => typeof query[key] === "string" ? query[key] as string : undefined;
+  const filters: DailyResearchFilters = {
+    tradingDate: first("tradingDate") || undefined,
+    fromDate: first("fromDate") || undefined,
+    toDate: first("toDate") || undefined,
+    limit: first("limit") ? Number(first("limit")) : undefined,
+    offset: first("offset") ? Number(first("offset")) : undefined,
+  };
+  const [stock, analysis, prices, locale, evaluation, metadata, research] = await Promise.all([dataSource.getStock(ticker), getStockAnalysis(ticker), getOhlcv(ticker), getLocale(), getPredictionEvaluations(ticker), getSecurityMetadata(ticker), getDailyResearch(ticker, filters)]);
 
   const analysisState = getFeatureDataState(analysis.source, analysis.error, analysis.data.records.length);
   const priceState = getFeatureDataState(prices.source, prices.error, prices.data.bars.length);
@@ -86,6 +99,7 @@ export default async function StockDetailPage({ params }: StockDetailPageProps) 
           </article>)}</div>}
       </section>
 
+      <DailyResearchPanel ticker={ticker} result={research} filters={filters} />
       <section className="panel single-panel" aria-label={t("Prediction evaluation")}>
         <div className="panel-heading"><div><p className="eyebrow">{t("Research evaluation")}</p><h2>{t("Prediction evaluation")}</h2></div>
           <span className="panel-count">{stateLabel(evaluationState)}</span>
