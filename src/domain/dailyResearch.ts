@@ -64,8 +64,8 @@ export function isDailyResearchSeries(value: unknown, ticker: string): value is 
   if (!object(value) || value.schemaVersion !== "daily_research_series_v1" || value.ticker !== ticker ||
       !oneOf(value.availability, ["recorded", "no_recorded_analysis"]) ||
       !safeInt(value.totalRecords, 0, 100000) || !safeInt(value.offset, 0, 100000) ||
-      !safeInt(value.limit, 1, 200) || !Array.isArray(value.records) || value.records.length > value.limit ||
-      value.records.length > value.totalRecords ||
+      !safeInt(value.limit, 1, 200) || !Array.isArray(value.records) || value.records.length > (value.limit as number) ||
+      value.records.length > (value.totalRecords as number) ||
       value.timestampAuthority !== "local_operational_clock_not_authenticated") return false;
   if (value.availability === "no_recorded_analysis" && value.totalRecords !== 0) return false;
   if (value.availability === "recorded" && value.totalRecords === 0) return false;
