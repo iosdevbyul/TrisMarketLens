@@ -83,3 +83,14 @@ test("integrated research preview respects ticker selection and cannot fabricate
  await expect(page.getByRole("region", {name:"Source selection"}).getByRole("alert")).toContainText("Use exactly six letters or digits");
  await expect(page.getByText("Enter a ticker above to request a real publication preview.")).toBeVisible();
 });
+
+test("research status offers source-specific checks without claiming live connectivity", async ({page}) => {
+ await page.goto("/research-status");
+ const section=page.getByRole("region",{name:"Research source next verification steps"});
+ await expect(section).toBeVisible();
+ await expect(section.getByText("Verify the local market API connection")).toBeVisible();
+ await expect(section.getByText("Inspect research LLM management access")).toBeVisible();
+ await expect(section.getByText("Select a ticker to inspect daily research")).toBeVisible();
+ await expect(section.getByText("npm run verify:research:workspace")).toBeVisible();
+ await expect(page.getByText("Published source observations",{exact:true})).toHaveCount(0);
+});
