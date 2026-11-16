@@ -44,15 +44,15 @@ export default async function DiagnosticsPage({searchParams}:{searchParams:Promi
   <PageHeader eyebrow="Operations" title="Backend diagnostics" badge={status} description="Read-only connection checks. Healthy API transport does not certify data freshness, completeness or research approval."/>
   <p className="section-copy"><Link href="/backend-api-coverage"><Localize text="Review full DonghakStockVision API integration inventory" /></Link> · <Link href="/security-metadata"><Localize text="Inspect full security metadata publication" /></Link></p>
   <section className="panel single-panel" aria-label="Operational readiness"><div className="panel-heading"><h2><Localize text="Operational readiness" /></h2><span className="panel-count">{t(readiness)}</span></div>
-   <p className="section-copy">{readiness==="partial_evidence"?"Read-only endpoints responded for the selected ticker. Data provenance, completeness, market freshness and research approval are not certified.":readiness==="needs_review"?"Complete the selected ticker checks and review unavailable or disconnected sources before investigating evidence readiness.":readiness==="not_configured"?"The web is not configured to use the live HTTP backend.":"Backend transport must be restored before examining publication readiness."}</p>
+   <p className="section-copy">{t(readiness==="partial_evidence"?"Read-only endpoints responded for the selected ticker. Data provenance, completeness, market freshness and research approval are not certified.":readiness==="needs_review"?"Complete the selected ticker checks and review unavailable or disconnected sources before investigating evidence readiness.":readiness==="not_configured"?"The web is not configured to use the live HTTP backend.":"Backend transport must be restored before examining publication readiness.")}</p>
   </section>
   <section className="panel single-panel" aria-label="Next verification steps">
    <div className="panel-heading"><h2><Localize text="Next verification steps" /></h2><span className="panel-count">{nextSteps.length} {t("actions")}</span></div>
-   <ol>{nextSteps.map(step=><li key={step.id}><strong>{step.title}</strong><p className="metric-detail">{step.detail}</p></li>)}</ol>
+   <ol>{nextSteps.map(step=><li key={step.id}><strong>{t(step.title)}</strong><p className="metric-detail">{t(step.detail)}</p></li>)}</ol>
    <p className="section-copy"><Localize text="These are recommended checks, not automatic repairs or verification certificates." /></p>
   </section>
   <section className="panel single-panel" aria-label="Backend connection">
-   <div className="panel-heading"><h2><Localize text="Backend connection" /></h2><span className="panel-count">{status}</span></div>
+   <div className="panel-heading"><h2><Localize text="Backend connection" /></h2><span className="panel-count">{t(status)}</span></div>
    <p className="section-copy">{t("Configured data mode:")} {mode}</p>
    {health&&health.status!=="ok"?<div className="run-lock" role="alert"><p><Localize text="Backend unavailable" /></p><span>{health.detail}</span></div>:null}
    <p className="metric-detail"><Localize text="HTTP health verifies read-only transport only. Optional immutable market data and publication inputs are checked separately." /></p>
@@ -60,13 +60,13 @@ export default async function DiagnosticsPage({searchParams}:{searchParams:Promi
   <section className="panel single-panel" aria-label="Feature data status">
    <div className="panel-heading"><h2><Localize text="Feature data status" /></h2></div>
    {sources.map(item=><article className="operations-run" key={item.name}>
-    <div><strong>{item.name}</strong>{item.error?<p className="metric-detail" role="alert">{item.error}</p>:null}</div>
-    <span className="status-pill" data-state={item.state==="error"?"blocked":item.state==="available"?"verified":"in_progress"}>{item.state}</span>
+    <div><strong>{t(item.name)}</strong>{item.error?<p className="metric-detail" role="alert">{item.error}</p>:null}</div>
+    <span className="status-pill" data-state={item.state==="error"?"blocked":item.state==="available"?"verified":"in_progress"}>{t(item.state)}</span>
    </article>)}
    <p className="section-copy"><Localize text="Empty means a valid response with no records. Disconnected means no configured source. An HTTP error is never replaced with demo data." /></p>
   </section>
   <section className="panel single-panel" aria-label="Collected operational market data">
-   <div className="panel-heading"><h2><Localize text="Collected KRX data" /></h2><span className="panel-count">{operationalState}</span></div>
+   <div className="panel-heading"><h2><Localize text="Collected KRX data" /></h2><span className="panel-count">{t(operationalState)}</span></div>
    <p className="metric-detail">{t("Read-only backend health:")} {t(health?.status??"not_required")} · {t("Operational catalog:")} {t(operationalState)} · {t("Observed tickers:")} {operational.data?.total??t("unknown")}</p>
    <p className="metric-detail"><Localize text="These correspond to the backend and operationalMarket statuses exposed by" />{" "}<Link href="/api/health"><Localize text="the web health endpoint" /></Link><Localize text=". An available catalog is not evidence of validated research data."/></p>
    <p className="section-copy"><Localize text="Unreviewed operational snapshot, separate from the research market universe. A successful backend health response does not guarantee these endpoints are configured." /></p>
@@ -74,7 +74,7 @@ export default async function DiagnosticsPage({searchParams}:{searchParams:Promi
    {operational.data?<p className="metric-detail">{t("First-page operational tickers returned:")} {operational.data.items.length}. <Link href="/operational-market"><Localize text="Browse collected tickers" /></Link></p>:null}
    {validTicker?<article className="operations-run"><div><strong>{t("Collected OHLCV:")} {requested}</strong>
     {operationalBars?.error?<p className="metric-detail" role="alert">{operationalBars.error}</p>:null}
-    {operationalBars?.data?<p className="metric-detail">Observed bars: {operationalBars.data.bars.length}. Last date: {operationalBars.data.bars.at(-1)?.date??"—"}. <Link href={"/operational-market/"+requested}><Localize text="View collected chart" /></Link></p>:null}
+    {operationalBars?.data?<p className="metric-detail">{t("Observed bars:")} {operationalBars.data.bars.length}. {t("Last date:")} {operationalBars.data.bars.at(-1)?.date??"—"}. <Link href={"/operational-market/"+requested}><Localize text="View collected chart" /></Link></p>:null}
     {mode!=="http"?<p className="metric-detail"><Localize text="Requires HTTP mode" /></p>:null}
    </div></article>:null}
   </section>
