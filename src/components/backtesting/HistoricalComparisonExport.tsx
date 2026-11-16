@@ -1,5 +1,5 @@
 "use client";
-import { ClientLocalize } from "../../i18n/LocaleProvider";
+import { useLocalization, ClientLocalize } from "../../i18n/LocaleProvider";
 
 import {useState} from "react";
 import type {HistoricalPortfolioComparison} from "@/data/HistoricalPortfolioComparisonDataSource";
@@ -7,6 +7,7 @@ import {historicalComparisonCsv} from "@/domain/historicalComparisonExport";
 
 export function HistoricalComparisonExport({comparison}:{comparison:HistoricalPortfolioComparison}){
  const [message,setMessage]=useState("");
+ const t = useLocalization();
  const download=()=>{
   try{
    const csv=historicalComparisonCsv(comparison);
@@ -25,7 +26,7 @@ export function HistoricalComparisonExport({comparison}:{comparison:HistoricalPo
   }
  };
  return <div>
-  <button type="button" onClick={download} aria-label="Export historical portfolio research comparison CSV"><ClientLocalize text="Export research comparison CSV" /></button>
-  <p className="metric-detail" role="status">{message}</p>
+  <button type="button" onClick={download} aria-label={t("Export historical portfolio research comparison CSV")}><ClientLocalize text="Export research comparison CSV" /></button>
+  <p className="metric-detail" role="status">{t(message)}</p>
  </div>;
 }

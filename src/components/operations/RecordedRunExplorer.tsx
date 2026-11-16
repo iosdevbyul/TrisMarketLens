@@ -121,8 +121,8 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   const url=new URL(window.location.href);
   url.search=queryString;
   window.history.replaceState(window.history.state,"",url.toString());
-  try{await navigator.clipboard.writeText(url.toString());setShareStatus("Link copied");}
-  catch{setShareStatus("Link updated in address bar; clipboard unavailable");}
+  try{await navigator.clipboard.writeText(url.toString());setShareStatus(t("Link copied"));}
+  catch{setShareStatus(t("Link updated in address bar; clipboard unavailable"));}
  };
  const copyRunId=async(id:string)=>{
   try{await navigator.clipboard.writeText(id);setCopiedRunId(id);setCopyError(null);}
@@ -497,14 +497,14 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
   </div>
   <div className="recorded-run-active-filters" aria-label={t("Active execution filters")}>
    <strong>Active filters ({activeFilters.length})</strong>
-   {activeFilters.length===0?<span className="metric-detail"><ClientLocalize text="None — default view" /></span>:activeFilters.map(item=><button type="button" key={item.key} onClick={()=>clearActiveFilter(item.key)} aria-label={"Remove "+item.label+" filter"}>{item.label}<span aria-hidden="true"> ×</span></button>)}
+   {activeFilters.length===0?<span className="metric-detail"><ClientLocalize text="None — default view" /></span>:activeFilters.map(item=><button type="button" key={item.key} onClick={()=>clearActiveFilter(item.key)} aria-label={"Remove "+item.label+" filter"}>{t(item.label)}<span aria-hidden="true"> ×</span></button>)}
   </div>
   {shareStatus?<p role="status" className="metric-detail">{shareStatus}</p>:null}
   <p className="metric-detail" role="status">Showing {visible.length} of {runs.length} returned execution records. Needs attention includes recorded failures, blocked executions, invalid evidence or unavailable evidence; it does not imply a complete history. Evidence classifications are parsed only from explicitly recorded backend diagnostics; missing evidence is not treated as valid. Date filters use UTC dates of recorded start times. Records without start times are excluded when a date range is selected. Filters and CSV export apply only to returned records; the API may contain additional records beyond its first 25.</p>
   {visible.length===0?<p className="section-copy"><ClientLocalize text="No recorded executions match these filters." /></p>:
    <div className="operations-runs">{visible.map(run=><article className="operations-run" key={run.id}>
     <div><strong>{run.pipeline}</strong><p className="metric-detail">{run.id} · {run.dataThrough??"—"}</p><button className="recorded-run-copy" type="button" onClick={()=>void copyRunId(run.id)} aria-label={"Copy run ID "+run.id}><ClientLocalize text="Copy run ID" /></button>{copiedRunId===run.id?<span className="metric-detail" role="status"><ClientLocalize text="Copied" /></span>:null}{copyError===run.id?<span className="metric-detail" role="alert"><ClientLocalize text="Copy unavailable" /></span>:null}</div>
-    <div><span className="status-pill" data-state={recordedRunBadgeTone(run.state)}>{run.state}</span><span className="recorded-run-evidence" aria-label={"Recorded evidence: "+recordedEvidence(run)}>Evidence: {recordedEvidence(run).replaceAll("-"," ")}</span><p className="metric-detail">{formatTime(run.startedAt)}</p>{listAttentionReasons(run).length>0?<div className="recorded-run-reason-tags" aria-label={"Recorded attention reasons for "+run.id}>{listAttentionReasons(run).map(reason=><span key={reason}>{reason.replaceAll("-"," ")}</span>)}</div>:null}</div>
+    <div><span className="status-pill" data-state={recordedRunBadgeTone(run.state)}>{t(run.state)}</span><span className="recorded-run-evidence" aria-label={"Recorded evidence: "+recordedEvidence(run)}>{t("Evidence:")} {t(recordedEvidence(run).replaceAll("-"," "))}</span><p className="metric-detail">{formatTime(run.startedAt)}</p>{listAttentionReasons(run).length>0?<div className="recorded-run-reason-tags" aria-label={"Recorded attention reasons for "+run.id}>{listAttentionReasons(run).map(reason=><span key={reason}>{reason.replaceAll("-"," ")}</span>)}</div>:null}</div>
     <details className="recorded-run-details"><summary><ClientLocalize text="Inspect recorded details" /></summary>
       <button type="button" className="recorded-run-copy" onClick={()=>void copyRunSummary(run)} aria-label={"Copy recorded details for "+run.id}><ClientLocalize text="Copy run details" /></button>{copiedSummaryId===run.id?<span role="status" className="metric-detail"><ClientLocalize text="Details copied" /></span>:null}{summaryCopyErrorId===run.id?<span role="alert" className="metric-detail"><ClientLocalize text="Copy unavailable" /></span>:null}
       <dl>
