@@ -31,7 +31,7 @@ export type SecurityMetadataCatalogResult = {
 const isObject = (v: unknown): v is Record<string, unknown> => !!v && typeof v === "object" && !Array.isArray(v);
 const sha = (v: unknown) => typeof v === "string" && /^[0-9a-f]{64}$/.test(v);
 const ticker = (v: unknown): v is string => typeof v === "string" && /^[0-9A-Z]{6}$/.test(v);
-const safeText = (v: unknown) => typeof v === "string" && v.length <= 200;
+const safeText = (v: unknown): v is string => typeof v === "string" && v.length <= 200;
 const nullableText = (v: unknown) => v === null || safeText(v);
 
 export function projectSecurityCatalog(value: unknown): SecurityMetadataCatalog | null {
