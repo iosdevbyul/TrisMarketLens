@@ -38,7 +38,7 @@ test("English/Korean switch refreshes server-rendered page and client navigation
 test("Korean operational client controls use shared locale instead of untranslated labels", async ({page,context})=>{
   await context.addCookies([{name:"tris-locale",value:"ko",url:localOrigin}]);
   await page.goto("/operations");
-  await expect(page.getByRole("heading",{name:"운영 현황",exact:false}).first()).toBeVisible();
+  await expect(page.getByRole("heading",{name:"기록된 운영 실행",exact:true}).first()).toBeVisible();
   await expect(page.getByText("실행별 근거 상태",{exact:true}).first()).toBeVisible();
   await expect(page.getByText("Execution × evidence breakdown",{exact:true})).toHaveCount(0);
 });
