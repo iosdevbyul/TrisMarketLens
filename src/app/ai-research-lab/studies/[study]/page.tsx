@@ -1,3 +1,4 @@
+import { Localize } from "@/i18n/Localize";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -24,7 +25,7 @@ export default async function AIResearchStudyDetail({
     <PageHeader eyebrow="Retained research study" title={study.study} badge={study.truncated?"Partial publication":"Stored study"}
       description="Review actual recorded study evidence. The study folder label is not a verified Experiment ID, cohort ID or plan fingerprint, and this is not a live execution controller."/>
     <section className="panel single-panel" aria-label="Study record summary">
-      <div className="panel-heading"><h2>Study activity</h2><span className="panel-count">{evidence.complete?"Included records complete":"Partial evidence"}</span></div>
+      <div className="panel-heading"><h2><Localize text="Study activity" /></h2><span className="panel-count">{evidence.complete?"Included records complete":"Partial evidence"}</span></div>
       <div className="operations-overview-grid">
         {([
           ["Run records",summary.runCount],
@@ -43,14 +44,10 @@ export default async function AIResearchStudyDetail({
         Last recorded run: {summary.lastRecordedAt??"Unreported"} · Agents: {summary.agents.length?summary.agents.join(", "):"Unreported"} ·
         Observed states: {summary.observedStates.length?summary.observedStates.join(", "):"Unreported"}
       </p>
-      <p className="section-copy">
-        Completion totals are terminal artifacts, not deduplicated experiments. Run, result and terminal
-        positions have no publicly validated join key. No timeline, cause of improvement, or study-level
-        independent validation is fabricated from record order.
-      </p>
+      <p className="section-copy"><Localize text="Completion totals are terminal artifacts, not deduplicated experiments. Run, result and terminal positions have no publicly validated join key. No timeline, cause of improvement, or study-level independent validation is fabricated from record order." /></p>
     </section>
     <section className="panel single-panel" aria-label="Individual experiment observations">
-      <div className="panel-heading"><h2>Individual retained result observations</h2><span className="panel-count">{study.results.length} included</span></div>
+      <div className="panel-heading"><h2><Localize text="Individual retained result observations" /></h2><span className="panel-count">{study.results.length} included</span></div>
       <p className="section-copy">
         Every row is an existing published result observation, not a new experiment claim.
         Observation numbers identify positions in this publication only; they are not
@@ -71,13 +68,13 @@ export default async function AIResearchStudyDetail({
             <td style={{padding:"10px"}}>{result.hasDeferredDiagnostic||result.hasRobustSummary||result.hasGeneralizationTraining?"Diagnostic recorded":"Not provided"}</td>
           </tr>)}</tbody>
         </table>
-      </div>:<p className="section-copy">No result records in this study publication.</p>}
+      </div>:<p className="section-copy"><Localize text="No result records in this study publication." /></p>}
       {study.results.length<study.kinds.autonomous_result?<p role="status" className="metric-detail">
         There are {study.kinds.autonomous_result-study.results.length} additional retained result records not included in this publication.
       </p>:null}
     </section>
     <section className="panel single-panel" aria-label="Study evidence limitations">
-      <h2>Qualification and follow-up</h2>
+      <h2><Localize text="Qualification and follow-up" /></h2>
       <p className="section-copy">
         The source includes {evidence.approved} explicitly true performance-approval flags,
         {evidence.pitQualified} explicitly true PIT flags, and {evidence.executionAuthorized} explicitly true
@@ -89,7 +86,7 @@ export default async function AIResearchStudyDetail({
         and causal Experiment Memory links are not exposed by the current sanitized publication.
         They require a reviewed backend read-only contract; they are not guessed here.
       </p>
-      <p><Link href={href}>Inspect full within-study metric distribution and recorded run/terminal history</Link></p>
+      <p><Link href={href}><Localize text="Inspect full within-study metric distribution and recorded run/terminal history" /></Link></p>
     </section>
   </>;
 }
