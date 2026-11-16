@@ -66,7 +66,7 @@ export default async function AutonomousResearchPage({
       {snapshot.publication ? <>
         <section className="panel single-panel" aria-label="Autonomous research coverage">
           <div className="panel-heading"><h2><Localize text="Retained research coverage" /></h2>
-            <span className="panel-count">{snapshot.publication.studyCount} study databases</span></div>
+            <span className="panel-count">{snapshot.publication.studyCount} <Localize text="study databases"/></span></div>
           <div className="operations-overview-grid">
             {([
               ["Research run records", snapshot.publication.aggregateCounts.autonomous_run],
@@ -93,7 +93,7 @@ export default async function AutonomousResearchPage({
             </select>
             <button type="submit"><Localize text="Inspect study" /></button>
           </form>
-          {invalidSelection ? <p role="status" className="metric-detail">Unknown study; showing the first published study instead.</p> : null}
+          {invalidSelection ? <p role="status" className="metric-detail"><Localize text="Unknown study; showing the first published study instead."/></p> : null}
           {current ? <>
             <h3>{current.study}</h3>
             <div className="operations-overview-grid">
@@ -108,9 +108,9 @@ export default async function AutonomousResearchPage({
                 <thead><tr>{["Recorded at","Agent","State","Attempts","Completed","Failed","Trained","PIT","Approved"].map(label=>
                   <th key={label} scope="col" style={{padding:"10px"}}><Localize text={label}/></th>)}</tr></thead>
                 <tbody>{current.runs.map((run,index)=><tr key={index}>
-                  <td style={{padding:"10px"}}>{run.recordedAt ?? "Unreported"}</td>
-                  <td style={{padding:"10px"}}>{run.agent ?? "Unreported"}</td>
-                  <td style={{padding:"10px"}}>{run.state ?? "Unreported"}</td>
+                  <td style={{padding:"10px"}}>{run.recordedAt ?? <Localize text="Unreported"/>}</td>
+                  <td style={{padding:"10px"}}>{run.agent ?? <Localize text="Unreported"/>}</td>
+                  <td style={{padding:"10px"}}>{run.state ?? <Localize text="Unreported"/>}</td>
                   <td style={{padding:"10px"}}>{number(run.attempts)}</td>
                   <td style={{padding:"10px"}}>{number(run.completed)}</td>
                   <td style={{padding:"10px"}}>{number(run.failed)}</td>
@@ -130,8 +130,8 @@ export default async function AutonomousResearchPage({
                   <td style={{padding:"10px"}}>{score(item.stabilityAp)}</td>
                   <td style={{padding:"10px"}}>{score(item.worstBalancedAccuracy)}</td>
                   <td style={{padding:"10px"}}>{number(item.largestTrainGap)}</td>
-                  <td style={{padding:"10px"}}>{item.hasDeferredDiagnostic ? "Recorded" : "Not present"}</td>
-                  <td style={{padding:"10px"}}>{item.hasRobustSummary ? "Recorded" : "Not present"}</td>
+                  <td style={{padding:"10px"}}><Localize text={item.hasDeferredDiagnostic ? "Recorded" : "Not present"}/></td>
+                  <td style={{padding:"10px"}}><Localize text={item.hasRobustSummary ? "Recorded" : "Not present"}/></td>
                   <td style={{padding:"10px"}}>{yesNo(item.performanceApproved)}</td>
                 </tr>)}</tbody>
               </table></div> : <p className="section-copy"><Localize text="No experiment result records published for this study." /></p>}
