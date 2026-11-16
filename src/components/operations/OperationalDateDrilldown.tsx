@@ -1,5 +1,5 @@
 "use client";
-import { ClientLocalize } from "@/i18n/LocaleProvider";
+import { ClientLocalize } from "../../i18n/LocaleProvider";
 import {useMemo,useState} from "react";
 import Link from "next/link";
 import type {DateDistribution} from "@/data/OperationalDateDistributionDataSource";
