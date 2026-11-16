@@ -67,7 +67,7 @@ const terminals = (v: unknown): v is ResearchTerminalView => obj(v)
   && ["state","startedAt","finishedAt"].every(k => nullableText(v[k]))
   && ["meanAp","stabilityAp"].every(k => metric(v[k]))
   && nullableCount(v.largestTrainGap);
-const arr = (v: unknown, validator: (v: unknown)=>boolean) =>
+const arr = <T,>(v: unknown, validator: (item: unknown) => item is T): v is T[] =>
   Array.isArray(v) && v.length <= 500 && v.every(validator);
 function isStudy(v: unknown): v is ResearchStudyView {
   return obj(v) && typeof v.study === "string" && /^[A-Za-z0-9][A-Za-z0-9._-]{0,120}$/.test(v.study)
