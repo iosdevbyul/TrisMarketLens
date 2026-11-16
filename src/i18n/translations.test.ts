@@ -18,6 +18,19 @@ describe("EN/KO translated UI copy",()=>{
     expect(translate("en","Research evidence source")).toBe("Research evidence source");
     expect(translate("ko","Research evidence source")).toBe("연구 근거 출처");
   });
+  it("localizes research status, autonomous experiment and collection counters",()=>{
+    const cases = [
+      ["No ticker selected", "선택된 종목 없음"],
+      ["Live data source", "실시간 데이터 출처"],
+      ["Research runs", "연구 실행 수"],
+      ["Observed tickers", "관측 종목 수"],
+      ["Not checked", "미점검"],
+    ] as const;
+    for (const [english, korean] of cases) {
+      expect(translate("ko", english)).toBe(korean);
+      expect(translate("en", english)).toBe(english);
+    }
+  });
   it("all statically localized server and client text nodes have an explicit Korean entry",()=>{
     const missing=new Set<string>();
     const literalCommands=new Set(["python3 scripts/export-autonomous-research.py","npm run verify:research:workspace"]);
