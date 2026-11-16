@@ -70,8 +70,8 @@ export function validateResearchPage(body, ticker, limit, offset) {
       fail(stage,"Provenance and usage restrictions mismatch");
     if (r.status!=="completed" && (r.researchScore!==null || r.researchSignal!=="unavailable"))
       fail(stage,"Unfinished research cannot include an output score or direction");
-    if (r.status==="completed" && (typeof r.researchScore!=="number" || !Number.isFinite(r.researchScore)
-      || r.researchScore<0 || r.researchScore>1 || !strings(r.researchSignal,["up","down","neutral"])))
+    if (r.status==="completed" && (r.researchScore!==null && (typeof r.researchScore!=="number" || !Number.isFinite(r.researchScore)
+      || r.researchScore<0 || r.researchScore>1) || !strings(r.researchSignal,["up","down","neutral"])))
       fail(stage,"Completed research output is malformed");
     details[r.status]++;
     if (r.dataOrigin==="real") details.realSource++; else details.syntheticFixture++;
