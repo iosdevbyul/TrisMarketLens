@@ -29,7 +29,7 @@ export default async function SecurityMetadataPage({
       badge={catalog.state==="available"?"Published backend metadata":catalog.state}
       description="Inspect the full research-snapshot security identity publication. Corporation mapping is not the same as independently verified current security names or historical ticker continuity."/>
     <section className="panel single-panel" aria-label="Security metadata source">
-      <div className="panel-heading"><h2><Localize text="Publication status" /></h2><span className="panel-count">{catalog.state}</span></div>
+      <div className="panel-heading"><h2><Localize text="Publication status" /></h2><span className="panel-count"><Localize text={catalog.state}/></span></div>
       {catalog.error?<p role="status" className="section-copy">{catalog.error}</p>:null}
       <p className="section-copy"><Localize text="This endpoint is opt-in on DonghakStockVision. HTTP health or an operational stock catalog does not prove that security identity metadata is configured. No simulated records are substituted." /></p>
       {catalog.data ? <>
@@ -40,7 +40,7 @@ export default async function SecurityMetadataPage({
             ["Exact DART corporation mappings",catalog.data.linkedCorporations],
             ["Individual historical boundaries",catalog.data.historicalBoundaries],
             ["Source references",catalog.data.sourceCount],
-          ] as const).map(([label,value])=><div key={label} className="operations-overview-stat"><span>{label}</span><strong>{value}</strong></div>)}
+          ] as const).map(([label,value])=><div key={label} className="operations-overview-stat"><span><Localize text={label}/></span><strong>{value}</strong></div>)}
         </div>
         <p className="metric-detail"><Localize text="All names and mappings are bounded by the source snapshot. No current-listing status, PIT approval, or full-history identity continuity is inferred." /></p>
       </>:null}
@@ -59,13 +59,13 @@ export default async function SecurityMetadataPage({
       {visible.length?<div className="stock-table" style={{overflowX:"auto"}}>
         <table style={{width:"100%",minWidth:"680px",textAlign:"left"}}>
           <thead><tr>{["Ticker","Security name","DART corporation","Current name verified","Relationship"].map(label=>
-            <th key={label} scope="col" style={{padding:"10px"}}>{label}</th>)}</tr></thead>
+            <th key={label} scope="col" style={{padding:"10px"}}><Localize text={label}/></th>)}</tr></thead>
           <tbody>{visible.map(item=><tr key={item.ticker}>
             <td style={{padding:"10px"}}><Link href={"/stocks/"+item.ticker}>{item.ticker}</Link></td>
-            <td style={{padding:"10px"}}>{item.securityName??"Unavailable"}</td>
-            <td style={{padding:"10px"}}>{item.corporationName??"Unavailable"}</td>
-            <td style={{padding:"10px"}}>{item.nameVerified?"Verified in snapshot":"Not verified"}</td>
-            <td style={{padding:"10px"}}>{item.corporationMappingVerified?"Exact DART mapping":"Unavailable"}</td>
+            <td style={{padding:"10px"}}>{item.securityName??<Localize text="Unavailable"/>}</td>
+            <td style={{padding:"10px"}}>{item.corporationName??<Localize text="Unavailable"/>}</td>
+            <td style={{padding:"10px"}}><Localize text={item.nameVerified?"Verified in snapshot":"Not verified"}/></td>
+            <td style={{padding:"10px"}}><Localize text={item.corporationMappingVerified?"Exact DART mapping":"Unavailable"}/></td>
           </tr>)}</tbody>
         </table>
       </div>:<p role="status" className="section-copy"><Localize text="No securities match the selected filters." /></p>}
