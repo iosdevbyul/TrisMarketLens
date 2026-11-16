@@ -1,11 +1,12 @@
+import { Localize } from "@/i18n/Localize";
 import type { SchedulerDiagnosticsResult } from "@/data/KrxSchedulerDiagnosticsDataSource";
 export function KrxSchedulerDiagnosticsPanel({result}:{result:SchedulerDiagnosticsResult}) {
  const d=result.data;
  return <section className="panel single-panel" aria-label="KRX scheduler diagnostics">
-   <div className="panel-heading"><div><p className="eyebrow">KRX operations</p><h2>Scheduler diagnostics</h2></div>
+   <div className="panel-heading"><div><p className="eyebrow"><Localize text="KRX operations" /></p><h2><Localize text="Scheduler diagnostics" /></h2></div>
      <span className="status-pill" data-state={!d?"blocked":d.status==="no_due_sessions"?"verified":"in_progress"}>{d?d.status.replaceAll("_"," "):"Unavailable"}</span></div>
-   <p className="section-copy">Read-only operator-provided diagnostic reports. This panel does not start collections, approve evidence, or enable PAPER trading.</p>
-   {result.error?<div className="run-lock" role="status"><p>Diagnostics unavailable</p><span>{result.error}</span></div>:null}
+   <p className="section-copy"><Localize text="Read-only operator-provided diagnostic reports. This panel does not start collections, approve evidence, or enable PAPER trading." /></p>
+   {result.error?<div className="run-lock" role="status"><p><Localize text="Diagnostics unavailable" /></p><span>{result.error}</span></div>:null}
    {d?<><div className="operations-overview-grid">
      {[
        ["Scheduler enabled",d.schedulerEnabled?"Yes":"No"],
