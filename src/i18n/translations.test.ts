@@ -20,13 +20,15 @@ describe("EN/KO translated UI copy",()=>{
   });
   it("all statically localized server and client text nodes have an explicit Korean entry",()=>{
     const missing=new Set<string>();
+    const literalCommands=new Set(["python3 scripts/export-autonomous-research.py","npm run verify:research:workspace"]);
     let total=0;
     for(const path of sourceFiles(join(process.cwd(),"src"))){
       const source=readFileSync(path,"utf8");
       for(const match of source.matchAll(/<(?:Localize|ClientLocalize) text="([^"]+)"\s*\/>/g)){
         const text=match[1];
         total++;
-        if(translate("ko",text)===text)missing.add(path.replace(process.cwd()+"/","")+": "+text);
+        // Commands are intentionally identical in both languages and must remain copyable.
+        if(!literalCommands.has(text) && translate("ko",text)===text)missing.add(path.replace(process.cwd()+"/","")+": "+text);
       }
     }
     expect(total).toBeGreaterThan(250);
