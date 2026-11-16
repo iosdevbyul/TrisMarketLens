@@ -94,3 +94,16 @@ test("research status offers source-specific checks without claiming live connec
  await expect(section.getByText("npm run verify:research:workspace")).toBeVisible();
  await expect(page.getByText("Published source observations",{exact:true})).toHaveCount(0);
 });
+
+test("autonomous research page distinguishes nonpublished local snapshots from recorded research", async ({page}) => {
+ await page.goto("/autonomous-research");
+ await expect(page.getByRole("heading",{name:"Retained experiment evidence"})).toBeVisible();
+ await expect(page.getByRole("region",{name:"Autonomous research publication source"})).toBeVisible();
+ await expect(page.getByText("Autonomous research local publication is opt-in",{exact:false})).toBeVisible();
+ await expect(page.getByText("python3 scripts/export-autonomous-research.py")).toBeVisible();
+ await expect(page.getByRole("region",{name:"Autonomous research coverage"})).toHaveCount(0);
+ await expect(page.getByText("169")).toHaveCount(0);
+ await page.goto("/research-status");
+ await expect(page.getByRole("region",{name:"Autonomous research publication coverage"})).toBeVisible();
+ await expect(page.getByRole("link",{name:"Inspect retained autonomous research"})).toBeVisible();
+});
