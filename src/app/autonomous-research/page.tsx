@@ -1,4 +1,5 @@
 import { Localize } from "@/i18n/Localize";
+import { getTranslator } from "@/i18n/server";
 import Link from "next/link";
 import { PageHeader } from "@/components/common/PageHeader";
 import { getAutonomousResearchPublication } from "@/data/AutonomousResearchDataSource";
@@ -37,6 +38,7 @@ export default async function AutonomousResearchPage({
 }: {
   searchParams: Promise<{ study?: string; metric?: string }>;
 }) {
+  const t = await getTranslator();
   const query = await searchParams;
   const snapshot = await getAutonomousResearchPublication();
   const studies = snapshot.publication?.studies ?? [];
@@ -55,8 +57,8 @@ export default async function AutonomousResearchPage({
         description="Inspect completed research records and evaluation observations from the existing local autonomous engine. This is not a live trading system, historical PIT certificate, or forecast leaderboard."
       />
       <section className="panel single-panel" aria-label="Autonomous research publication source">
-        <div className="panel-heading"><h2><Localize text="Independent research publication" /></h2><span className="panel-count">{snapshot.state}</span></div>
-        <p className="section-copy" role="status">{snapshot.message}</p>
+        <div className="panel-heading"><h2><Localize text="Independent research publication" /></h2><span className="panel-count">{t(snapshot.state)}</span></div>
+        <p className="section-copy" role="status">{t(snapshot.message)}</p>
         <p className="metric-detail"><Localize text="This view uses a separate, opt-in server-side snapshot containing only approved summary fields. Research databases and private checkpoint/source identities are never sent to the browser. This is separate from Daily Research, which currently requires its own backend snapshot." /></p>
         {snapshot.state !== "available" ? <>
           <p className="section-copy"><Localize text="Run" />{" "}<code><Localize text="python3 scripts/export-autonomous-research.py" /></code>{" "}<Localize text="from TrisMarketLens on the operator Mac. Then set" />{" "}<code>MARKET_LENS_AUTONOMOUS_RESEARCH_SOURCE=local_snapshot</code><Localize text="in" />{" "}<code>.env.local</code>{" "}<Localize text="and restart the web process." /></p>
@@ -74,14 +76,13 @@ export default async function AutonomousResearchPage({
               ["Selection records", snapshot.publication.aggregateCounts.autonomous_selection],
               ["Terminal records", snapshot.publication.aggregateCounts.autonomous_terminal],
             ] as const).map(([name,value]) =>
-              <div className="operations-overview-stat" key={name}><span><Localize text={name}/></span><strong>{value}</strong></div>)}
+              <div className="operations-overview-stat" key={name}><span><Localize text={name}/></span><strong>{typeof value === "string" ? t(value) : value}</strong></div>)}
           </div>
           <p className="section-copy">
-            Generated: {snapshot.publication.generatedAt}. These are raw retained counts across databases,
-            NOT deduplicated independent studies or successful experiments.
+            <Localize text="Generated:" /> {snapshot.publication.generatedAt}. <Localize text="These are raw retained counts across databases, NOT deduplicated independent studies or successful experiments." />
             {snapshot.publication.containsPartialStudies
-              ? " Some databases or records were skipped or capped; counts and visible details are incomplete."
-              : " Each eligible database was projected within the configured cap."}
+              ? " " + t("Some databases or records were skipped or capped; counts and visible details are incomplete.")
+               : " " + t("Each eligible database was projected within the configured cap.")}
           </p>
         </section>
         <section className="panel single-panel" aria-label="Autonomous research study selection">
@@ -110,13 +111,13 @@ export default async function AutonomousResearchPage({
                 <tbody>{current.runs.map((run,index)=><tr key={index}>
                   <td style={{padding:"10px"}}>{run.recordedAt ?? <Localize text="Unreported"/>}</td>
                   <td style={{padding:"10px"}}>{run.agent ?? <Localize text="Unreported"/>}</td>
-                  <td style={{padding:"10px"}}>{run.state ?? <Localize text="Unreported"/>}</td>
-                  <td style={{padding:"10px"}}>{number(run.attempts)}</td>
-                  <td style={{padding:"10px"}}>{number(run.completed)}</td>
-                  <td style={{padding:"10px"}}>{number(run.failed)}</td>
-                  <td style={{padding:"10px"}}>{number(run.trainedThisRun)}</td>
-                  <td style={{padding:"10px"}}>{yesNo(run.pitQualified)}</td>
-                  <td style={{padding:"10px"}}>{yesNo(run.performanceApproved)}</td>
+                  <td style={{padding:"10px"}}>{run.state ? t(run.state) : t("Unreported")}</td>
+                  <td style={{padding:"10px"}}>{t(number(run.attempts))}</td>
+                  <td style={{padding:"10px"}}>{t(number(run.completed))}</td>
+                  <td style={{padding:"10px"}}>{t(number(run.failed))}</td>
+                  <td style={{padding:"10px"}}>{t(number(run.trainedThisRun))}</td>
+                  <td style={{padding:"10px"}}>{t(yesNo(run.pitQualified))}</td>
+                  <td style={{padding:"10px"}}>{t(yesNo(run.performanceApproved))}</td>
                 </tr>)}</tbody>
               </table></div> : <p className="section-copy"><Localize text="No run records published for this study." /></p>}
             <h3><Localize text="Experiment evaluation observations" /></h3>
@@ -126,13 +127,13 @@ export default async function AutonomousResearchPage({
                   <th key={label} scope="col" style={{padding:"10px"}}><Localize text={label}/></th>)}</tr></thead>
                 <tbody>{current.results.map((item,index)=><tr key={index}>
                   <td style={{padding:"10px"}}>{index+1}</td>
-                  <td style={{padding:"10px"}}>{score(item.meanAp)}</td>
-                  <td style={{padding:"10px"}}>{score(item.stabilityAp)}</td>
-                  <td style={{padding:"10px"}}>{score(item.worstBalancedAccuracy)}</td>
-                  <td style={{padding:"10px"}}>{number(item.largestTrainGap)}</td>
+                  <td style={{padding:"10px"}}>{t(score(item.meanAp))}</td>
+                  <td style={{padding:"10px"}}>{t(score(item.stabilityAp))}</td>
+                  <td style={{padding:"10px"}}>{t(score(item.worstBalancedAccuracy))}</td>
+                  <td style={{padding:"10px"}}>{t(number(item.largestTrainGap))}</td>
                   <td style={{padding:"10px"}}><Localize text={item.hasDeferredDiagnostic ? "Recorded" : "Not present"}/></td>
                   <td style={{padding:"10px"}}><Localize text={item.hasRobustSummary ? "Recorded" : "Not present"}/></td>
-                  <td style={{padding:"10px"}}>{yesNo(item.performanceApproved)}</td>
+                  <td style={{padding:"10px"}}>{t(yesNo(item.performanceApproved))}</td>
                 </tr>)}</tbody>
               </table></div> : <p className="section-copy"><Localize text="No experiment result records published for this study." /></p>}
             <h3><Localize text="Selection and terminal states" /></h3>
