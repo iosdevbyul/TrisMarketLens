@@ -1065,4 +1065,5 @@ Object.assign(ko, {
   "Daily research evidence": "일일 연구 근거",
   "Historical model comparison": "과거 모델 비교"
 });
+Object.assign(ko, {"Recorded operations":"기록된 운영 실행"});
 export function translate(locale: Locale, text: string): string { return locale === "ko" ? (ko[text] ?? ko[text.replace(/\s+/g, " ").trim()] ?? text) : text; }
