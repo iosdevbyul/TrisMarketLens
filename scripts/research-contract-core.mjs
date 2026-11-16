@@ -98,7 +98,7 @@ export function collection(body, keys, stage) {
 export function validateActive(body) {
   if (!obj(body) || !int(body.selectionVersion,0,1000000000)
     || typeof body.busy!=="boolean"
-    || typeof body.selectedModelKey!=="string" || !body.selectedModelKey
+    || (body.selectedModelKey!==null && (typeof body.selectedModelKey!=="string" || !body.selectedModelKey))
     || typeof body.defaultModelKey!=="string" || !body.defaultModelKey)
     fail("management_active","Model selection contract mismatch");
   return {selectionVersion:body.selectionVersion, busy:body.busy,selected:body.selectedModelKey===body.defaultModelKey};
