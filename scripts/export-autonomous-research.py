@@ -13,6 +13,7 @@ import sqlite3
 import stat
 import tempfile
 from collections import Counter
+from contextlib import closing
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -22,7 +23,7 @@ MAX_STUDIES = 40
 MAX_ROWS_PER_KIND = 500
 MAX_DB_BYTES = 256 * 1024 * 1024
 SAFE_NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,120}$")
-SAFE_STATE = re.compile(r"^[a-zA-Z0-9_ -]{1,64}$")
+SAFE_STATE = re.compile(r"^[A-Za-z0-9_. :+-]{1,140}$")
 
 
 def text(value):
@@ -114,7 +115,7 @@ def load_study(path):
         return None
     result = {"study": path.parent.name, "kinds": {}, "runs": [], "results": [], "selections": [], "terminals": [], "truncated": False}
     uri = path.resolve().as_uri() + "?mode=ro&immutable=1"
-    with sqlite3.connect(uri, uri=True) as db:
+    with closing(sqlite3.connect(uri, uri=True)) as db:
         db.execute("PRAGMA query_only=ON")
         if db.execute("PRAGMA quick_check").fetchone() != ("ok",):
             return None
