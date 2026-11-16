@@ -1,0 +1,44 @@
+import { test, expect } from "@playwright/test";
+
+const localOrigin="http://127.0.0.1:3000";
+
+test("Korean research lab renders translated headings, safety copy and existing status correctly", async ({page,context})=>{
+  await context.addCookies([{name:"tris-locale",value:"ko",url:localOrigin}]);
+  await page.goto("/ai-research-lab");
+  await expect(page.getByRole("heading",{name:"동학 자율 연구"})).toBeVisible();
+  await expect(page.getByRole("heading",{name:"연구 근거 출처"})).toBeVisible();
+  await expect(page.getByRole("link",{name:"AI 연구소"})).toBeVisible();
+  await expect(page.getByText("기존 읽기 전용 로컬 연구 게시 데이터가 필요합니다.",{exact:false})).toBeVisible();
+  await expect(page.getByText("Research evidence source",{exact:true})).toHaveCount(0);
+  await expect(page.locator("html")).toHaveAttribute("lang","ko");
+});
+
+test("Korean metadata screen never masks optional backend unavailability with synthetic data",async({page,context})=>{
+  await context.addCookies([{name:"tris-locale",value:"ko",url:localOrigin}]);
+  await page.goto("/security-metadata?q=005930");
+  await expect(page.getByRole("heading",{name:"종목 메타데이터 목록"})).toBeVisible();
+  await expect(page.getByRole("heading",{name:"게시 상태"})).toBeVisible();
+  await expect(page.getByText("이 API는 동학비전에서 선택적으로 활성화됩니다.",{exact:false})).toBeVisible();
+  await expect(page.getByRole("region",{name:"Security metadata search"})).toHaveCount(0);
+});
+
+test("English/Korean switch refreshes server-rendered page and client navigation without losing current route",async({page})=>{
+  await page.goto("/backend-api-coverage");
+  await expect(page.getByRole("heading",{name:"DonghakStockVision API coverage"})).toBeVisible();
+  await page.getByRole("button",{name:"한국어"}).click();
+  await expect(page).toHaveURL(/\/backend-api-coverage$/);
+  await expect(page.getByRole("heading",{name:"동학비전 API 연동 현황"})).toBeVisible();
+  await expect(page.getByRole("heading",{name:"연동 목록"})).toBeVisible();
+  await expect(page.locator("html")).toHaveAttribute("lang","ko");
+  await page.getByRole("button",{name:"English"}).click();
+  await expect(page.getByRole("heading",{name:"DonghakStockVision API coverage"})).toBeVisible();
+  await expect(page.locator("html")).toHaveAttribute("lang","en");
+});
+
+test("Korean operational client controls use shared locale instead of untranslated labels", async ({page,context})=>{
+  await context.addCookies([{name:"tris-locale",value:"ko",url:localOrigin}]);
+  await page.goto("/operations");
+  await expect(page.getByRole("heading",{name:"운영 현황",exact:false}).first()).toBeVisible();
+  await expect(page.getByText("실행별 근거 상태",{exact:true}).first()).toBeVisible();
+  await expect(page.getByText("Execution × evidence breakdown",{exact:true})).toHaveCount(0);
+});
