@@ -1,3 +1,4 @@
+import { getTranslator } from "@/i18n/server";
 import { Localize } from "@/i18n/Localize";
 import Link from "next/link";
 import {PageHeader} from "@/components/common/PageHeader";
@@ -12,6 +13,7 @@ const decision=(value:boolean|null)=>value===null?"Unavailable":value?"Yes":"No"
 export default async function HistoricalPortfolioComparePage({
  searchParams
 }:{searchParams:Promise<{id?:string|string[]}>}){
+ const t=await getTranslator();
  const query=await searchParams;
  const reportIds=Array.isArray(query.id)?query.id:query.id?[query.id]:[];
  const base=process.env.MARKET_LENS_DATA_SOURCE==="http"?process.env.DONGHAK_API_BASE_URL:undefined;
@@ -56,7 +58,7 @@ export default async function HistoricalPortfolioComparePage({
    <h3><Localize text="Backend comparison notices" /></h3>
    {data.comparability.notices.map(notice=><p className="metric-detail" key={notice}>{notice.replaceAll("_"," ")}</p>)}
    {Object.entries(data.comparability.unavailable).map(([field,reason])=>
-    <p className="metric-detail" key={field}>Unavailable {field}: {reason.replaceAll("_"," ")}</p>)}
+    <p className="metric-detail" key={field}>{t("Unavailable")} {t(field)}: {t(reason.replaceAll("_"," "))}</p>)}
   </section>:null}
   {data?<section className="panel single-panel" aria-label="Published portfolio side by side comparison">
    <div className="panel-heading"><h2><Localize text="Recorded portfolio fields" /></h2><span className="panel-count">{items.length} publications</span></div>

@@ -1,3 +1,4 @@
+import { getTranslator } from "@/i18n/server";
 import { Localize } from "@/i18n/Localize";
 import Link from "next/link";
 import {PageHeader} from "@/components/common/PageHeader";
@@ -6,6 +7,7 @@ import {loadHistoricalPortfolioSummary,loadHistoricalPortfolioTrades} from "@/da
 export default async function PortfolioDetailPage({
  params,searchParams
 }:{params:Promise<{reportId:string}>;searchParams:Promise<{offset?:string}>}){
+ const t=await getTranslator();
  const [{reportId},search]=await Promise.all([params,searchParams]);
  const raw=search.offset??"0";
  const offset=/^(0|[1-9]\d{0,5})$/.test(raw)?Number(raw):NaN;
@@ -50,7 +52,7 @@ export default async function PortfolioDetailPage({
     </div>)}
    </div>
    <p className="metric-detail"><Localize text="Archive integrity verified; offline authoritative replay passed. Research only; brokerage and live trading eligibility denied."/></p>
-   <p className="metric-detail">Evidence scope: {report.evidenceScope} · Data origin: {report.dataOrigin}</p>
+   <p className="metric-detail">{t("Evidence scope:")} {t(report.evidenceScope)} · {t("Data origin:")} {t(report.dataOrigin)}</p>
    {report.limitations.length>0?<div><h3><Localize text="Recorded limitations" /></h3>{report.limitations.map((item,index)=><p className="metric-detail" key={index}>{item}</p>)}</div>:null}
    <div className="operations-runs" aria-label="Per-ticker historical evidence">
     <h3><Localize text="Per-ticker position and timeline review" /></h3>
@@ -67,14 +69,14 @@ export default async function PortfolioDetailPage({
    {history?.items.map(item=><article className="operations-run" key={item.eventId}>
     <div>
      <strong>{item.evidence.ticker} · {item.evidence.trading_date}</strong>
-     <p className="metric-detail">Simulated outcome: {item.classification} · Terminal status: {item.terminalStatus??"Not recorded"}</p>
+     <p className="metric-detail">{t("Simulated outcome:")} {t(item.classification)} · {t("Terminal status:")} {t(item.terminalStatus??"Not recorded")}</p>
      <p className="metric-detail"><Localize text="Evidence event:" />{" "}<code>{item.eventId}</code></p>
     </div>
     <span className="status-pill" data-state={item.classification==="filled"?"completed":"blocked"}>{item.classification}</span>
    </article>)}
    {history?<nav aria-label="Trade evidence pages" className="recorded-run-controls">
     {offset>0?<Link href={"/backtesting/portfolios/"+reportId+"?offset="+Math.max(0,offset-10)}><Localize text="Previous page" /></Link>:null}
-    <span className="metric-detail">Showing {history.items.length} of {history.total} recorded outcomes, offset {offset}</span>
+    <span className="metric-detail">{t("Showing")} {history.items.length} / {history.total} {t("recorded outcomes")}, {t("Offset")} {offset}</span>
     {offset+history.items.length<history.total&&history.items.length>0?<Link href={"/backtesting/portfolios/"+reportId+"?offset="+(offset+history.items.length)}><Localize text="Next page" /></Link>:null}
    </nav>:null}
   </section>:null}
