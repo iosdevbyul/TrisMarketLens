@@ -1,5 +1,5 @@
 "use client";
-import { ClientLocalize } from "@/i18n/LocaleProvider";
+import { ClientLocalize } from "../../i18n/LocaleProvider";
 
 import Link from "next/link";
 import { translate, type Locale } from "../../i18n/translations";
