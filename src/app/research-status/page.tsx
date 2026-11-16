@@ -6,6 +6,7 @@ import { getDailyResearch } from "@/data/DailyResearchDataSource";
 import { researchSourceRows } from "@/domain/researchSourceStatus";
 import { researchDiagnosticActions } from "@/domain/researchDiagnosticActions";
 import { summarizeResearchWorkspace } from "@/domain/researchWorkspaceSummary";
+import { getAutonomousResearchPublication } from "@/data/AutonomousResearchDataSource";
 
 export const dynamic = "force-dynamic";
 
@@ -20,10 +21,11 @@ export default async function ResearchStatusPage({
   const ticker = validTicker ? entered : null;
   const sourceMode = process.env.MARKET_LENS_DATA_SOURCE ?? "mock";
 
-  const [health, management, daily] = await Promise.all([
+  const [health, management, daily, autonomous] = await Promise.all([
     sourceMode === "http" ? checkBackendHealth(process.env.DONGHAK_API_BASE_URL) : Promise.resolve(null),
     getAIManagementSnapshot(),
     ticker ? getDailyResearch(ticker, { limit: 10, offset: 0 }) : Promise.resolve(null),
+    getAutonomousResearchPublication(),
   ]);
 
   const sources = researchSourceRows({ sourceMode, health, management, daily, ticker });
@@ -64,6 +66,18 @@ export default async function ResearchStatusPage({
           ))}
         </div>
         <p className="section-copy">Empty means a valid response with no published records. Unavailable indicates a failed or unverified source. Demo and disconnected are not equivalent to real backend availability.</p>
+      </section>
+      <section className="panel single-panel" aria-label="Autonomous research publication coverage">
+        <div className="panel-heading"><h2>Autonomous experimental research</h2><span className="panel-count">{autonomous.state}</span></div>
+        <p className="section-copy">{autonomous.message}</p>
+        <p className="metric-detail">This independent publication reads retained experimental research, not per-ticker Daily Research. It does not change the running research engine.</p>
+        <div className="operations-overview-grid">
+          <div className="operations-overview-stat"><span>Research databases</span><strong>{autonomous.publication?.studyCount ?? "Not published"}</strong></div>
+          <div className="operations-overview-stat"><span>Run records</span><strong>{autonomous.publication?.aggregateCounts.autonomous_run ?? "Not published"}</strong></div>
+          <div className="operations-overview-stat"><span>Experiment result records</span><strong>{autonomous.publication?.aggregateCounts.autonomous_result ?? "Not published"}</strong></div>
+          <div className="operations-overview-stat"><span>Partial or skipped studies</span><strong>{autonomous.publication?.containsPartialStudies ? "Yes" : autonomous.publication ? "No" : "Unknown"}</strong></div>
+        </div>
+        <p><Link href="/autonomous-research">Inspect retained autonomous research</Link></p>
       </section>
       <section className="panel single-panel" aria-label="Research LLM selection and comparison overview">
         <div className="panel-heading"><div><p className="eyebrow">Research agent</p><h2>Model selection and experiment comparisons</h2></div><span className="panel-count">{management.state}</span></div>
