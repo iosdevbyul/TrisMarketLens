@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/common/PageHeader";
 import { getAutonomousResearchPublication } from "@/data/AutonomousResearchDataSource";
+import { AutonomousStudyInsights } from "@/components/research/AutonomousStudyInsights";
+import { EVALUATION_METRICS, type EvaluationMetricKey } from "@/domain/autonomousResearchInsights";
 import {
   researchStudySummary,
   type ResearchStudyView,
@@ -32,7 +34,7 @@ function studyMetrics(study: ResearchStudyView) {
 export default async function AutonomousResearchPage({
   searchParams,
 }: {
-  searchParams: Promise<{ study?: string }>;
+  searchParams: Promise<{ study?: string; metric?: string }>;
 }) {
   const query = await searchParams;
   const snapshot = await getAutonomousResearchPublication();
@@ -41,6 +43,7 @@ export default async function AutonomousResearchPage({
     ? studies.find(study => study.study === query.study) : undefined;
   const current = selected ?? studies[0];
   const invalidSelection = !!query.study && !selected;
+  const metric: EvaluationMetricKey = EVALUATION_METRICS.find(item => item.key === query.metric)?.key ?? "meanAp";
   return (
     <>
       <Link className="back-link" href="/research-status">← Back to research status</Link>
@@ -105,6 +108,7 @@ export default async function AutonomousResearchPage({
                 <div className="operations-overview-stat" key={name}><span>{name}</span><strong>{value}</strong></div>)}
             </div>
             {current.truncated ? <p role="status" className="metric-detail">This study is only partially included in the published projection.</p> : null}
+            <AutonomousStudyInsights study={current} selectedMetric={metric}/>
             <h3>Research execution history</h3>
             {current.runs.length ? <div className="stock-table" style={{overflowX:"auto"}}>
               <table style={{width:"100%",minWidth:"760px",textAlign:"left"}}>
