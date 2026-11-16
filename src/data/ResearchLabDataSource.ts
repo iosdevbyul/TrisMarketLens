@@ -101,10 +101,12 @@ function validMemory(v: unknown): v is ResearchLabMemory {
       HASH.test(e.experimentId) && (e.parentExperimentId === null || (typeof e.parentExperimentId === "string" && HASH.test(e.parentExperimentId))));
 }
 function validReport(v: unknown): v is ResearchLabReport {
-  return validStudy(v) && isObject(v) && isObject(v.researchPeriod) &&
-    v.sourceClass === "ARCHIVED_KRX_RESEARCH_NOT_INDEPENDENT_PIT" &&
-    Array.isArray(v.discoveryCurve) && v.discoveryCurve.length <= 1000 &&
-    Array.isArray(v.limitations) && v.limitations.every(text);
+  if (!validStudy(v)) return false;
+  const report: Record<string, unknown> = v as unknown as Record<string, unknown>;
+  return isObject(report.researchPeriod) &&
+    report.sourceClass === "ARCHIVED_KRX_RESEARCH_NOT_INDEPENDENT_PIT" &&
+    Array.isArray(report.discoveryCurve) && report.discoveryCurve.length <= 1000 &&
+    Array.isArray(report.limitations) && report.limitations.every(text);
 }
 function validComparison(v: unknown): v is ResearchLabComparison {
   return isObject(v) && typeof v.comparisonGroupId === "string" && HASH.test(v.comparisonGroupId) &&
