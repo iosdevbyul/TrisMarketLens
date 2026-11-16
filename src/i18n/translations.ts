@@ -1023,4 +1023,15 @@ Object.assign(ko, {
   "No recorded application": "적용 이력 없음",
   "No recorded operations": "운영 기록 없음"
 });
+Object.assign(ko, {
+  "Returned execution status summary": "반환된 실행 상태 요약",
+  "Returned evidence status summary": "반환된 근거 상태 요약",
+  "Recorded execution and evidence combinations": "기록된 실행 및 근거 조합",
+  "Evidence recording coverage of returned executions": "반환된 실행의 근거 기록 범위",
+  "Evidence issues across returned executions": "반환된 실행의 근거 문제",
+  "Evidence recording coverage by pipeline": "파이프라인별 근거 기록 범위",
+  "Reasons requiring attention": "검토가 필요한 사유",
+  "Run ID, source, diagnostic": "실행 ID, 출처, 진단",
+  "Active execution filters": "활성 실행 필터"
+});
 export function translate(locale: Locale, text: string): string { return locale === "ko" ? (ko[text] ?? ko[text.replace(/\s+/g, " ").trim()] ?? text) : text; }
