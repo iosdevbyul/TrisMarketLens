@@ -5,9 +5,11 @@ import { compareVisibleResearchModels } from "@/domain/researchModelEvidenceComp
 export function ResearchModelEvidenceComparison({
   records,
   totalRecords,
+  scope = "page",
 }: {
   records: readonly DailyResearchRecord[];
   totalRecords: number;
+  scope?: "page" | "complete" | "limited";
 }) {
   const rows = compareVisibleResearchModels(records);
   return (
@@ -20,8 +22,8 @@ export function ResearchModelEvidenceComparison({
         <span className="panel-count">{rows.length} model/source groups</span>
       </div>
       <p className="section-copy">
-        These counts compare only the {records.length} records on the currently displayed page
-        of {totalRecords} retained records. Model versions and real/synthetic origins are kept
+        {scope === "page" ? "These counts compare only the currently displayed response page." : scope === "limited" ? "These counts cover only the first bounded slice of matching published records." : "These counts cover all records matching the requested published date range."}
+        {" "}Retrieved {records.length} of {totalRecords} matching published records. Model versions and real/synthetic origins are kept
         separate. Completed jobs are not verified predictions; research scores are not calibrated
         probabilities, and no accuracy, profit, or model ranking is inferred.
       </p>
