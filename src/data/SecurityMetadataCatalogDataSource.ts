@@ -1,4 +1,3 @@
-import "server-only";
 import { normalizeLocalBackendUrl } from "./localBackendUrl";
 
 export type SecurityCatalogItem = {
