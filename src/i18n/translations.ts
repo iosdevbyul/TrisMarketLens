@@ -1034,4 +1034,35 @@ Object.assign(ko, {
   "Run ID, source, diagnostic": "실행 ID, 출처, 진단",
   "Active execution filters": "활성 실행 필터"
 });
+Object.assign(ko, {
+  "A read-only research observatory built from actual retained DonghakStockVision experiment records. Evidence, failures and unknowns remain distinct; this screen never launches research or authorizes investments.": "동학비전에 보존된 실제 실험 기록을 바탕으로 한 읽기 전용 연구 관제실입니다. 근거·실패·미확인 상태를 구분하며 연구를 실행하거나 투자를 승인하지 않습니다.",
+  "Review actual recorded study evidence. The study folder label is not a verified Experiment ID, cohort ID or plan fingerprint, and this is not a live execution controller.": "실제로 기록된 연구 근거를 검토합니다. 연구 폴더 이름은 검증된 실험 ID·코호트 ID·계획 지문이 아니며 이 화면은 실시간 실행 제어 기능을 제공하지 않습니다.",
+  "This record is projected from an actual autonomous_result artifact. The observation index is not an Experiment ID or a validated run→result relationship.": "이 기록은 실제 autonomous_result 산출물에서 추출했습니다. 관측 순번은 실험 ID나 검증된 실행·결과 연결 관계가 아닙니다.",
+  "Inspect the language models that propose bounded research experiments. These are not trained stock-direction models, and changing one never approves a trading decision.": "범위가 제한된 연구 실험을 제안하는 언어 모델을 확인합니다. 이는 학습된 주가 방향성 모델이 아니며 모델 변경이 거래 결정을 승인하지 않습니다.",
+  "Inspect completed research records and evaluation observations from the existing local autonomous engine. This is not a live trading system, historical PIT certificate, or forecast leaderboard.": "기존 로컬 자율 연구 엔진의 완료된 연구 기록과 평가 관측값을 확인합니다. 실거래 시스템, 과거 PIT 검증 인증 또는 예측 모델 순위표가 아닙니다.",
+  "Every current documented backend HTTP route is tracked here. Mapped means the web has a corresponding feature surface, NOT that its private runtime has been tested end-to-end or that every optional backend publication is configured.": "현재 문서화된 백엔드 HTTP 라우트를 추적합니다. 화면 연결은 관련 웹 기능이 있다는 뜻이지 비공개 운영 환경의 실제 E2E 검증이 끝났거나 선택적 게시 API가 모두 설정됐다는 뜻은 아닙니다.",
+  "Published portfolio detail": "게시된 포트폴리오 상세",
+  "Frozen historical simulation evidence from a pinned local DonghakStockVision publication. No broker execution, PIT/OOS qualification, operational approval, or investment suitability is implied.": "고정된 로컬 동학비전 게시 자료의 과거 시뮬레이션 근거입니다. 실제 증권사 거래, PIT·표본외 적격성, 운영 승인 또는 투자 적합성을 의미하지 않습니다.",
+  "Per-security observations from the pinned historical portfolio research publication. Simulated fills and valuation references are not broker trades or live-price approvals.": "고정된 과거 포트폴리오 연구 게시물의 종목별 관측값입니다. 모의 체결과 평가 기준값은 실제 거래나 실시간 가격 승인이 아닙니다.",
+  "Published portfolio comparison": "게시된 포트폴리오 비교",
+  "Side-by-side recorded historical research. No ranking, trading recommendation or inferred performance. Different periods, missing valuation marks and unavailable policies can make economic comparison invalid.": "기록된 과거 연구를 나란히 비교합니다. 순위·거래 추천·추정 성과를 제공하지 않습니다. 평가 기간, 누락된 평가값 또는 사용할 수 없는 정책이 다르면 경제적 비교가 유효하지 않을 수 있습니다.",
+  "Published historical portfolios": "게시된 과거 포트폴리오",
+  "Read-only published research archives from the local DonghakStockVision API. Neither publication nor integrity checks establish live trading permission, investment suitability, point-in-time validity, or out-of-sample validation.": "로컬 동학비전 API에서 제공하는 읽기 전용 연구 기록입니다. 게시 또는 무결성 검증만으로 실거래 권한, 투자 적합성, 시점별 유효성 또는 표본외 검증이 입증되지 않습니다.",
+  "Read-only connection checks. Healthy API transport does not certify data freshness, completeness or research approval.": "읽기 전용 연결 확인입니다. 정상 API 연결은 데이터 최신성·완전성 또는 연구 승인을 보장하지 않습니다.",
+  "KRX operational collection": "KRX 운영 데이터 수집",
+  "Unreviewed operational observations": "검토되지 않은 운영 관측값",
+  "Original unadjusted observations from a pinned operational SQLite snapshot. No fabricated bars, trade signals or research validation.": "고정된 운영 SQLite 스냅샷의 원본 비수정 관측값입니다. 가상 봉 데이터, 거래 신호 또는 연구 검증 결과를 만들지 않습니다.",
+  "Read-only KOSPI observations from an operator-pinned operational SQLite snapshot. These records are not research-approved predictions or the research stock universe.": "운영자가 고정한 운영 SQLite 스냅샷의 읽기 전용 KOSPI 관측값입니다. 연구 승인 예측이나 연구 대상 종목 범위를 뜻하지 않습니다.",
+  "Read-only operations": "읽기 전용 운영",
+  "Collection to research evidence trace": "수집부터 연구까지 근거 추적",
+  "Trace original KRX collection, scheduler gates, execution records, freshness, alerts and separate research publications. Every stage independently reports its available evidence; no completion, quality, or approval is inferred.": "원본 KRX 수집, 스케줄러 차단 조건, 실행 기록, 최신성, 경고 및 별도 연구 게시물을 추적합니다. 단계마다 확보된 근거를 독립적으로 표시하며 완료·품질·승인을 추정하지 않습니다.",
+  "Research workflow": "연구 작업 흐름",
+  "Navigate from collected observations to research identity, model qualification, original published signals, blockers and historical portfolios. Each stage is independent; there is no implied inference, live trade or approved forecast.": "수집된 관측값에서 연구 식별, 모델 적격성, 원래 게시된 신호, 차단 요인 및 과거 포트폴리오까지 탐색합니다. 각 단계는 독립적이며 추론 실행, 실거래 또는 승인된 예측을 의미하지 않습니다.",
+  "Separate live API reachability, authenticated research LLM controls, recorded comparison evidence and ticker-level daily research. Each publication is checked independently.": "실시간 API 연결 가능 여부, 인증된 연구 LLM 관리, 기록된 비교 근거와 종목별 일일 연구를 구분합니다. 각 게시 데이터는 독립적으로 확인합니다.",
+  "Research evidence workbench": "연구 근거 작업 공간",
+  "Follow published model qualification, evidence blockers and explicitly published security analysis. Global Up/Down model statistics do not identify a ticker's inference model or constitute investment advice.": "게시된 모델 적격성, 근거 차단 요인 및 명시적으로 게시된 종목 분석을 추적합니다. 전체 상승·하락 모델 통계는 특정 종목의 추론 모델을 식별하거나 투자 조언을 제공하지 않습니다.",
+  "Inspect the full research-snapshot security identity publication. Corporation mapping is not the same as independently verified current security names or historical ticker continuity.": "전체 연구 스냅샷의 종목 식별 게시 데이터를 확인합니다. 기업 매핑은 독립적으로 검증된 현재 종목명이나 과거 종목 식별 연속성과 다릅니다.",
+  "Daily research evidence": "일일 연구 근거",
+  "Historical model comparison": "과거 모델 비교"
+});
 export function translate(locale: Locale, text: string): string { return locale === "ko" ? (ko[text] ?? ko[text.replace(/\s+/g, " ").trim()] ?? text) : text; }
