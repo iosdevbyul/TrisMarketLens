@@ -41,7 +41,7 @@ describe("integrated research source states", () => {
   it("distinguishes empty valid publication from failure and no ticker selection", () => {
     const empty = researchSourceRows(input({ daily: {
       source: "http", error: null, unavailable: false,
-      data: { ticker: "005930", totalRecords: 0, records: [] } as NonNullable<DailyResearchResult["data"]>,
+      data: { ticker: "005930", totalRecords: 0, records: [] } as unknown as NonNullable<DailyResearchResult["data"]>,
     } }));
     expect(empty[3]).toMatchObject({ status: "empty", count: 0 });
     const failed = researchSourceRows(input({ daily: { source: "http", data: null, error: "HTTP 503", unavailable: true } }));
