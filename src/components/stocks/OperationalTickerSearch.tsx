@@ -1,5 +1,5 @@
 "use client";
-import { ClientLocalize } from "@/i18n/LocaleProvider";
+import { ClientLocalize } from "../../i18n/LocaleProvider";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 export function normalizeOperationalTicker(value:string):string|null{
