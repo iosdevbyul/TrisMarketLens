@@ -59,3 +59,27 @@ test("web health explicitly labels mock mode and does not assert backend connect
  expect(health.dataSource).toBe("mock");
  expect(health.backend?.status).not.toBe("ok");
 });
+
+
+test("integrated research workspace exposes source limits and model evidence in disconnected mode", async ({page}) => {
+ await page.goto("/research-status");
+ await expect(page.getByRole("heading", {name:"Integrated AI research status"})).toBeVisible();
+ await expect(page.getByRole("region", {name:"Independent research source status"})).toBeVisible();
+ await expect(page.getByRole("region", {name:"Research LLM selection and comparison overview"})).toBeVisible();
+ await expect(page.getByRole("region", {name:"Selected ticker research preview"})).toBeVisible();
+ await expect(page.getByText("Market source mode: mock.", {exact:false})).toBeVisible();
+ await expect(page.getByRole("link", {name:"Review model catalog, validation controls and matching research runs"})).toBeVisible();
+ await expect(page.getByText("Enter a ticker above to request a real publication preview.")).toBeVisible();
+ await expect(page.getByText("Published source observations", {exact:true})).toHaveCount(0);
+});
+
+test("integrated research preview respects ticker selection and cannot fabricate unavailable records", async ({page}) => {
+ await page.goto("/research-status?ticker=005930");
+ await expect(page.getByRole("heading", {name:"005930 publication preview"})).toBeVisible();
+ await expect(page.getByRole("link", {name:"Inspect full per-ticker record details"})).toHaveAttribute("href", "/stocks/005930#daily-research");
+ await expect(page.getByRole("link", {name:"Compare up to 1,000 published records"})).toHaveAttribute("href", "/stocks/005930/research-comparison");
+ await expect(page.getByText("No records were returned in the preview.", {exact:false})).toBeVisible();
+ await page.goto("/research-status?ticker=invalid-ticker");
+ await expect(page.getByRole("alert")).toContainText("Use exactly six letters or digits");
+ await expect(page.getByText("Enter a ticker above to request a real publication preview.")).toBeVisible();
+});
