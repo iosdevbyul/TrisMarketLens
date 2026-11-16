@@ -68,3 +68,15 @@ HTTP endpoints and rejects remote hosts, userinfo, arbitrary paths and
 redirects. The management adapter independently requires literal
 `127.0.0.1`. Any future hosted configuration must use a separately reviewed,
 authenticated gateway; never weaken loopback guards as a workaround.
+
+## Operator verification suite: diagnosis by stage
+
+The operator command now uses the same bounded contract checks as offline Node tests. The first validated publication page is checked against the second page when one exists (maximum two pages of ten records each). A changing total, missing record, duplicate job reference, or unexpected date order fails the check without printing research contents. Results distinguish the first-page preview counts from the total number of published records. The script **does not** claim a full-history audit.
+
+Use `npm run verify:research:workspace` with the existing local configuration. A successful run reports JSON with `outcome: passed`, `dailyResearch.checkedPages` and the optional `management` status. A failure reports `outcome: failed`, a bounded `stage`, and a sanitized reason; it exits nonzero. No bearer token, raw source response, job identifier, or authorization header is output.
+
+The optional management check reads the catalog, active model, selection history, and comparison history through authenticated GET requests. It can distinguish authentication failure (401), missing permission (403), publication unavailable (503), invalid JSON, malformed management data, and invalid selection version. It never starts model validation or changes the selection. For comparison studies, the endpoint response only proves retained entries exist; equal `comparisonContractId` still does not prove prediction quality.
+
+Run `npm run verify:research:contracts` to exercise both the pure contract validator and a controlled local HTTP server that simulates the actual operator command, including a changing daily research page and a forbidden management endpoint. These regression tests run during the required GitHub CI verifier step; they do not require the private macOS backend. The web's `/research-status` page also shows source-specific next checks, with read-only links to existing diagnostics and the local command, without executing that command in the browser.
+
+If no local backend is running, the actual operator verification remains **unverified**, even when CI succeeds. Never weaken loopback restrictions or publish a token merely to make the verifier pass.
