@@ -1,4 +1,5 @@
 import { Localize } from "@/i18n/Localize";
+import { getTranslator } from "@/i18n/server";
 import Link from "next/link";
 import {PageHeader} from "@/components/common/PageHeader";
 import {getDataSource} from "@/data/getDataSource";
@@ -15,6 +16,7 @@ function failure(outcome:PromiseSettledResult<unknown>,label:string):string|null
 export default async function ResearchPathPage({
  searchParams
 }:{searchParams:Promise<{ticker?:string}>}){
+ const t=await getTranslator();
  const query=await searchParams;
  const ticker=researchPathTicker(query.ticker);
  const invalid=query.ticker!==undefined&&!ticker;
@@ -59,7 +61,7 @@ export default async function ResearchPathPage({
    badge={mode!=="http"?"Demonstration mode":attention.length?"Evidence requires review":"Recorded sources"}
    description="Navigate from collected observations to research identity, model qualification, original published signals, blockers and historical portfolios. Each stage is independent; there is no implied inference, live trade or approved forecast."/>
   <section className="panel single-panel" aria-label="Research path selection">
-   <div className="panel-heading"><h2><Localize text="Select research security" /></h2><span className="panel-count">{ticker??"No ticker selected"}</span></div>
+   <div className="panel-heading"><h2><Localize text="Select research security" /></h2><span className="panel-count">{ticker??t("No ticker selected")}</span></div>
    <form method="get" action="/research-path">
     <label htmlFor="research-path-ticker"><Localize text="Ticker" /></label>{" "}
     <input id="research-path-ticker" name="ticker" defaultValue={typeof query.ticker==="string"?query.ticker:""}
@@ -69,17 +71,17 @@ export default async function ResearchPathPage({
    {invalid?<p role="alert" className="metric-detail"><Localize text="Invalid ticker: use exactly six uppercase letters or digits." /></p>:null}
    {ticker&&stockList&&!stockList.some(stock=>stock.ticker===ticker)?
     <p role="status" className="metric-detail"><Localize text="This ticker is not in the returned research catalog. No security identity or prediction is assumed." /></p>:null}
-   <p className="section-copy">Backend data mode: {mode}. {mode==="mock"?"All mock records are fictional examples.":mode==="http"?"Actual source availability is evaluated separately for each step, not inferred from backend health.":"HTTP source is not enabled."}</p>
+   <p className="section-copy"><Localize text="Backend data mode:" /> {mode}. {t(mode==="mock"?"All mock records are fictional examples.":mode==="http"?"Actual source availability is evaluated separately for each step, not inferred from backend health.":"HTTP source is not enabled.")}</p>
   </section>
   <section className="panel single-panel" aria-label="Integrated research steps">
-   <div className="panel-heading"><h2><Localize text="Source evidence path" /></h2><span className="panel-count">{attention.length} steps needing review</span></div>
+   <div className="panel-heading"><h2><Localize text="Source evidence path" /></h2><span className="panel-count">{attention.length} {t("steps needing review")}</span></div>
    {stages.map((stage,index)=><article className="operations-run" key={stage.id}>
     <div>
-     <strong>{index+1}. {stage.title}</strong>
-     <p className="metric-detail">{stage.note}</p>
+     <strong>{index+1}. {t(stage.title)}</strong>
+     <p className="metric-detail">{t(stage.note)}</p>
      <p><Link href={stage.href}><Localize text="Inspect recorded source" /></Link></p>
     </div>
-    <span className="status-pill" data-state={stage.status==="observed"?"verified":stage.status==="blocked"?"blocked":"in_progress"}>{stage.status}</span>
+    <span className="status-pill" data-state={stage.status==="observed"?"verified":stage.status==="blocked"?"blocked":"in_progress"}>{t(stage.status)}</span>
    </article>)}
   </section>
   <section className="panel single-panel" aria-label="Research integrity limitations">
