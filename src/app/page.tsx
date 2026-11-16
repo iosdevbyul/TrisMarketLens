@@ -1,3 +1,4 @@
+import { Localize } from "@/i18n/Localize";
 import Link from "next/link";
 import {loadOperationalCatalog} from "@/data/OperationalMarketDataSource";
 import { getTranslator } from "@/i18n/server";
@@ -25,7 +26,7 @@ export default async function Home() {
         title={status.productName}
       />
 
-      <section className="panel single-panel" aria-label="Research evidence journey"><div className="panel-heading"><h2>Follow the research evidence</h2><span className="status-pill" data-state="blocked">Read-only</span></div><p className="section-copy">Start at a security, inspect its published analysis and model validation, review unresolved source evidence, then compare pinned historical portfolios. Collected KRX observations are never promoted to approved research.</p><Link href="/research-path">Open integrated research path</Link> · <Link href="/research-status">Open unified research source workspace</Link> · <Link href="/autonomous-research">Inspect autonomous experiment evidence</Link></section>
+      <section className="panel single-panel" aria-label="Research evidence journey"><div className="panel-heading"><h2><Localize text="Follow the research evidence" /></h2><span className="status-pill" data-state="blocked"><Localize text="Read-only" /></span></div><p className="section-copy"><Localize text="Start at a security, inspect its published analysis and model validation, review unresolved source evidence, then compare pinned historical portfolios. Collected KRX observations are never promoted to approved research." /></p><Link href="/research-path"><Localize text="Open integrated research path" /></Link> · <Link href="/research-status"><Localize text="Open unified research source workspace" /></Link> · <Link href="/autonomous-research"><Localize text="Inspect autonomous experiment evidence" /></Link></section>
 
       <section className="metric-grid" aria-label={t("Research summary")}>
         {status.metrics.map((metric) => (
@@ -34,17 +35,17 @@ export default async function Home() {
       </section>
 
       <WakPanel as="section" className="single-panel">
-        <WakSectionHeader eyebrow="Live data source" title="Collected KRX observations" trailing={<span className="panel-count">Unreviewed operational data</span>} />
-        <p className="section-copy">Separate from research coverage and model approval. This reports the configured operational snapshot only.</p>
+        <WakSectionHeader eyebrow="Live data source" title="Collected KRX observations" trailing={<span className="panel-count"><Localize text="Unreviewed operational data" /></span>} />
+        <p className="section-copy"><Localize text="Separate from research coverage and model approval. This reports the configured operational snapshot only." /></p>
         {operational.data ? <>
           <div className="metric-grid"><WakMetricCard label="Observed tickers" value={operational.data.total.toLocaleString(locale==="ko"?"ko-KR":"en-US")} detail="Count returned by the read-only operational API" /></div>
           {operational.data.items.length>0 ? <div className="operations-runs">
             {operational.data.items.slice(0,5).map(item=><article className="operations-run" key={item.ticker}>
               <div><strong><Link href={"/operational-market/"+item.ticker}>{item.ticker}</Link></strong><p className="metric-detail">Latest observed: {item.latestDataDate}</p></div>
             </article>)}
-          </div> : <p className="section-copy">This snapshot contains no observed tickers.</p>}
+          </div> : <p className="section-copy"><Localize text="This snapshot contains no observed tickers." /></p>}
         </> : <p className="metric-detail" role="status">Collected data unavailable: {operational.error}</p>}
-        <Link href="/operational-market">Browse collected KRX prices</Link>
+        <Link href="/operational-market"><Localize text="Browse collected KRX prices" /></Link>
       </WakPanel>
       <AnalysisOverviewPanel result={screener} locale={locale} />
 

@@ -1,3 +1,4 @@
+import { Localize } from "@/i18n/Localize";
 import Link from "next/link";
 import { getLocale, getTranslator } from "@/i18n/server";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -24,7 +25,7 @@ export default async function StocksPage() {
         title={t("Stocks")}
       />
 
-      <p className="section-copy"><Link href="/security-metadata">Browse independently verified security and corporation metadata</Link> · <Link href="/backend-api-coverage">Check backend API integration inventory</Link></p>
+      <p className="section-copy"><Link href="/security-metadata"><Localize text="Browse independently verified security and corporation metadata" /></Link> · <Link href="/backend-api-coverage"><Localize text="Check backend API integration inventory" /></Link></p>
       <section className="metric-grid">
         <WakMetricCard label={t("Universe")} value={coverage.universe.toLocaleString()} detail={t("Approved KOSPI securities")} />
         <WakMetricCard label={t("Daily bars")} value={coverage.totalBars.toLocaleString()} detail={`${coverage.startDate} through ${coverage.endDate}`} />
