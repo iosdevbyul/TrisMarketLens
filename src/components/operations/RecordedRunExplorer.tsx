@@ -1,4 +1,5 @@
 "use client";
+import { translate } from "../../i18n/translations";
 import { ClientLocalize } from "../../i18n/LocaleProvider";
 import {useEffect,useState} from "react";
 import {exportPipelineEvidenceCoverageCsv} from "../../domain/pipelineEvidenceCoverageCsv";
@@ -81,6 +82,7 @@ export function filterRunsByStartDate(runs:readonly AnalysisRun[],from:string,to
 }
 const states:AnalysisRunState[]=["queued","running","succeeded","failed","blocked","unknown"];
 export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko"|"en"}){
+ const t=(copy:string)=>translate(locale,copy);
  const [pipeline,setPipeline]=useState<RunFilter>("all");
  const [query,setQuery]=useState("");
  const [state,setState]=useState<"all"|AnalysisRunState>("all");
@@ -387,23 +389,23 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
  };
  const formatTime=(value:string|null)=>formatRecordedTime(value,locale);
  return <div className="recorded-run-explorer">
-  <div className="recorded-run-summary" aria-label="Returned execution status summary">
+  <div className="recorded-run-summary" aria-label={t("Returned execution status summary")}>
    {recordedStates.map(item=><button type="button" key={item} aria-pressed={state===item} aria-label={`Filter ${item} recorded executions (${counts[item]})`} onClick={()=>setState(current=>current===item?"all":item)}><span>{item}</span><strong>{counts[item]}</strong></button>)}
   </div>
   <p className="metric-detail">Select a status count to filter the records below; select it again to clear that status. Status totals describe only the {runs.length} execution records returned by this API request, not the complete execution history. A recorded completed operation does not establish semantic approval.</p>
-  <div className="recorded-run-summary" aria-label="Returned evidence status summary">
+  <div className="recorded-run-summary" aria-label={t("Returned evidence status summary")}>
    {evidenceCategories.map(item=><button type="button" key={item} aria-pressed={evidence===item} aria-label={`Filter ${item} evidence records (${evidenceCounts[item]})`} onClick={()=>setEvidence(current=>current===item?"all":item)}><span>{item}</span><strong>{evidenceCounts[item]}</strong></button>)}
   </div>
   <p className="metric-detail">Evidence totals describe only the {runs.length} returned executions. Missing or malformed evidence labels are counted as not recorded, not validated. Select a count to filter; select again to clear.</p>
-  <section className="recorded-run-matrix" aria-label="Recorded execution and evidence combinations">
+  <section className="recorded-run-matrix" aria-label={t("Recorded execution and evidence combinations")}>
    <h3><ClientLocalize text="Execution × evidence breakdown" /></h3>
-   <div className="recorded-run-coverage" aria-label="Evidence recording coverage of returned executions">
+   <div className="recorded-run-coverage" aria-label={t("Evidence recording coverage of returned executions")}>
     <div><span><ClientLocalize text="Evidence status recorded" /></span><strong>{evidenceCoverage.recordedPercent}%</strong><small>{evidenceCoverage.recorded} of {evidenceCoverage.total} returned runs</small></div>
     <div><span><ClientLocalize text="Evidence not recorded" /></span><strong>{evidenceCoverage.notRecordedPercent}%</strong><small>{evidenceCoverage.notRecorded} of {evidenceCoverage.total} returned runs</small></div>
     <div><span><ClientLocalize text="Evidence validated" /></span><strong>{evidenceCoverage.validated}</strong><small>Explicitly labeled validated; not inferred from successful runs</small></div>
    </div>
    <p className="metric-detail">Evidence recorded includes validated, partial, invalid and unavailable classifications. It measures recording coverage, not the proportion of evidence approved. Percentages use only API-returned executions; 0 returned runs display 0% rather than an inferred rate.</p>
-   <section aria-label="Evidence issues across returned executions" className="recorded-run-pipeline-coverage">
+   <section aria-label={t("Evidence issues across returned executions")} className="recorded-run-pipeline-coverage">
     <h4><ClientLocalize text="Evidence issues overview" /></h4>
     <button type="button" className="recorded-run-reset" onClick={()=>void copyEvidenceIssueOverview()}><ClientLocalize text="Copy overview handoff" /></button>
     <button type="button" className="recorded-run-reset" onClick={downloadEvidenceIssueOverviewCsv}><ClientLocalize text="Export overview CSV" /></button>
@@ -423,9 +425,9 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
     </div>
     <p className="metric-detail">Oldest observed issue execution start (UTC): {evidenceIssueOverview.oldestStartedAt??"Unavailable"}. The issue share uses every API-returned execution as its denominator; it is not a failure rate, incident frequency, or historical trend. These totals cover API-returned records, not a complete history. An execution start is not an incident discovery timestamp, SLA, or approval.</p>
    </section>
-   <section aria-label="Evidence recording coverage by pipeline" className="recorded-run-pipeline-coverage">
+   <section aria-label={t("Evidence recording coverage by pipeline")} className="recorded-run-pipeline-coverage">
     <h4><ClientLocalize text="Evidence recording by pipeline" /></h4>
-    <label><ClientLocalize text="Pipeline row order" />{" "}<select aria-label="Pipeline row order" value={coverageOrder} onChange={event=>setCoverageOrder(event.target.value as PipelineCoverageOrder)}><option value="default"><ClientLocalize text="Default" /></option><option value="most-missing-first"><ClientLocalize text="Most missing evidence first" /></option><option value="oldest-missing-first"><ClientLocalize text="Oldest missing evidence first" /></option><option value="most-issues-first"><ClientLocalize text="Most invalid/unavailable first" /></option><option value="oldest-issues-first"><ClientLocalize text="Oldest invalid/unavailable start first" /></option></select></label>
+    <label><ClientLocalize text="Pipeline row order" />{" "}<select aria-label={t("Pipeline row order")} value={coverageOrder} onChange={event=>setCoverageOrder(event.target.value as PipelineCoverageOrder)}><option value="default"><ClientLocalize text="Default" /></option><option value="most-missing-first"><ClientLocalize text="Most missing evidence first" /></option><option value="oldest-missing-first"><ClientLocalize text="Oldest missing evidence first" /></option><option value="most-issues-first"><ClientLocalize text="Most invalid/unavailable first" /></option><option value="oldest-issues-first"><ClientLocalize text="Oldest invalid/unavailable start first" /></option></select></label>
     <button type="button" className="recorded-run-reset" onClick={downloadPipelineCoverageCsv}><ClientLocalize text="Export pipeline coverage CSV" /></button>
     <button type="button" className="recorded-run-reset" onClick={downloadPipelineTriageCsv}><ClientLocalize text="Export triage CSV" /></button>
     <button type="button" className="recorded-run-reset" onClick={downloadPipelineQualityCsv}><ClientLocalize text="Export evidence quality CSV" /></button>
@@ -463,7 +465,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
     </table>
    </div>
   </section>
-  <section aria-label="Reasons requiring attention">
+  <section aria-label={t("Reasons requiring attention")}>
    <h3><ClientLocalize text="Recorded attention reasons" /></h3>
    <div className="recorded-run-summary">
     {attentionReasons.map(reason=><button type="button" key={reason} aria-pressed={attentionReason===reason} onClick={()=>setAttentionReason(current=>current===reason?null:reason)} aria-label={`Filter attention reason ${reason} (${attentionCounts[reason]})`}><span>{reason.replaceAll("-"," ")}</span><strong>{attentionCounts[reason]}</strong></button>)}
@@ -474,7 +476,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
    <label className="recorded-run-attention"><input type="checkbox" checked={attentionOnly} onChange={e=>setAttentionOnly(e.target.checked)} />{" "}<ClientLocalize text="Needs attention only" /></label>
    <label><ClientLocalize text="Start date from (UTC)" /><input type="date" value={from} max={to||undefined} onChange={e=>setFrom(e.target.value)} /></label>
    <label><ClientLocalize text="Start date to (UTC)" /><input type="date" value={to} min={from||undefined} onChange={e=>setTo(e.target.value)} /></label>
-   <label><ClientLocalize text="Search recorded execution" /><input type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Run ID, source, diagnostic" autoComplete="off" /></label>
+   <label><ClientLocalize text="Search recorded execution" /><input type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder={t("Run ID, source, diagnostic")} autoComplete="off" /></label>
    <label><ClientLocalize text="Pipeline" /><select value={pipeline} onChange={e=>setPipeline(e.target.value as RunFilter)}>
     <option value="all"><ClientLocalize text="All pipelines" /></option><option value="Market collection"><ClientLocalize text="Market collection" /></option>
     <option value="DART session"><ClientLocalize text="DART session" /></option><option value="DART batch acquisition"><ClientLocalize text="DART batch acquisition" /></option>
@@ -493,7 +495,7 @@ export function RecordedRunExplorer({runs,locale}:{runs:AnalysisRun[];locale:"ko
    <button type="button" className="recorded-run-reset" onClick={downloadCsv} disabled={visible.length===0}><ClientLocalize text="Export filtered CSV" /></button>
    <button type="button" className="recorded-run-reset" onClick={()=>{setQuery("");setPipeline("all");setState("all");setSort("newest");setFrom("");setTo("");setEvidence("all");setAttentionOnly(false);setAttentionReason(null);}} disabled={!query&&!from&&!to&&pipeline==="all"&&state==="all"&&sort==="newest"&&evidence==="all"&&!attentionOnly&&attentionReason===null}><ClientLocalize text="Reset filters" /></button>
   </div>
-  <div className="recorded-run-active-filters" aria-label="Active execution filters">
+  <div className="recorded-run-active-filters" aria-label={t("Active execution filters")}>
    <strong>Active filters ({activeFilters.length})</strong>
    {activeFilters.length===0?<span className="metric-detail"><ClientLocalize text="None — default view" /></span>:activeFilters.map(item=><button type="button" key={item.key} onClick={()=>clearActiveFilter(item.key)} aria-label={"Remove "+item.label+" filter"}>{item.label}<span aria-hidden="true"> ×</span></button>)}
   </div>
