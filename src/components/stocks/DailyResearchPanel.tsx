@@ -53,7 +53,7 @@ export function DailyResearchPanel({ ticker, result, filters }: { ticker: string
       <p className="section-copy">Last successful analysis: {data.lastSuccessfulAnalyzedAt ?? "None"} · Trading date: {data.lastSuccessfulTradingDate ?? "None"} · Origin: {data.lastSuccessfulDataOrigin === "synthetic_fixture" ? "SYNTHETIC FIXTURE" : data.lastSuccessfulDataOrigin === "real" ? "Real provider capture (locally retained; not independently authenticated)" : "None"}.</p>
       {summary ? <section aria-label="Visible daily research evidence summary">
         <div className="panel-heading"><h2>Research activity in this page</h2><span className="panel-count">Visible records only</span></div>
-        <p className="section-copy">Counts below describe only the {summary.displayed} records in this current paginated response, not all {data.totalRecords} retained records. A status of completed means the research job produced an artifact, not that its forecast was correct or independently verified.</p>
+        <p className="section-copy">Counts below describe only the {summary.displayed} records in this current paginated response, not all {data?.totalRecords ?? 0} retained records. A status of completed means the research job produced an artifact, not that its forecast was correct or independently verified.</p>
         <div className="operations-overview-grid">
           {([
             ["Completed", summary.completed], ["Pending", summary.pending], ["Blocked", summary.blocked],
