@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/common/PageHeader";
+import { AIResearchComparisonGroups } from "@/components/research/AIResearchComparisonGroups";
 import { requestModelValidation, selectValidatedResearchModel } from "./actions";
 import { getAIManagementSnapshot, getAIManagementValidation, safeLabel, stringValue, type AIManagementRecord } from "@/data/AIModelManagementDataSource";
 
@@ -31,13 +32,13 @@ export default async function AIResearchModelsPage({ searchParams }: { searchPar
       <PageHeader
         eyebrow="Research infrastructure"
         title="AI research LLMs"
-        badge={snapshot.state === "available" ? "Read-only · authenticated" : "Not connected"}
+        badge={snapshot.state === "available" ? "Authenticated operator controls" : "Not connected"}
         description="Inspect the language models that propose bounded research experiments. These are not trained stock-direction models, and changing one never approves a trading decision."
       />
       <section className="panel single-panel" aria-label="AI management connection">
         <div className="panel-heading"><h2>Management connection</h2><span className="panel-count">{snapshot.state}</span></div>
         <p className="section-copy" role={snapshot.state === "available" ? undefined : "status"}>{snapshot.message}</p>
-        <p className="metric-detail">This page performs authenticated server-side GET requests only. It does not start validation, switch models, launch studies, or activate trading. Backend credentials are never sent to the browser.</p>
+        <p className="metric-detail">The page reads management status through server-side GET requests. Its separate, explicitly approved controls can request model validation or selection; neither action starts a study, changes a stock prediction model, or activates trading. Backend credentials remain server-side.</p>
         {snapshot.partialErrors.map((error) => <p key={error} role="status" className="metric-detail">{error}</p>)}
       </section>
       {active && (
@@ -131,10 +132,7 @@ export default async function AIResearchModelsPage({ searchParams }: { searchPar
         <div className="panel-heading"><h2>Selection history</h2><span className="panel-count">{snapshot.state === "available" ? snapshot.history.length + " records" : "Unavailable"}</span></div>
         {snapshot.history.length ? snapshot.history.map((item, index) => <div key={index} className="status-row"><div><p className="status-title">{title(item, "modelKey", "selectedModelKey", "action", "outcome")}</p><p className="status-detail">Outcome: {detail(item, "outcome", "status")} · At: {detail(item, "changedAt", "createdAt", "timestamp")} · Version: {detail(item, "selectionVersion")}</p></div></div>) : <p className="section-copy">No selection history is available. This is not evidence that no model changes ever occurred.</p>}
       </section>
-      <section className="panel single-panel" aria-label="Comparable research outcomes">
-        <div className="panel-heading"><h2>Research model comparisons</h2><span className="panel-count">{snapshot.state === "available" ? snapshot.comparisons.length + " records" : "Unavailable"}</span></div>
-        {snapshot.comparisons.length ? snapshot.comparisons.map((item, index) => <div key={index} className="status-row"><div><p className="status-title">{title(item, "modelKey", "modelId", "studyId", "comparisonContractId")}</p><p className="status-detail">Contract: {detail(item, "comparisonContractId")} · State: {detail(item, "status", "outcome")} · Run: {detail(item, "runId")}</p></div></div>) : <p className="section-copy">No comparison records are available. Only identical comparison contract IDs can support matched comparisons; research metrics do not establish live investment performance.</p>}
-      </section>
+      <AIResearchComparisonGroups records={snapshot.comparisons} available={snapshot.state === "available" && !snapshot.partialErrors.includes("Research comparisons are currently unavailable.")} />
     </>
   );
 }

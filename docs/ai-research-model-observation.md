@@ -51,3 +51,9 @@ Open `/stocks/{ticker}/research-comparison` from the existing stock detail scree
 Every page uses the current HTTP-only research adapter and its strict schema validator. A moving total, page-size mismatch, broken offset, non-monotonic date boundary, or duplicate job reference causes the complete comparison to be withheld. Disconnected or unpublished data never falls back to mock. The results distinguish `complete` (all matching published records) from `limited` (only first 1,000), and never call a partial count an all-history metric.
 
 The comparison is descriptive only: job status, model and version identity, recorded date coverage, and real versus synthetic publication origins. It does not run autonomous experiments, expose private Experiment Memory, estimate model quality or compute investment performance. Historical publication counts reflect available backend records only, not an independently verified market history.
+
+## Model-management comparison contracts
+
+The authenticated `GET /api/v1/ai/models/comparisons` response is now displayed by backend-provided `comparisonContractId` groups. A record without a non-empty contract ID is explicitly unclassified and **never** merged into a scored group. Matching IDs permit a side-by-side view of retained run identities, state and any recorded reason, but are not independent proof of model quality or investment performance. A group containing only one run is labelled as such. Frontend code does not invent metrics or compare across contract fingerprints.
+
+This page also correctly identifies its explicit server-action validation and selection controls rather than claiming the entire page only performs GET requests. Those controls remain operator-authenticated and bounded by the existing management API. Autonomous Experiment Memory itself still has no verified general-purpose HTTP publication contract and is not fabricated in the web UI.
