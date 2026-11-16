@@ -1066,4 +1066,20 @@ Object.assign(ko, {
   "Historical model comparison": "과거 모델 비교"
 });
 Object.assign(ko, {"Recorded operations":"기록된 운영 실행"});
+Object.assign(ko, {
+  "Most recently recorded run:": "마지막으로 기록된 연구 실행:",
+  "matches": "건 일치",
+  "run records": "개 실행 기록",
+  "result records": "개 결과 기록",
+  "completed terminals": "개 완료 종료 기록",
+  "failed terminals": "개 실패 종료 기록",
+  "Agents:": "에이전트:",
+  "Last recorded run:": "최근 기록된 실행:",
+  "State evidence:": "상태 근거:",
+  "Observed states:": "관측된 상태:",
+  "included": "건 포함",
+  "study databases": "개 연구 데이터베이스",
+  "Diagnostics recorded": "진단 기록됨",
+  "Retained": "보존됨"
+});
 export function translate(locale: Locale, text: string): string { return locale === "ko" ? (ko[text] ?? ko[text.replace(/\s+/g, " ").trim()] ?? text) : text; }
