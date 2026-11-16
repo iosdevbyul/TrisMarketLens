@@ -36,3 +36,9 @@ The server sends the bearer token when fetching the existing `GET /api/v1/ai/mod
 Open `/ai-research-models`, request a validation for a registered model, and refresh the displayed job until it completes. Once the backend reports a valid outcome and an unexpired receipt, check the explicit approval box to submit a compare-and-set model selection. A model selection affects only **subsequent manually initiated managed studies**; neither validation nor selection starts research. On 409, refresh the page and re-evaluate the current model/version. 401/403 require the operator to supply correct server-side authentication. The example configuration must use an existing `ai:manage` scoped credential for these operations.
 
 This is not a general-purpose multi-user administrative interface. Access should remain restricted to the local operator. Real validation jobs can consume CPU and memory; no blind retry is performed.
+
+## Stock-detail research evidence comparison
+
+The existing `/stocks/[ticker]` Daily Research panel now includes a model-wise comparison table for the **current validated response page**. The grouping key is `modelId + modelVersion + dataOrigin` so real-source and synthetic-fixture rows never share one count. The table shows observed trading-date coverage, recorded jobs, outcome status counts, and count of recorded research scores, with a separate disclosure for Up/Down/Neutral display labels. It does not average uncalibrated scores or infer return, success rate, ranking, trading readiness or autonomous Experiment Memory contents.
+
+A page containing 50 of 300 retained records is always identified as 50 displayed records; comparisons do not silently claim to cover the 250 unrequested records. Unavailable or unconfigured publication leaves the section absent rather than replacing it with demonstration data. No backend API changes are needed.
