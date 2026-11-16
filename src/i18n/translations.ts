@@ -1249,4 +1249,24 @@ Object.assign(ko, {
   "Filter status": "상태 필터",
   "Run evidence": "실행 근거"
 });
+Object.assign(ko, {
+  "Generated:": "생성 시각:",
+  "This is a manually refreshed operator publication, not live process telemetry.": "운영자가 수동 갱신한 게시 데이터이며 실시간 프로세스 상태 정보가 아닙니다.",
+  "database sources were excluded from the export. Displayed counts are not the full DonghakStockVision history.": "개 데이터베이스가 내보내기에서 제외됐습니다. 표시된 개수는 동학비전의 전체 연구 이력을 의미하지 않습니다.",
+  "Completion and failure counts describe terminal records, not distinct experiments. Research may have progressed since publication. Current CPU, memory and process state are unavailable.": "완료·실패 수는 중복 제거된 실험이 아닌 종료 기록 수입니다. 게시 이후 연구가 진행됐을 수 있으며 현재 CPU·메모리·실행 상태는 제공되지 않습니다.",
+  "Recorded run and terminal states are historical observations, not proof a process is running now. Study labels are storage labels, not verified cohorts, horizons or selection policies. Unsupported filters are deferred.": "실행 및 종료 상태는 과거 관측 기록이며 현재 실행 중임을 입증하지 않습니다. 연구 이름은 저장소의 식별 표기일 뿐 검증된 코호트, 예측 기간 또는 선택 정책이 아닙니다. 지원하지 않는 필터는 제공하지 않습니다.",
+  "Page": "페이지",
+  "Included records complete": "포함된 기록 전체 확인",
+  "Partial evidence": "불완전한 근거",
+  "Each row is a published result observation, not a new experiment. The observation index is not an Experiment ID. Private checkpoints and source PINs are never exposed.": "각 행은 게시된 결과 관측값이며 새로운 실험이 아닙니다. 관측 순번은 실험 ID가 아니며 비공개 체크포인트와 출처 PIN은 노출하지 않습니다.",
+  "Additional retained result records excluded from this publication:": "게시에서 제외된 추가 보존 결과 기록:",
+  "Recorded true performance-approval flags:": "참으로 기록된 성능 승인 상태 수:",
+  "Recorded true PIT flags:": "참으로 기록된 PIT 상태 수:",
+  "Recorded true execution-authorization flags:": "참으로 기록된 실행 승인 상태 수:",
+  "These recorded flags do not certify site-wide approval, independently validated models or permission to invest.": "기록된 상태값만으로 시스템 전체 승인, 독립 검증된 모델 또는 투자 실행 권한이 입증되지는 않습니다.",
+  "The sanitized publication has no verified hypothesis, best-versus-selected candidate, independent evaluation cohort, final report or causal Experiment Memory links. A reviewed read-only backend contract is required; no values are inferred.": "정제된 게시 데이터에는 검증된 가설, 탐색 최고 후보와 선택 모델의 비교, 독립 평가 코호트, 최종 보고서 또는 인과관계가 확인된 Experiment Memory 연결 정보가 없습니다. 검토된 읽기 전용 백엔드 계약이 필요하며, 없는 값은 추정하지 않습니다.",
+  "Result observation": "결과 관측 기록",
+  "Research evidence source": "연구 근거 출처",
+  "Retained research publication": "보존된 연구 게시 데이터"
+});
 export function translate(locale: Locale, text: string): string { return locale === "ko" ? (ko[text] ?? ko[text.replace(/\s+/g, " ").trim()] ?? text) : text; }
