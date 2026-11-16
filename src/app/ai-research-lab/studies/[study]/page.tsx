@@ -37,7 +37,7 @@ export default async function AIResearchStudyDetail({
           ["Deferred diagnostics",evidence.diagnosticPresence.deferred],
           ["Robustness summary records",evidence.diagnosticPresence.robustness],
         ] as const).map(([name,value])=><div className="operations-overview-stat" key={name}>
-          <span>{name}</span><strong>{value}</strong>
+          <span><Localize text={name}/></span><strong>{value}</strong>
         </div>)}
       </div>
       <p className="metric-detail">
@@ -57,7 +57,7 @@ export default async function AIResearchStudyDetail({
       {study.results.length?<div className="stock-table" style={{overflowX:"auto"}}>
         <table style={{width:"100%",minWidth:"720px",textAlign:"left"}}>
           <thead><tr>{["Observation","Mean AP","Stability AP","Worst balanced accuracy","PIT qualified","Performance approved","Generalization evidence"].map(label=>
-            <th key={label} scope="col" style={{padding:"10px"}}>{label}</th>)}</tr></thead>
+            <th key={label} scope="col" style={{padding:"10px"}}><Localize text={label}/></th>)}</tr></thead>
           <tbody>{study.results.map((result,index)=><tr key={index}>
             <td style={{padding:"10px"}}><Link href={"/ai-research-lab/studies/"+encodeURIComponent(study.study)+"/results/"+index}>Observation {index+1}</Link></td>
             <td style={{padding:"10px"}}>{display(result.meanAp)}</td>
