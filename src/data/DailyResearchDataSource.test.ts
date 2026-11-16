@@ -80,4 +80,28 @@ describe("daily research (independent of approved publication)", () => {
     expect(result.error).toContain("invalid");
     expect(result.data).toBeNull();
   });
+  it("refuses nonloopback or credential-bearing research destinations before fetch", async () => {
+    for (const target of [
+      "https://example.com", "http://192.168.1.3:8000",
+      "http://127.0.0.1:8000/path", "http://user:secret@127.0.0.1:8000",
+      "http://localhost:99999", "http://localhost:8000?forward=1",
+    ]) {
+      const f = fetcher(series);
+      const result = await loadDailyResearch(ticker, {
+        mode: "http", apiBaseUrl: target, fetcher: f,
+      });
+      expect(result.data).toBeNull();
+      expect(result.error).toContain("loopback");
+      expect(f).not.toHaveBeenCalled();
+    }
+  });
+  it("does not follow redirects from a local research publication", async () => {
+    const moved = vi.fn(async () => Response.redirect("https://example.com/private", 302)) as unknown as typeof fetch;
+    await loadDailyResearch(ticker, { mode: "http", apiBaseUrl: "http://127.0.0.1:8000", fetcher: moved });
+    expect(moved).toHaveBeenCalledWith(
+      expect.stringContaining("127.0.0.1:8000/api/v1/stocks/"),
+      expect.objectContaining({ redirect: "error", cache: "no-store" }),
+    );
+  });
+
 });

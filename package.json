@@ -12,7 +12,7 @@
     "check": "npm run lint && npm run typecheck && npm run test && npm run build",
     "verify:http": "node --env-file=.env.local scripts/verify-http.mjs",
     "verify:extensions": "node --env-file=.env.local scripts/verify-extensions-http.mjs",
-    "verify:scripts": "node --check scripts/audit-web-backend-integration.mjs && node --check scripts/verify-http.mjs && node --check scripts/verify-extensions-http.mjs && node --check scripts/create-verification-report.mjs && node --check scripts/inspect-verification-report.mjs && node --check scripts/verify-operational-http.mjs && node --check scripts/verify-operational-web-e2e.mjs && node --check scripts/verify-krx-scheduler-web-http.mjs && node --check scripts/inspect-approved-next-task.mjs && npm run verify:next-queue",
+    "verify:scripts": "node --check scripts/audit-web-backend-integration.mjs && node --check scripts/verify-http.mjs && node --check scripts/verify-research-workspace-http.mjs && node --check scripts/verify-extensions-http.mjs && node --check scripts/create-verification-report.mjs && node --check scripts/inspect-verification-report.mjs && node --check scripts/verify-operational-http.mjs && node --check scripts/verify-operational-web-e2e.mjs && node --check scripts/verify-krx-scheduler-web-http.mjs && node --check scripts/inspect-approved-next-task.mjs && npm run verify:next-queue",
     "verify:report": "node scripts/create-verification-report.mjs",
     "verify:inspect": "node scripts/inspect-verification-report.mjs",
     "verify:operational": "node --env-file=.env.local scripts/verify-operational-http.mjs",
@@ -20,7 +20,8 @@
     "verify:krx-scheduler:web": "node --env-file=.env.local scripts/verify-krx-scheduler-web-http.mjs",
     "verify:next-queue": "node --test scripts/select-approved-next-task.node-check.mjs scripts/verify-operational-web-e2e.node-check.mjs scripts/audit-web-backend-integration.node-check.mjs",
     "verify:integration:audit": "node --env-file=.env.local scripts/audit-web-backend-integration.mjs",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "verify:research:workspace": "node --env-file=.env.local scripts/verify-research-workspace-http.mjs"
   },
   "dependencies": {
     "next": "16.4.3",
