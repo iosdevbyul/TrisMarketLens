@@ -3,6 +3,8 @@ import { getTranslator } from "@/i18n/server";
 import Link from "next/link";
 import { PageHeader } from "@/components/common/PageHeader";
 import { getAutonomousResearchPublication } from "@/data/AutonomousResearchDataSource";
+import { labStudies } from "@/data/ResearchLabDataSource";
+import { PublishedLabOverview } from "@/components/research/ResearchLabPublicationViews";
 import { labOverview, searchStudies } from "@/domain/aiResearchLab";
 
 export const dynamic="force-dynamic";
@@ -15,6 +17,11 @@ export default async function AIResearchLabPage({
 }){
   const t=await getTranslator();
   const params=await searchParams;
+  const approved=await labStudies(0,1);
+  if(approved.data){
+    const offset=typeof params.page==="string"&&/^\d{1,4}$/.test(params.page)?(Math.max(1,Number(params.page))-1)*25:0;
+    return <PublishedLabOverview offset={offset}/>;
+  }
   const source=await getAutonomousResearchPublication();
   const publication=source.publication;
   const q=typeof params.q==="string"?params.q.trim().slice(0,80):"";
@@ -29,6 +36,7 @@ export default async function AIResearchLabPage({
   const visible=entries.slice((currentPage-1)*12,currentPage*12);
   const nextHref=(index:number)=>"/ai-research-lab?"+new URLSearchParams({q,state,agent,page:String(index)}).toString();
   return <>
+    <section className="panel single-panel" role="status"><h2>{t("Approved Research Lab API unavailable")}</h2><p className="section-copy">{t(approved.message)}</p><p className="metric-detail">{t("The legacy local snapshot below is separate from the new approved six-study API. It does not contain verified Experiment IDs or final reports.")}</p></section>
     <PageHeader eyebrow="AI Research Lab" title="Donghak autonomous research"
       badge={publication?"Retained research publication":source.state}
       description="A read-only research observatory built from actual retained DonghakStockVision experiment records. Evidence, failures and unknowns remain distinct; this screen never launches research or authorizes investments."/>
