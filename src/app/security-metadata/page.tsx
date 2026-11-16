@@ -1,3 +1,4 @@
+import { Localize } from "@/i18n/Localize";
 import Link from "next/link";
 import { PageHeader } from "@/components/common/PageHeader";
 import { getSecurityMetadataCatalog } from "@/data/SecurityMetadataCatalogDataSource";
@@ -28,9 +29,9 @@ export default async function SecurityMetadataPage({
       badge={catalog.state==="available"?"Published backend metadata":catalog.state}
       description="Inspect the full research-snapshot security identity publication. Corporation mapping is not the same as independently verified current security names or historical ticker continuity."/>
     <section className="panel single-panel" aria-label="Security metadata source">
-      <div className="panel-heading"><h2>Publication status</h2><span className="panel-count">{catalog.state}</span></div>
+      <div className="panel-heading"><h2><Localize text="Publication status" /></h2><span className="panel-count">{catalog.state}</span></div>
       {catalog.error?<p role="status" className="section-copy">{catalog.error}</p>:null}
-      <p className="section-copy">This endpoint is opt-in on DonghakStockVision. HTTP health or an operational stock catalog does not prove that security identity metadata is configured. No simulated records are substituted.</p>
+      <p className="section-copy"><Localize text="This endpoint is opt-in on DonghakStockVision. HTTP health or an operational stock catalog does not prove that security identity metadata is configured. No simulated records are substituted." /></p>
       {catalog.data ? <>
         <div className="operations-overview-grid">
           {([
@@ -41,19 +42,19 @@ export default async function SecurityMetadataPage({
             ["Source references",catalog.data.sourceCount],
           ] as const).map(([label,value])=><div key={label} className="operations-overview-stat"><span>{label}</span><strong>{value}</strong></div>)}
         </div>
-        <p className="metric-detail">All names and mappings are bounded by the source snapshot. No current-listing status, PIT approval, or full-history identity continuity is inferred.</p>
+        <p className="metric-detail"><Localize text="All names and mappings are bounded by the source snapshot. No current-listing status, PIT approval, or full-history identity continuity is inferred." /></p>
       </>:null}
     </section>
     {catalog.data?<section className="panel single-panel" aria-label="Security metadata search">
-      <div className="panel-heading"><h2>Explore metadata</h2><span className="panel-count">{filtered.length} matches · page {currentPage} of {totalPages}</span></div>
+      <div className="panel-heading"><h2><Localize text="Explore metadata" /></h2><span className="panel-count">{filtered.length} matches · page {currentPage} of {totalPages}</span></div>
       <form action="/security-metadata" method="get" className="stock-explorer">
-        <label htmlFor="security-metadata-query">Ticker or published name</label>
+        <label htmlFor="security-metadata-query"><Localize text="Ticker or published name" /></label>
         <input id="security-metadata-query" name="q" maxLength={80} defaultValue={q} placeholder="005930"/>
-        <label htmlFor="security-metadata-only">Corporation mapping</label>
+        <label htmlFor="security-metadata-only"><Localize text="Corporation mapping" /></label>
         <select id="security-metadata-only" name="only" defaultValue={only}>
-          <option value="all">All</option><option value="unmapped">Unmapped only</option>
+          <option value="all"><Localize text="All" /></option><option value="unmapped"><Localize text="Unmapped only" /></option>
         </select>
-        <button type="submit">Find securities</button>
+        <button type="submit"><Localize text="Find securities" /></button>
       </form>
       {visible.length?<div className="stock-table" style={{overflowX:"auto"}}>
         <table style={{width:"100%",minWidth:"680px",textAlign:"left"}}>
@@ -67,11 +68,11 @@ export default async function SecurityMetadataPage({
             <td style={{padding:"10px"}}>{item.corporationMappingVerified?"Exact DART mapping":"Unavailable"}</td>
           </tr>)}</tbody>
         </table>
-      </div>:<p role="status" className="section-copy">No securities match the selected filters.</p>}
+      </div>:<p role="status" className="section-copy"><Localize text="No securities match the selected filters." /></p>}
       <p className="metric-detail">Displayed {visible.length} of {filtered.length} filtered securities. Full backend publication is validated before any filtering; browsing is local to the server-rendered response.</p>
       <div style={{display:"flex",gap:"16px",marginTop:"16px"}}>
-        {currentPage>1?<Link href={href(currentPage-1)}>Previous page</Link>:null}
-        {currentPage<totalPages?<Link href={href(currentPage+1)}>Next page</Link>:null}
+        {currentPage>1?<Link href={href(currentPage-1)}><Localize text="Previous page" /></Link>:null}
+        {currentPage<totalPages?<Link href={href(currentPage+1)}><Localize text="Next page" /></Link>:null}
       </div>
     </section>:null}
   </>;
