@@ -60,30 +60,30 @@ export default async function ResearchStatusPage({
           {sources.map((item) => (
             <article className="status-row" key={item.id}>
               <div>
-                <p className="status-title"><Link href={item.href}>{item.name}</Link></p>
-                <p className="status-detail">{item.detail}</p>
+                <p className="status-title"><Link href={item.href}>{t(item.name)}</Link></p>
+                <p className="status-detail">{t(item.detail)}</p>
                 {item.count !== null ? <p className="metric-detail">{t("Published count:")} {item.count}</p> : null}
               </div>
-              <span className="status-pill" data-state={item.status === "available" ? "verified" : item.status === "unavailable" ? "blocked" : "in_progress"}>{item.status}</span>
+              <span className="status-pill" data-state={item.status === "available" ? "verified" : item.status === "unavailable" ? "blocked" : "in_progress"}>{t(item.status)}</span>
             </article>
           ))}
         </div>
         <p className="section-copy"><Localize text="Empty means a valid response with no published records. Unavailable indicates a failed or unverified source. Demo and disconnected are not equivalent to real backend availability." /></p>
       </section>
       <section className="panel single-panel" aria-label="Autonomous research publication coverage">
-        <div className="panel-heading"><h2><Localize text="Autonomous experimental research" /></h2><span className="panel-count">{autonomous.state}</span></div>
+        <div className="panel-heading"><h2><Localize text="Autonomous experimental research" /></h2><span className="panel-count">{t(autonomous.state)}</span></div>
         <p className="section-copy">{autonomous.message}</p>
         <p className="metric-detail"><Localize text="This independent publication reads retained experimental research, not per-ticker Daily Research. It does not change the running research engine." /></p>
         <div className="operations-overview-grid">
-          <div className="operations-overview-stat"><span><Localize text="Research databases" /></span><strong>{autonomous.publication?.studyCount ?? "Not published"}</strong></div>
-          <div className="operations-overview-stat"><span><Localize text="Run records" /></span><strong>{autonomous.publication?.aggregateCounts.autonomous_run ?? "Not published"}</strong></div>
-          <div className="operations-overview-stat"><span><Localize text="Experiment result records" /></span><strong>{autonomous.publication?.aggregateCounts.autonomous_result ?? "Not published"}</strong></div>
-          <div className="operations-overview-stat"><span><Localize text="Partial or skipped studies" /></span><strong>{autonomous.publication?.containsPartialStudies ? "Yes" : autonomous.publication ? "No" : "Unknown"}</strong></div>
+          <div className="operations-overview-stat"><span><Localize text="Research databases" /></span><strong>{autonomous.publication?.studyCount ?? t("Not published")}</strong></div>
+          <div className="operations-overview-stat"><span><Localize text="Run records" /></span><strong>{autonomous.publication?.aggregateCounts.autonomous_run ?? t("Not published")}</strong></div>
+          <div className="operations-overview-stat"><span><Localize text="Experiment result records" /></span><strong>{autonomous.publication?.aggregateCounts.autonomous_result ?? t("Not published")}</strong></div>
+          <div className="operations-overview-stat"><span><Localize text="Partial or skipped studies" /></span><strong>{t(autonomous.publication?.containsPartialStudies ? "Yes" : autonomous.publication ? "No" : "Unknown")}</strong></div>
         </div>
         <p><Link href="/ai-research-lab"><Localize text="Open the AI Research Lab observatory" /></Link> · <Link href="/autonomous-research"><Localize text="Inspect retained autonomous research" /></Link></p>
       </section>
       <section className="panel single-panel" aria-label="Research LLM selection and comparison overview">
-        <div className="panel-heading"><div><p className="eyebrow"><Localize text="Research agent" /></p><h2><Localize text="Model selection and experiment comparisons" /></h2></div><span className="panel-count">{management.state}</span></div>
+        <div className="panel-heading"><div><p className="eyebrow"><Localize text="Research agent" /></p><h2><Localize text="Model selection and experiment comparisons" /></h2></div><span className="panel-count">{t(management.state)}</span></div>
         <p className="section-copy"><Localize text="These are actual authenticated management records when configured. Selecting a research LLM does not start a study or change a stock-direction prediction model." /></p>
         <div className="operations-overview-grid">
           {([
@@ -95,14 +95,14 @@ export default async function ResearchStatusPage({
             ["Reported comparison contracts", workspace.comparisonContracts ?? "Unavailable"],
             ["Contracts with 2+ entries", workspace.matchedContracts ?? "Unavailable"],
             ["Comparisons lacking contract", workspace.unclassifiedComparisons ?? "Unavailable"],
-          ] as const).map(([label, value]) => <div className="operations-overview-stat" key={label}><span>{label}</span><strong>{value}</strong></div>)}
+          ] as const).map(([label, value]) => <div className="operations-overview-stat" key={label}><span>{t(label)}</span><strong>{typeof value === "string" ? t(value) : value}</strong></div>)}
         </div>
         <p className="metric-detail"><Localize text="Only identical backend-provided comparisonContractId values can be inspected together. Two retained entries are not proof of independent performance or stock-price accuracy." /></p>
         <p><Link href="/ai-research-models"><Localize text="Review model catalog, validation controls and matching research runs" /></Link></p>
       </section>
       <section className="panel single-panel" aria-label="Selected ticker research preview">
-        <div className="panel-heading"><div><p className="eyebrow"><Localize text="Daily retained research" /></p><h2>{ticker ? ticker + " publication preview" : "Choose a ticker for a publication preview"}</h2></div>
-          <span className="panel-count">{workspace.totalResearchRecords === null ? "Not available" : workspace.totalResearchRecords + " published total"}</span></div>
+        <div className="panel-heading"><div><p className="eyebrow"><Localize text="Daily retained research" /></p><h2>{ticker ? ticker + " " + t("publication preview") : t("Choose a ticker for a publication preview")}</h2></div>
+          <span className="panel-count">{workspace.totalResearchRecords === null ? t("Not available") : workspace.totalResearchRecords + " " + t("published total")}</span></div>
         <p className="section-copy"><Localize text="This is a bounded preview of up to 10 validated records, not an all-history dataset. A completed research job or a displayed Up/Down label is neither an approved forecast nor a measured return." /></p>
         <div className="operations-overview-grid">
           {([
@@ -119,24 +119,24 @@ export default async function ResearchStatusPage({
         {recentRecords.length ? <div className="stock-table" style={{ overflowX: "auto", marginTop: "16px" }}>
           <table style={{ width: "100%", minWidth: "690px", borderCollapse: "collapse", textAlign: "left" }}>
             <thead><tr>{["Trading date", "Research model", "Execution status", "Data origin", "Recorded signal"].map(heading =>
-              <th scope="col" key={heading} style={{ borderBottom: "1px solid var(--border)", padding: "10px" }}>{heading}</th>)}</tr></thead>
+              <th scope="col" key={heading} style={{ borderBottom: "1px solid var(--border)", padding: "10px" }}>{t(heading)}</th>)}</tr></thead>
             <tbody>{recentRecords.map(record => <tr key={record.jobReference}>
               <td style={{ padding: "10px" }}>{record.tradingDate}</td>
               <td style={{ padding: "10px" }}>{record.modelId} · {record.modelVersion}</td>
-              <td style={{ padding: "10px" }}>{record.status}</td>
-              <td style={{ padding: "10px" }}>{record.dataOrigin === "real" ? "Real source" : "Synthetic fixture"}</td>
-              <td style={{ padding: "10px" }}>{record.researchSignal}</td>
+              <td style={{ padding: "10px" }}>{t(record.status)}</td>
+              <td style={{ padding: "10px" }}>{t(record.dataOrigin === "real" ? "Real source" : "Synthetic fixture")}</td>
+              <td style={{ padding: "10px" }}>{t(record.researchSignal)}</td>
             </tr>)}</tbody>
           </table>
-        </div> : <p className="section-copy" role="status">{!ticker ? "Enter a ticker above to request a real publication preview." : daily?.error ?? "No records were returned in the preview. This does not prove that an experiment was run."}</p>}
+        </div> : <p className="section-copy" role="status">{!ticker ? t("Enter a ticker above to request a real publication preview.") : daily?.error ?? t("No records were returned in the preview. This does not prove that an experiment was run.")}</p>}
         {ticker ? <p><Link href={"/stocks/" + ticker + "#daily-research"}><Localize text="Inspect full per-ticker record details" /></Link> · <Link href={"/stocks/" + ticker + "/research-comparison"}><Localize text="Compare up to 1,000 published records" /></Link></p> : null}
       </section>
       <section className="panel single-panel" aria-label="Research source next verification steps">
         <div className="panel-heading"><h2><Localize text="Next verification steps" /></h2><span className="panel-count">{nextChecks.length} {t("suggested checks")}</span></div>
         {nextChecks.length ? <ol>
           {nextChecks.map(action => <li key={action.id}>
-            <strong>{action.title}</strong>
-            <p className="metric-detail">{action.description}</p>
+            <strong>{t(action.title)}</strong>
+            <p className="metric-detail">{t(action.description)}</p>
             <p><Link href={action.href}><Localize text="Inspect source evidence" /></Link></p>
           </li>)}
         </ol> : <p className="section-copy"><Localize text="No current connection blockers were identified by these bounded checks. This is not an assertion of research quality or publication completeness." /></p>}
@@ -147,8 +147,8 @@ export default async function ResearchStatusPage({
         <div className="operations-overview-grid">
           <div className="operations-overview-stat"><span><Localize text="Registered research LLMs" /></span><strong>{management.state === "available" ? management.models.length : "Unknown"}</strong></div>
           <div className="operations-overview-stat"><span><Localize text="Retained LLM comparisons" /></span><strong>{sources[2].count ?? "Unknown"}</strong></div>
-          <div className="operations-overview-stat"><span><Localize text="Matching ticker research records" /></span><strong>{sources[3].count ?? "Not checked"}</strong></div>
-          <div className="operations-overview-stat"><span><Localize text="Market transport" /></span><strong>{sources[0].status}</strong></div>
+          <div className="operations-overview-stat"><span><Localize text="Matching ticker research records" /></span><strong>{sources[3].count ?? t("Not checked")}</strong></div>
+          <div className="operations-overview-stat"><span><Localize text="Market transport" /></span><strong>{t(sources[0].status)}</strong></div>
         </div>
         {management.partialErrors.map((error) => <p className="metric-detail" role="status" key={error}>{error}</p>)}
         <p className="section-copy"><Localize text="A healthy transport does not prove that models ran successfully. A completed research job does not establish forecast accuracy, PIT qualification, Final Test approval, or trading permission. The backend has no verified general-purpose Experiment Memory HTTP publication contract, so its private contents are not inferred here." /></p>
