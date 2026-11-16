@@ -69,3 +69,13 @@ test("Korean research lab publication and prior empty evidence preserve correct 
   await expect(page.getByText("동학비전에 보존된 실제 실험 기록을 바탕으로 한 읽기 전용 연구 관제실입니다.",{exact:false})).toBeVisible();
   await expect(page.getByText("The existing read-only local research publication is required.",{exact:false})).toHaveCount(0);
 });
+
+test("Korean Research Lab distinguishes unavailable approved API from legacy snapshot",async({page,context})=>{
+  await context.addCookies([{name:"tris-locale",value:"ko",url:localOrigin}]);
+  await page.goto("/ai-research-lab");
+  await expect(page.getByRole("heading",{name:"승인된 연구소 API를 사용할 수 없음"})).toBeVisible();
+  await expect(page.getByText("아래 기존 로컬 스냅샷은 승인된 신규 6개 연구 API와 별개이며",{exact:false})).toBeVisible();
+  await expect(page.getByText("72 completed experiments")).toHaveCount(0);
+  await page.goto("/ai-research-lab/reports");
+  await expect(page.getByText("가상의 연구·보고서·실험 ID·모델 성능으로 대체하지 않습니다.",{exact:false})).toBeVisible();
+});
