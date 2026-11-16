@@ -57,3 +57,11 @@ The comparison is descriptive only: job status, model and version identity, reco
 The authenticated `GET /api/v1/ai/models/comparisons` response is now displayed by backend-provided `comparisonContractId` groups. A record without a non-empty contract ID is explicitly unclassified and **never** merged into a scored group. Matching IDs permit a side-by-side view of retained run identities, state and any recorded reason, but are not independent proof of model quality or investment performance. A group containing only one run is labelled as such. Frontend code does not invent metrics or compare across contract fingerprints.
 
 This page also correctly identifies its explicit server-action validation and selection controls rather than claiming the entire page only performs GET requests. Those controls remain operator-authenticated and bounded by the existing management API. Autonomous Experiment Memory itself still has no verified general-purpose HTTP publication contract and is not fabricated in the web UI.
+
+## Integrated research source status
+
+The web's `/research-status` route reports four independently checked sources: the read-only market backend's health endpoint, the authenticated research LLM model catalog, its optional comparison publication, and the selected ticker's daily research series. Source states distinguish available, empty, disconnected, unavailable, demonstration and not-checked.
+
+A six-character ticker is required for per-stock daily research; leaving it blank does not query any stock record. The daily query uses a bounded `limit=10` response while showing the backend's `totalRecords` separately, so a preview count is not presented as comprehensive publication. Management tokens stay server-side. The page only performs GET requests; it does not initiate model validation, switch an LLM, execute research, or place trades.
+
+Because autonomous Experiment Memory does not have a verified general-purpose HTTP publication contract, the integration explicitly labels it unavailable rather than fabricating private experimental data. The individual underlying screens remain available for detailed investigation.
