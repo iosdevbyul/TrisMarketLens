@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/common/PageHeader";
 import { getTranslator } from "@/i18n/server";
 import {
   labStudies,labStudy,labExperiments,labExperiment,labMemory,labReports,labReport,labComparisons,
-  type ResearchLabStudy,type ResearchLabHorizon,type ResearchLabExperiment,type LabLoad,
+  type ResearchLabStudy,type ResearchLabHorizon,
 } from "@/data/ResearchLabDataSource";
 
 const base="/ai-research-lab";
@@ -13,45 +13,49 @@ const reportHref=(id:string)=>base+"/reports/"+encodeURIComponent(id);
 const n=(value:number|null|undefined)=>value===null||value===undefined?"—":String(value);
 const score=(value:number|null|undefined)=>value===null||value===undefined?"—":value.toFixed(4);
 const truncated=(value:string)=>value.length>18?value.slice(0,12)+"…"+value.slice(-6):value;
-const offsetOf=(raw:string|undefined)=>raw && /^\d{1,5}$/.test(raw)?Math.min(10000,Number(raw)):0;
 const idLinks=(id:string)=> <code title={id} style={{overflowWrap:"anywhere"}}>{truncated(id)}</code>;
 
-function Unavailable({message}:{message:string}) {
+async function Unavailable({message}:{message:string}) {
+  const t=await getTranslator();
   return <section className="panel single-panel" role="status">
-    <h2>Research Lab publication unavailable</h2>
+    <h2>{t("Research Lab publication unavailable")}</h2>
     <p className="section-copy">{message}</p>
-    <p className="metric-detail">The web does not substitute fabricated studies, reports, experiment IDs or model performance. An approved local Research Lab publication and loopback API are required.</p>
+    <p className="metric-detail">{t("The web does not substitute fabricated studies, reports, experiment IDs or model performance. An approved local Research Lab publication and loopback API are required.")}</p>
   </section>;
 }
-function Limits() {
+async function Limits() {
+  const t=await getTranslator();
   return <p className="metric-detail">
-    Research-only historical evidence. Deferred diagnostics are retrospective, not independent future validation. PIT qualification, independent validation, performance approval and trading authorization are not established.
+    {t("Research-only historical evidence. Deferred diagnostics are retrospective, not independent future validation. PIT qualification, independent validation, performance approval and trading authorization are not established.")}
   </p>;
 }
-function Pagination({path,offset,total,limit}:{path:string;offset:number;total:number;limit:number}) {
+async function Pagination({path,offset,total,limit}:{path:string;offset:number;total:number;limit:number}) {
+  const t=await getTranslator();
   return <p className="metric-detail">
-    {offset>0?<Link href={path+"?offset="+Math.max(0,offset-limit)}>Previous</Link>:null}
+    {offset>0?<Link href={path+"?offset="+Math.max(0,offset-limit)}>{t("Previous")}</Link>:null}
     {" "} {total?offset+1:0}–{Math.min(total,offset+limit)} / {total} {" "}
-    {offset+limit<total?<Link href={path+"?offset="+(offset+limit)}>Next</Link>:null}
+    {offset+limit<total?<Link href={path+"?offset="+(offset+limit)}>{t("Next")}</Link>:null}
   </p>;
 }
-function HorizonTable({horizons,studyId}:{horizons:ResearchLabHorizon[];studyId?:string}) {
+async function HorizonTable({horizons,studyId}:{horizons:ResearchLabHorizon[];studyId?:string}) {
+  const t=await getTranslator();
   return <div className="stock-table" style={{overflowX:"auto"}}><table style={{width:"100%",minWidth:600,textAlign:"left"}}>
-    <thead><tr>{["Horizon","Completed candidates","Selected experiment","Selected mean AP","Best seen AP"].map(x=><th key={x} scope="col" style={{padding:10}}>{x}</th>)}</tr></thead>
+    <thead><tr>{["Horizon","Completed candidates","Selected experiment","Selected mean AP","Best seen AP"].map(x=><th key={x} scope="col" style={{padding:10}}>{t(x)}</th>)}</tr></thead>
     <tbody>{horizons.map(h=><tr key={h.horizon}>
       <td style={{padding:10}}>{h.horizon}</td><td style={{padding:10}}>{h.experimentCount}</td>
-      <td style={{padding:10}}>{h.selectedExperimentId?studyId?<Link href={experimentHref(studyId,h.selectedExperimentId)}>{idLinks(h.selectedExperimentId)}</Link>:idLinks(h.selectedExperimentId):"Not selected"}</td>
+      <td style={{padding:10}}>{h.selectedExperimentId?studyId?<Link href={experimentHref(studyId,h.selectedExperimentId)}>{idLinks(h.selectedExperimentId)}</Link>:idLinks(h.selectedExperimentId):t("Not selected")}</td>
       <td style={{padding:10}}>{score(h.selectedMeanAP)}</td><td style={{padding:10}}>{score(h.bestSeenAP)}</td>
     </tr>)}</tbody></table></div>;
 }
-function StudySummary({study}:{study:ResearchLabStudy}) {
+async function StudySummary({study}:{study:ResearchLabStudy}) {
+  const t=await getTranslator();
   return <div className="operations-run">
     <div style={{minWidth:0,overflowWrap:"anywhere"}}>
       <strong><Link href={studyHref(study.studyId)}>{study.cohort} / {study.selectionPolicy}</Link></strong>
-      <p className="metric-detail">Study {idLinks(study.studyId)} · {study.completed} completed / {study.failed} failed · budget {study.experimentBudget}</p>
-      <p className="metric-detail">Report <Link href={reportHref(study.reportId)}>{idLinks(study.reportId)}</Link> · {study.horizons.length} horizons · Independent validation: {study.independentValidationStatus}</p>
+      <p className="metric-detail">Study {idLinks(study.studyId)} · {study.completed} {t("completed")} / {study.failed} {t("failed")} · {t("budget")} {study.experimentBudget}</p>
+      <p className="metric-detail">Report <Link href={reportHref(study.reportId)}>{idLinks(study.reportId)}</Link> · {study.horizons.length} {t("horizons")} · {t("Independent validation")}: {t(study.independentValidationStatus)}</p>
     </div>
-    <span className="status-pill" data-state="blocked">Research only</span>
+    <span className="status-pill" data-state="blocked">{t("Research only")}</span>
   </div>;
 }
 export async function PublishedLabOverview({offset=0}:{offset?:number}) {
@@ -61,6 +65,7 @@ export async function PublishedLabOverview({offset=0}:{offset?:number}) {
   if(!available)return <Unavailable message={t(studies.message)}/>;
   const completed=available.items.reduce((sum,s)=>sum+s.completed,0);
   return <div>
+    <PageHeader eyebrow="AI Research Lab" title="Donghak autonomous research" badge="Approved local research publication" description="Explore original Study and Experiment identities, model evaluation, historical memory, final reports and cohort-matched policy comparisons without triggering research or trading." />
     <section className="panel single-panel" aria-label="Approved Research Lab overview">
       <div className="panel-heading"><h2>{t("Approved Research Lab overview")}</h2><span className="panel-count">{available.total} {t("studies")}</span></div>
       <p className="section-copy">{t("Original Plan IDs and approved report links are supplied by the backend. Counts refer to the returned page, not inferred experiments.")}</p>
@@ -122,11 +127,40 @@ export async function PublishedStudy({id,offset=0}:{id:string;offset?:number}) {
     </section>
   </>;
 }
-function MetricMatrix({metrics}:{metrics:Array<Record<string,number|null>|null>}) {
+async function MetricMatrix({metrics}:{metrics:Array<Record<string,number|null>|null>}) {
+  const t=await getTranslator();
   return <div className="stock-table" style={{overflowX:"auto"}}><table style={{width:"100%",minWidth:600,textAlign:"left"}}>
-    <thead><tr>{["Fold","AP","Balanced accuracy","Brier score"].map(x=><th style={{padding:10}} key={x}>{x}</th>)}</tr></thead>
+    <thead><tr>{["Fold","AP","Balanced accuracy","Brier score"].map(x=><th style={{padding:10}} key={x}>{t(x)}</th>)}</tr></thead>
     <tbody>{metrics.map((m,index)=><tr key={index}><td style={{padding:10}}>{index+1}</td><td style={{padding:10}}>{score(m?.pr_auc_ap)}</td><td style={{padding:10}}>{score(m?.balanced_accuracy)}</td><td style={{padding:10}}>{score(m?.brier_score)}</td></tr>)}</tbody></table></div>;
 }
+
+function DiagnosticMetrics({diagnostic}:{diagnostic:unknown}) {
+  if(!diagnostic || typeof diagnostic!=="object" || Array.isArray(diagnostic))return null;
+  const groups=diagnostic as Record<string,unknown>;
+  const sections=["periods","input_regimes","heldout_regimes","ticker_distribution","seen_symbols","heldout_symbols"];
+  const rows:{label:string;status:string;ap:number|null;ba:number|null;brier:number|null}[]=[];
+  const collect=(label:string,value:unknown)=>{
+    if(!value || typeof value!=="object" || Array.isArray(value))return;
+    const item=value as Record<string,unknown>;
+    const m=item.metrics && typeof item.metrics==="object" && !Array.isArray(item.metrics)?item.metrics as Record<string,unknown>:{};
+    const safe=(k:string)=>typeof m[k]==="number"&&Number.isFinite(m[k])?m[k] as number:null;
+    rows.push({label,status:typeof item.status==="string"?item.status:"UNKNOWN",ap:safe("pr_auc_ap"),ba:safe("balanced_accuracy"),brier:safe("brier_score")});
+  };
+  for(const section of sections) {
+    const data=groups[section];
+    if(!data || typeof data!=="object" || Array.isArray(data))continue;
+    if("metrics" in data)collect(section,data);
+    else for(const [key,value] of Object.entries(data))collect(section+" / "+key,value);
+  }
+  if(!rows.length)return null;
+  return <div className="stock-table" style={{overflowX:"auto"}}>
+    <table style={{width:"100%",minWidth:620,textAlign:"left"}}>
+      <thead><tr><th>Retrospective population</th><th>Assessment status</th><th>AP</th><th>BA</th><th>Brier</th></tr></thead>
+      <tbody>{rows.map(row=><tr key={row.label}><td style={{padding:8}}>{row.label}</td><td style={{padding:8}}>{row.status}</td><td>{score(row.ap)}</td><td>{score(row.ba)}</td><td>{score(row.brier)}</td></tr>)}</tbody>
+    </table><p className="metric-detail">These diagnostic populations are not independently qualified and were not used to select the candidate.</p>
+  </div>;
+}
+
 export async function PublishedExperiment({studyId,id}:{studyId:string;id:string}) {
   const t=await getTranslator();
   const result=await labExperiment(studyId,id);
@@ -155,6 +189,7 @@ export async function PublishedExperiment({studyId,id}:{studyId:string;id:string
     </section>
     <section className="panel single-panel"><h2>{t("Retrospective generalization diagnostic")}</h2>
       <p className="section-copy">{e.deferredDiagnostic===null?t("No deferred diagnostic was published."):t("A deferred diagnostic is recorded. It is retrospective descriptive evidence, not independent future validation.")}</p>
+      <DiagnosticMetrics diagnostic={e.deferredDiagnostic}/>
       {e.robustSummary?<p className="metric-detail">{t("Robustness summary recorded")}; {t("inspect published qualification flags without assuming approval.")}</p>:null}
       <Limits/>
     </section>
@@ -182,7 +217,12 @@ export async function PublishedReport({id}:{id:string}) {
       <p className="metric-detail">{t("Learner seconds")}: {n(s.learnerSeconds)} · {t("Maximum RSS KB")}: {n(s.maximumRssKb)}</p>
       <Limits/>
     </section>
-    <section className="panel single-panel"><h2>{t("Horizon selections and performance")}</h2><HorizonTable horizons={s.horizons} studyId={s.studyId}/></section>
+    <section className="panel single-panel"><h2>{t("Horizon selections and performance")}</h2><HorizonTable horizons={s.horizons} studyId={s.studyId}/>
+      {s.horizons.map(h=><div key={h.horizon}><h3>{t("Horizon")} {h.horizon}: {t("Selected seen folds")}</h3><MetricMatrix metrics={h.selectedSeenFoldMetrics}/><DiagnosticMetrics diagnostic={h.selectedDeferredDiagnostic}/></div>)}
+    </section>
+    <section className="panel single-panel"><h2>{t("Historical discovery and resources")}</h2><p>{t("Discovery records")}: {s.discoveryCurve.length}</p>
+      {s.discoveryCurve.map((entry,index)=><p className="metric-detail" key={entry.experimentId}>{index+1}. <Link href={experimentHref(s.studyId,entry.experimentId)}>{idLinks(entry.experimentId)}</Link> · {t("Selection order")}: {n(entry.selection)} · {t("Cache reused")}: {entry.cacheReused===null?"—":entry.cacheReused?t("Yes"):t("No")}</p>)}
+    </section>
     <section className="panel single-panel"><h2>{t("Report limitations")}</h2><p className="section-copy">{s.limitations.map(v=>t(v.replaceAll("_"," "))).join(" · ")}</p><Limits/></section>
   </>;
 }
