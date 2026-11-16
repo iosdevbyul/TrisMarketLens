@@ -1,4 +1,5 @@
 import { Localize } from "@/i18n/Localize";
+import { getTranslator } from "@/i18n/server";
 import {
   EVALUATION_METRICS,
   metricDistribution,
@@ -10,12 +11,13 @@ import type { ResearchStudyView } from "@/domain/autonomousResearchPublication";
 function value(score: number | null): string {
   return score === null ? "Not reported" : score.toFixed(4);
 }
-export function AutonomousStudyInsights({
+export async function AutonomousStudyInsights({
   study, selectedMetric,
 }: {
   study: ResearchStudyView;
   selectedMetric: EvaluationMetricKey;
 }) {
+  const t=await getTranslator();
   const distribution = metricDistribution(study.results, selectedMetric);
   const summary = summarizeStudyEvidence(study);
   const maxBucket = Math.max(...distribution.buckets.map(bucket=>bucket.count),1);
@@ -34,7 +36,7 @@ export function AutonomousStudyInsights({
         </select>
         <button type="submit"><Localize text="Inspect distribution" /></button>
       </form>
-      <p className="metric-detail">Selected metric: {label}. Scored observations: {distribution.observed} of {count}; missing: {distribution.missing}.</p>
+      <p className="metric-detail">{t("Selected metric:")} {t(label)}. {t("Scored observations:")} {distribution.observed} / {count}; {t("missing:")} {distribution.missing}.</p>
       <div className="operations-overview-grid">
         {([
           ["Minimum",distribution.minimum],["First quartile",distribution.q1],
@@ -45,7 +47,7 @@ export function AutonomousStudyInsights({
             <span><Localize text={title}/></span><strong>{value(number)}</strong>
           </div>)}
       </div>
-      <div aria-label={label + " histogram"} role="group" style={{display:"grid",gap:"12px",marginTop:"20px"}}>
+      <div aria-label={t(label) + " " + t("histogram")} role="group" style={{display:"grid",gap:"12px",marginTop:"20px"}}>
         {distribution.buckets.map(bucket=><div key={bucket.range}
           style={{display:"grid",gridTemplateColumns:"92px minmax(0,1fr) 44px",alignItems:"center",gap:"12px"}}>
           <span className="metric-detail">{bucket.range}</span>
@@ -55,7 +57,7 @@ export function AutonomousStudyInsights({
           <strong style={{fontSize:"12px",fontVariantNumeric:"tabular-nums"}}>{bucket.count}</strong>
         </div>)}
       </div>
-      {distribution.observed===0 ? <p role="status" className="section-copy">No valid reported measurements for the selected metric; no inferred score is shown.</p> : null}
+      {distribution.observed===0 ? <p role="status" className="section-copy"><Localize text="No valid reported measurements for the selected metric; no inferred score is shown."/></p> : null}
       <h3><Localize text="Research evidence and review boundaries" /></h3>
       <div className="operations-overview-grid">
         {([
@@ -68,26 +70,25 @@ export function AutonomousStudyInsights({
           ["Robustness summaries recorded",summary.diagnosticPresence.robustness],
           ["Generalization training recorded",summary.diagnosticPresence.generalization],
         ] as const).map(([name,value])=>
-          <div key={name} className="operations-overview-stat"><span><Localize text={name}/></span><strong>{value} / {count} results</strong></div>)}
+          <div key={name} className="operations-overview-stat"><span><Localize text={name}/></span><strong>{value} / {count} {t("results")}</strong></div>)}
       </div>
       <p className="metric-detail" role="status">
-        {summary.complete
+        {t(summary.complete
           ? "All declared records for this included study are present in the local publication."
-          : "This study has incomplete or capped publication records. The counts below refer only to included observations."}
-        {" "}Diagnostic presence alone does not establish passing a holdout or independent future performance.
-        Approval flags are observations in retained research artifacts, never permission to trade through this web app.
+          : "This study has incomplete or capped publication records. The counts below refer only to included observations.")}
+        {" "}{t("The presence of diagnostics does not mean holdout or independent future performance passed. Recorded approval flags are not permission to trade through this web app.")}
       </p>
       <div className="panel-grid">
         <section aria-label="Run state counts">
           <h3><Localize text="Run states" /></h3>
           {summary.runStates.length ? <div className="status-list">{summary.runStates.map(item=>
-            <div key={item.state} className="status-row"><span>{item.state}</span><strong>{item.count}</strong></div>)}</div>
+            <div key={item.state} className="status-row"><span>{t(item.state)}</span><strong>{item.count}</strong></div>)}</div>
             : <p className="metric-detail"><Localize text="No run states published." /></p>}
         </section>
         <section aria-label="Terminal state counts">
           <h3><Localize text="Terminal states" /></h3>
           {summary.terminalStates.length ? <div className="status-list">{summary.terminalStates.map(item=>
-            <div key={item.state} className="status-row"><span>{item.state}</span><strong>{item.count}</strong></div>)}</div>
+            <div key={item.state} className="status-row"><span>{t(item.state)}</span><strong>{item.count}</strong></div>)}</div>
             : <p className="metric-detail"><Localize text="No terminal states published." /></p>}
         </section>
       </div>

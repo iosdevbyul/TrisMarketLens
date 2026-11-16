@@ -1,9 +1,10 @@
 import { Localize } from "@/i18n/Localize";
+import { getTranslator } from "@/i18n/server";
 import type { DailyResearchRecord } from "@/domain/dailyResearch";
 import { compareVisibleResearchModels } from "@/domain/researchModelEvidenceComparison";
 
 /** Source-separated descriptive comparison, never a performance ranking. */
-export function ResearchModelEvidenceComparison({
+export async function ResearchModelEvidenceComparison({
   records,
   totalRecords,
   scope = "page",
@@ -12,6 +13,7 @@ export function ResearchModelEvidenceComparison({
   totalRecords: number;
   scope?: "page" | "complete" | "limited";
 }) {
+  const t=await getTranslator();
   const rows = compareVisibleResearchModels(records);
   return (
     <section className="panel single-panel" aria-label="Research model evidence comparison">
@@ -20,13 +22,11 @@ export function ResearchModelEvidenceComparison({
           <p className="eyebrow"><Localize text="Research evidence" /></p>
           <h2><Localize text="Model activity comparison" /></h2>
         </div>
-        <span className="panel-count">{rows.length} model/source groups</span>
+        <span className="panel-count">{rows.length} {t("model/source groups")}</span>
       </div>
       <p className="section-copy">
-        {scope === "page" ? "These counts compare only the currently displayed response page." : scope === "limited" ? "These counts cover only the first bounded slice of matching published records." : "These counts cover all records matching the requested published date range."}
-        {" "}Retrieved {records.length} of {totalRecords} matching published records. Model versions and real/synthetic origins are kept
-        separate. Completed jobs are not verified predictions; research scores are not calibrated
-        probabilities, and no accuracy, profit, or model ranking is inferred.
+        {t(scope === "page" ? "These counts compare only the currently displayed response page." : scope === "limited" ? "These counts cover only the first bounded slice of matching published records." : "These counts cover all records matching the requested published date range.")}
+        {" "}{t("Retrieved published research records:")} {records.length} / {totalRecords}. {t("Model versions and real or synthetic origins are separate. Completed jobs are not verified predictions; research scores are not calibrated probabilities. No accuracy, profit or model ranking is inferred.")}
       </p>
       {!rows.length ? (
         <div className="empty-state"><p><Localize text="No comparable records on this page" /></p><span><Localize text="Try another date range or page. Missing records are not treated as zero performance." /></span></div>
@@ -36,7 +36,7 @@ export function ResearchModelEvidenceComparison({
             <thead>
               <tr>
                 {["Model / version", "Data origin", "Trading-date coverage", "Jobs", "Completed", "Pending", "Blocked", "Failed", "Scores recorded"].map((heading) =>
-                  <th scope="col" key={heading} style={{ padding: "12px 10px", borderBottom: "1px solid var(--border)" }}>{heading}</th>
+                  <th scope="col" key={heading} style={{ padding: "12px 10px", borderBottom: "1px solid var(--border)" }}>{t(heading)}</th>
                 )}
               </tr>
             </thead>
@@ -46,7 +46,7 @@ export function ResearchModelEvidenceComparison({
                   <th scope="row" style={{ padding: "12px 10px", borderBottom: "1px solid var(--border)" }}>
                     {row.modelId}<div className="metric-detail">{row.modelVersion}</div>
                   </th>
-                  <td style={{ padding: "12px 10px" }}>{row.origin === "real" ? "Real provider record" : "Synthetic fixture"}</td>
+                  <td style={{ padding: "12px 10px" }}>{t(row.origin === "real" ? "Real provider record" : "Synthetic fixture")}</td>
                   <td style={{ padding: "12px 10px" }}>{row.firstTradingDate} – {row.lastTradingDate}</td>
                   <td style={{ padding: "12px 10px" }}>{row.count}</td>
                   <td style={{ padding: "12px 10px" }}>{row.completed}</td>
@@ -66,7 +66,7 @@ export function ResearchModelEvidenceComparison({
           {rows.map((row) => <div className="status-row" key={JSON.stringify([row.modelId, row.modelVersion, row.origin])}>
             <div>
               <p className="status-title">{row.modelId} · {row.modelVersion} · {row.origin}</p>
-              <p className="status-detail">Completed output labels only — Up: {row.directions.up}, Down: {row.directions.down}, Neutral: {row.directions.neutral}. These are not outcome evaluations.</p>
+              <p className="status-detail">{t("Completed output labels only:")} {t("Up:")} {row.directions.up}, {t("Down:")} {row.directions.down}, {t("Neutral:")} {row.directions.neutral}. {t("These are not outcome evaluations.")}</p>
             </div>
           </div>)}
         </div>
