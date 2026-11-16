@@ -10,7 +10,7 @@ function input(overrides: Partial<ResearchStatusInput> = {}): ResearchStatusInpu
     ticker: "005930",
     daily: {
       source: "http", error: null, unavailable: false,
-      data: { ticker: "005930", totalRecords: 3, records: [{ jobReference: "j1" }] } as NonNullable<DailyResearchResult["data"]>,
+      data: { ticker: "005930", totalRecords: 3, records: [{ jobReference: "j1" }] } as unknown as NonNullable<DailyResearchResult["data"]>,
     },
     ...overrides,
   };
