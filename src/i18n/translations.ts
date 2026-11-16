@@ -1269,4 +1269,38 @@ Object.assign(ko, {
   "Research evidence source": "연구 근거 출처",
   "Retained research publication": "보존된 연구 게시 데이터"
 });
+Object.assign(ko, {
+  "Market source mode:": "시장 데이터 모드:",
+  "Management credentials remain server-side. This screen does not launch validation, model selection, autonomous research or trading.": "모델 관리 인증 정보는 서버에만 보관됩니다. 이 화면에서는 검증, 모델 선택, 자율 연구 또는 거래를 실행하지 않습니다.",
+  "independent checks": "개 독립 점검",
+  "Published count:": "게시 건수:",
+  "suggested checks": "개 권장 점검",
+  "Configured data mode:": "설정된 데이터 모드:",
+  "actions": "개 조치",
+  "Read-only backend health:": "읽기 전용 백엔드 상태:",
+  "Operational catalog:": "운영 종목 목록:",
+  "Observed tickers:": "관측 종목 수:",
+  "Catalog:": "목록:",
+  "First-page operational tickers returned:": "첫 페이지에 반환된 운영 종목 수:",
+  "Collected OHLCV:": "수집된 OHLCV:",
+  "Selected ticker:": "선택된 종목:",
+  "Returned records:": "반환 기록 수:",
+  "Latest observed:": "최근 관측일:",
+  "Collected data unavailable:": "수집 데이터를 사용할 수 없음:",
+  "Collection preview rows:": "수집 미리보기 행 수:",
+  "observed tickers": "개 관측 종목",
+  "Latest observed trading date:": "최근 관측 거래일:",
+  "Newest date:": "최신 날짜:",
+  "Oldest latest date:": "가장 오래된 종목별 최종 관측일:",
+  "Source limitations:": "출처 한계:",
+  "not_required": "불필요",
+  "http": "HTTP",
+  "mock": "모의 데이터",
+  "disconnected": "연결되지 않음",
+  "connected": "연결됨",
+  "degraded": "성능 저하",
+  "observed": "관측됨",
+  "needs_attention": "검토 필요",
+  "unknown": "알 수 없음"
+});
 export function translate(locale: Locale, text: string): string { return locale === "ko" ? (ko[text] ?? ko[text.replace(/\s+/g, " ").trim()] ?? text) : text; }
