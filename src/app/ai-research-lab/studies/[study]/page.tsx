@@ -1,4 +1,5 @@
 import { Localize } from "@/i18n/Localize";
+import { getTranslator } from "@/i18n/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -13,6 +14,7 @@ export default async function AIResearchStudyDetail({
 }:{
   params:Promise<{study:string}>;
 }){
+  const t=await getTranslator();
   const {study:requested}=await params;
   const source=await getAutonomousResearchPublication();
   const study=source.publication?.studies.find(item=>item.study===requested);
@@ -25,7 +27,7 @@ export default async function AIResearchStudyDetail({
     <PageHeader eyebrow="Retained research study" title={study.study} badge={study.truncated?"Partial publication":"Stored study"}
       description="Review actual recorded study evidence. The study folder label is not a verified Experiment ID, cohort ID or plan fingerprint, and this is not a live execution controller."/>
     <section className="panel single-panel" aria-label="Study record summary">
-      <div className="panel-heading"><h2><Localize text="Study activity" /></h2><span className="panel-count">{evidence.complete?"Included records complete":"Partial evidence"}</span></div>
+      <div className="panel-heading"><h2><Localize text="Study activity" /></h2><span className="panel-count">{t(evidence.complete?"Included records complete":"Partial evidence")}</span></div>
       <div className="operations-overview-grid">
         {([
           ["Run records",summary.runCount],
@@ -42,17 +44,14 @@ export default async function AIResearchStudyDetail({
       </div>
       <p className="metric-detail">
         <Localize text="Last recorded run:"/> {summary.lastRecordedAt??<Localize text="Unreported"/>} · <Localize text="Agents:"/> {summary.agents.length?summary.agents.join(", "):<Localize text="Unreported"/>} ·
-        <Localize text="Observed states:"/> {summary.observedStates.length?summary.observedStates.join(", "):<Localize text="Unreported"/>}
+        <Localize text="Observed states:"/> {summary.observedStates.length?summary.observedStates.map(t).join(", "):<Localize text="Unreported"/>}
       </p>
       <p className="section-copy"><Localize text="Completion totals are terminal artifacts, not deduplicated experiments. Run, result and terminal positions have no publicly validated join key. No timeline, cause of improvement, or study-level independent validation is fabricated from record order." /></p>
     </section>
     <section className="panel single-panel" aria-label="Individual experiment observations">
       <div className="panel-heading"><h2><Localize text="Individual retained result observations" /></h2><span className="panel-count">{study.results.length} <Localize text="included"/></span></div>
       <p className="section-copy">
-        Every row is an existing published result observation, not a new experiment claim.
-        Observation numbers identify positions in this publication only; they are not
-        DonghakStockVision Experiment IDs. No direct links to private model checkpoints or
-        source-identifying PINs are exposed.
+        <Localize text="Each row is a published result observation, not a new experiment. The observation index is not an Experiment ID. Private checkpoints and source PINs are never exposed."/>
       </p>
       {study.results.length?<div className="stock-table" style={{overflowX:"auto"}}>
         <table style={{width:"100%",minWidth:"720px",textAlign:"left"}}>
@@ -70,21 +69,16 @@ export default async function AIResearchStudyDetail({
         </table>
       </div>:<p className="section-copy"><Localize text="No result records in this study publication." /></p>}
       {study.results.length<study.kinds.autonomous_result?<p role="status" className="metric-detail">
-        There are {study.kinds.autonomous_result-study.results.length} additional retained result records not included in this publication.
+        <Localize text="Additional retained result records excluded from this publication:"/> {study.kinds.autonomous_result-study.results.length}.
       </p>:null}
     </section>
     <section className="panel single-panel" aria-label="Study evidence limitations">
       <h2><Localize text="Qualification and follow-up" /></h2>
       <p className="section-copy">
-        The source includes {evidence.approved} explicitly true performance-approval flags,
-        {evidence.pitQualified} explicitly true PIT flags, and {evidence.executionAuthorized} explicitly true
-        execution-authorization flags among included result observations. These raw flags do not
-        constitute site-wide approval, an independently validated model, or permission to invest.
+        <Localize text="Recorded true performance-approval flags:"/> {evidence.approved} · <Localize text="Recorded true PIT flags:"/> {evidence.pitQualified} · <Localize text="Recorded true execution-authorization flags:"/> {evidence.executionAuthorized}. <Localize text="These recorded flags do not certify site-wide approval, independently validated models or permission to invest."/>
       </p>
       <p className="section-copy">
-        Study hypothesis, selected-vs-best candidate, independent evaluation cohort, final report,
-        and causal Experiment Memory links are not exposed by the current sanitized publication.
-        They require a reviewed backend read-only contract; they are not guessed here.
+        <Localize text="The sanitized publication has no verified hypothesis, best-versus-selected candidate, independent evaluation cohort, final report or causal Experiment Memory links. A reviewed read-only backend contract is required; no values are inferred."/>
       </p>
       <p><Link href={href}><Localize text="Inspect full within-study metric distribution and recorded run/terminal history" /></Link></p>
     </section>
