@@ -31,7 +31,7 @@ export default async function AIResearchLabPage({
       badge={publication?"Retained research publication":source.state}
       description="A read-only research observatory built from actual retained DonghakStockVision experiment records. Evidence, failures and unknowns remain distinct; this screen never launches research or authorizes investments."/>
     <section className="panel single-panel" aria-label="AI research lab publication">
-      <div className="panel-heading"><h2><Localize text="Research evidence source" /></h2><span className="panel-count">{source.state}</span></div>
+      <div className="panel-heading"><h2><Localize text="Research evidence source" /></h2><span className="panel-count"><Localize text={source.state}/></span></div>
       <p className="section-copy" role="status">{source.message}</p>
       {publication?<p className="metric-detail">
         Generated {publication.generatedAt}. This is an operator-produced, manually refreshed local publication,
@@ -54,7 +54,7 @@ export default async function AIResearchLabPage({
           ["Final reviewed reports","Not published"],
           ["Live research execution","Not verifiable"],
         ] as const).map(([label,value])=><div className="operations-overview-stat" key={label}>
-          <span>{label}</span><strong>{value}</strong>
+          <span><Localize text={label}/></span><strong>{typeof value==="string"?<Localize text={value}/>:value}</strong>
         </div>)}
       </div>
       <p className="metric-detail">
@@ -77,7 +77,7 @@ export default async function AIResearchLabPage({
           ["Sealed Final Test","Not published to the web"],
           ["PIT qualification","No site-wide certificate"],
           ["Investment readiness","Not established"],
-        ] as const).map(([label,value])=><div className="operations-overview-stat" key={label}><span>{label}</span><strong style={{fontSize:"14px",lineHeight:"1.5"}}>{value}</strong></div>)}
+        ] as const).map(([label,value])=><div className="operations-overview-stat" key={label}><span><Localize text={label}/></span><strong style={{fontSize:"14px",lineHeight:"1.5"}}><Localize text={value}/></strong></div>)}
       </div>
       <p className="section-copy"><Localize text="The retained study evidence has explicit per-record flags in the existing research views, but it does not prove independent future performance or investment permission. Cross-study AP ranking is deliberately disabled because dataset and evaluation conditions are not linked." /></p>
     </section>
@@ -88,7 +88,7 @@ export default async function AIResearchLabPage({
         <input id="lab-query" name="q" defaultValue={q} maxLength={80} placeholder="historical-expansion"/>
         <label htmlFor="lab-status"><Localize text="Recorded state" /></label>
         <select id="lab-status" name="state" defaultValue={state}>
-          {statusOptions.map(value=><option key={value} value={value}>{value==="all"?"All recorded states":value}</option>)}
+          {statusOptions.map(value=><option key={value} value={value}><Localize text={value==="all"?"All recorded states":value}/></option>)}
         </select>
         <label htmlFor="lab-agent"><Localize text="Research agent" /></label>
         <select id="lab-agent" name="agent" defaultValue={agent}>
