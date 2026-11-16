@@ -131,3 +131,13 @@ test("security metadata browser distinguishes disabled backend and never substit
  await expect(page.getByText("requires HTTP mode",{exact:false})).toBeVisible();
  await expect(page.getByRole("region",{name:"Security metadata search"})).toHaveCount(0);
 });
+
+test("AI Research Lab landing does not fabricate study or report counts when not published", async ({page}) => {
+  await page.goto("/ai-research-lab");
+  await expect(page.getByRole("heading",{name:"Donghak autonomous research"})).toBeVisible();
+  await expect(page.getByRole("region",{name:"AI research lab publication"})).toBeVisible();
+  await expect(page.getByText("No fictional studies, reports",{exact:false})).toBeVisible();
+  await expect(page.getByRole("region",{name:"Research study explorer"})).toHaveCount(0);
+  await expect(page.getByRole("region",{name:"AI research lab overview"})).toHaveCount(0);
+  await expect(page.getByText("72",{exact:true})).toHaveCount(0);
+});
