@@ -1,3 +1,4 @@
+import { Localize } from "@/i18n/Localize";
 import Link from "next/link";
 import { PageHeader } from "@/components/common/PageHeader";
 import { getAutonomousResearchPublication } from "@/data/AutonomousResearchDataSource";
@@ -30,20 +31,17 @@ export default async function AIResearchLabPage({
       badge={publication?"Retained research publication":source.state}
       description="A read-only research observatory built from actual retained DonghakStockVision experiment records. Evidence, failures and unknowns remain distinct; this screen never launches research or authorizes investments."/>
     <section className="panel single-panel" aria-label="AI research lab publication">
-      <div className="panel-heading"><h2>Research evidence source</h2><span className="panel-count">{source.state}</span></div>
+      <div className="panel-heading"><h2><Localize text="Research evidence source" /></h2><span className="panel-count">{source.state}</span></div>
       <p className="section-copy" role="status">{source.message}</p>
       {publication?<p className="metric-detail">
         Generated {publication.generatedAt}. This is an operator-produced, manually refreshed local publication,
         not live process telemetry. {publication.skippedStudyCount} database sources were excluded from the export;
         do not interpret displayed counts as the full history of DonghakStockVision.
-      </p>:<p className="metric-detail">
-        The existing read-only local research publication is required. No fictional studies, reports,
-        model rankings or experiment history are substituted when unavailable.
-        <Link href="/autonomous-research"> Inspect publication configuration</Link>.
+      </p>:<p className="metric-detail"><Localize text="The existing read-only local research publication is required. No fictional studies, reports, model rankings or experiment history are substituted when unavailable." /><Link href="/autonomous-research">{" "}<Localize text="Inspect publication configuration" /></Link>.
       </p>}
     </section>
     {overview?<section className="panel single-panel" aria-label="AI research lab overview">
-      <div className="panel-heading"><h2>Observed research activity</h2><span className="panel-count">Retained artifacts, not deduplicated trials</span></div>
+      <div className="panel-heading"><h2><Localize text="Observed research activity" /></h2><span className="panel-count"><Localize text="Retained artifacts, not deduplicated trials" /></span></div>
       <div className="operations-overview-grid">
         {([
           ["Included research databases",overview.studiesIncluded],
@@ -70,7 +68,7 @@ export default async function AIResearchLabPage({
       </p>:null}
     </section>:null}
     <section className="panel single-panel" aria-label="Research qualification boundaries">
-      <div className="panel-heading"><h2>What can be established?</h2><span className="panel-count">No inferred approval</span></div>
+      <div className="panel-heading"><h2><Localize text="What can be established?" /></h2><span className="panel-count"><Localize text="No inferred approval" /></span></div>
       <div className="operations-overview-grid">
         {([
           ["Search candidate leader","Unavailable without comparable candidate scope"],
@@ -81,27 +79,23 @@ export default async function AIResearchLabPage({
           ["Investment readiness","Not established"],
         ] as const).map(([label,value])=><div className="operations-overview-stat" key={label}><span>{label}</span><strong style={{fontSize:"14px",lineHeight:"1.5"}}>{value}</strong></div>)}
       </div>
-      <p className="section-copy">
-        The retained study evidence has explicit per-record flags in the existing research views, but
-        it does not prove independent future performance or investment permission. Cross-study AP
-        ranking is deliberately disabled because dataset and evaluation conditions are not linked.
-      </p>
+      <p className="section-copy"><Localize text="The retained study evidence has explicit per-record flags in the existing research views, but it does not prove independent future performance or investment permission. Cross-study AP ranking is deliberately disabled because dataset and evaluation conditions are not linked." /></p>
     </section>
     {publication?<section className="panel single-panel" aria-label="Research study explorer">
-      <div className="panel-heading"><h2>Search retained research studies</h2><span className="panel-count">{entries.length} matches</span></div>
+      <div className="panel-heading"><h2><Localize text="Search retained research studies" /></h2><span className="panel-count">{entries.length} matches</span></div>
       <form action="/ai-research-lab" method="get" className="stock-explorer">
-        <label htmlFor="lab-query">Study label or research agent</label>
+        <label htmlFor="lab-query"><Localize text="Study label or research agent" /></label>
         <input id="lab-query" name="q" defaultValue={q} maxLength={80} placeholder="historical-expansion"/>
-        <label htmlFor="lab-status">Recorded state</label>
+        <label htmlFor="lab-status"><Localize text="Recorded state" /></label>
         <select id="lab-status" name="state" defaultValue={state}>
           {statusOptions.map(value=><option key={value} value={value}>{value==="all"?"All recorded states":value}</option>)}
         </select>
-        <label htmlFor="lab-agent">Research agent</label>
+        <label htmlFor="lab-agent"><Localize text="Research agent" /></label>
         <select id="lab-agent" name="agent" defaultValue={agent}>
-          <option value="">All recorded agents</option>
+          <option value=""><Localize text="All recorded agents" /></option>
           {agents.map(value=><option key={value} value={value}>{value}</option>)}
         </select>
-        <button type="submit">Filter studies</button>
+        <button type="submit"><Localize text="Filter studies" /></button>
       </form>
       <p className="metric-detail">
         States are observed in retained run or terminal artifacts; a recorded running state is not proof
@@ -126,20 +120,20 @@ export default async function AIResearchLabPage({
             {item.partial?"Partial publication":item.hasDiagnostics?"Diagnostics recorded":"Retained"}
           </span>
         </article>)}
-      </div>:<p role="status" className="section-copy">No retained studies match the filters. No new research data is inferred.</p>}
+      </div>:<p role="status" className="section-copy"><Localize text="No retained studies match the filters. No new research data is inferred." /></p>}
       <div style={{display:"flex",gap:"20px",marginTop:"16px"}}>
-        {currentPage>1?<Link href={nextHref(currentPage-1)}>Previous page</Link>:null}
+        {currentPage>1?<Link href={nextHref(currentPage-1)}><Localize text="Previous page" /></Link>:null}
         <span className="metric-detail">Page {currentPage} of {pageCount}</span>
-        {currentPage<pageCount?<Link href={nextHref(currentPage+1)}>Next page</Link>:null}
+        {currentPage<pageCount?<Link href={nextHref(currentPage+1)}><Localize text="Next page" /></Link>:null}
       </div>
     </section>:null}
     <section className="panel single-panel" aria-label="Research lab linked views">
-      <h2>Further verified research surfaces</h2>
+      <h2><Localize text="Further verified research surfaces" /></h2>
       <p className="section-copy">
-        <Link href="/autonomous-research">Detailed study metrics and distributions</Link> ·
-        {" "}<Link href="/research-status">Research publication and LLM management status</Link> ·
-        {" "}<Link href="/ai-research-models">Research LLM comparisons</Link> ·
-        {" "}<Link href="/backend-api-coverage">Backend API parity</Link>
+        <Link href="/autonomous-research"><Localize text="Detailed study metrics and distributions" /></Link> ·
+        {" "}<Link href="/research-status"><Localize text="Research publication and LLM management status" /></Link> ·
+        {" "}<Link href="/ai-research-models"><Localize text="Research LLM comparisons" /></Link> ·
+        {" "}<Link href="/backend-api-coverage"><Localize text="Backend API parity" /></Link>
       </p>
     </section>
   </>;
