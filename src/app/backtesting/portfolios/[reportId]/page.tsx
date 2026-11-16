@@ -1,3 +1,4 @@
+import { Localize } from "@/i18n/Localize";
 import Link from "next/link";
 import {PageHeader} from "@/components/common/PageHeader";
 import {loadHistoricalPortfolioSummary,loadHistoricalPortfolioTrades} from "@/data/HistoricalPortfolioDetailDataSource";
@@ -41,8 +42,8 @@ export default async function PortfolioDetailPage({
   />
   {summary.error?<p role="status" className="run-lock">{summary.error}</p>:null}
   {report?<section className="panel single-panel" aria-label="Recorded portfolio summary">
-   <div className="panel-heading"><h2>Published simulation summary</h2><span className="status-pill" data-state="blocked">Not executable</span></div>
-   <p className="metric-detail">Report ID: <code>{report.reportId}</code></p>
+   <div className="panel-heading"><h2><Localize text="Published simulation summary" /></h2><span className="status-pill" data-state="blocked"><Localize text="Not executable" /></span></div>
+   <p className="metric-detail"><Localize text="Report ID:" />{" "}<code>{report.reportId}</code></p>
    <div className="operations-overview-grid">
     {rows.map(([label,value])=><div className="operations-overview-stat" key={label}>
      <span>{label}</span><strong>{value}</strong>
@@ -50,31 +51,31 @@ export default async function PortfolioDetailPage({
    </div>
    <p className="metric-detail">Archive integrity verified; offline authoritative replay passed. Research only; brokerage and live trading eligibility denied.</p>
    <p className="metric-detail">Evidence scope: {report.evidenceScope} · Data origin: {report.dataOrigin}</p>
-   {report.limitations.length>0?<div><h3>Recorded limitations</h3>{report.limitations.map((item,index)=><p className="metric-detail" key={index}>{item}</p>)}</div>:null}
+   {report.limitations.length>0?<div><h3><Localize text="Recorded limitations" /></h3>{report.limitations.map((item,index)=><p className="metric-detail" key={index}>{item}</p>)}</div>:null}
    <div className="operations-runs" aria-label="Per-ticker historical evidence">
-    <h3>Per-ticker position and timeline review</h3>
+    <h3><Localize text="Per-ticker position and timeline review" /></h3>
     {report.tickers.map(ticker=><p key={ticker}>
      <Link href={"/backtesting/portfolios/"+reportId+"/tickers/"+ticker}>{ticker} · View recorded positions and opportunities</Link>
     </p>)}
    </div>
   </section>:null}
   {report?<section className="panel single-panel" aria-label="Historical decision and trade evidence">
-   <div className="panel-heading"><h2>Recorded decision and order outcomes</h2><span className="panel-count">{history?history.total+" records":"Unavailable"}</span></div>
-   <p className="section-copy">These are simulated opportunity classifications, including no-order, rejected and pending outcomes. A filled classification is not a live brokerage execution.</p>
+   <div className="panel-heading"><h2><Localize text="Recorded decision and order outcomes" /></h2><span className="panel-count">{history?history.total+" records":"Unavailable"}</span></div>
+   <p className="section-copy"><Localize text="These are simulated opportunity classifications, including no-order, rejected and pending outcomes. A filled classification is not a live brokerage execution." /></p>
    {trades.error?<p role="status" className="metric-detail">{trades.error}</p>:null}
-   {history?.items.length===0?<p className="metric-detail">No records on this page.</p>:null}
+   {history?.items.length===0?<p className="metric-detail"><Localize text="No records on this page." /></p>:null}
    {history?.items.map(item=><article className="operations-run" key={item.eventId}>
     <div>
      <strong>{item.evidence.ticker} · {item.evidence.trading_date}</strong>
      <p className="metric-detail">Simulated outcome: {item.classification} · Terminal status: {item.terminalStatus??"Not recorded"}</p>
-     <p className="metric-detail">Evidence event: <code>{item.eventId}</code></p>
+     <p className="metric-detail"><Localize text="Evidence event:" />{" "}<code>{item.eventId}</code></p>
     </div>
     <span className="status-pill" data-state={item.classification==="filled"?"completed":"blocked"}>{item.classification}</span>
    </article>)}
    {history?<nav aria-label="Trade evidence pages" className="recorded-run-controls">
-    {offset>0?<Link href={"/backtesting/portfolios/"+reportId+"?offset="+Math.max(0,offset-10)}>Previous page</Link>:null}
+    {offset>0?<Link href={"/backtesting/portfolios/"+reportId+"?offset="+Math.max(0,offset-10)}><Localize text="Previous page" /></Link>:null}
     <span className="metric-detail">Showing {history.items.length} of {history.total} recorded outcomes, offset {offset}</span>
-    {offset+history.items.length<history.total&&history.items.length>0?<Link href={"/backtesting/portfolios/"+reportId+"?offset="+(offset+history.items.length)}>Next page</Link>:null}
+    {offset+history.items.length<history.total&&history.items.length>0?<Link href={"/backtesting/portfolios/"+reportId+"?offset="+(offset+history.items.length)}><Localize text="Next page" /></Link>:null}
    </nav>:null}
   </section>:null}
  </>;
