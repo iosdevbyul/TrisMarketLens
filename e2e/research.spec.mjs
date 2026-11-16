@@ -80,6 +80,6 @@ test("integrated research preview respects ticker selection and cannot fabricate
  await expect(page.getByRole("link", {name:"Compare up to 1,000 published records"})).toHaveAttribute("href", "/stocks/005930/research-comparison");
  await expect(page.getByText("No records were returned in the preview.", {exact:false})).toBeVisible();
  await page.goto("/research-status?ticker=invalid-ticker");
- await expect(page.getByRole("alert")).toContainText("Use exactly six letters or digits");
+ await expect(page.getByRole("region", {name:"Source selection"}).getByRole("alert")).toContainText("Use exactly six letters or digits");
  await expect(page.getByText("Enter a ticker above to request a real publication preview.")).toBeVisible();
 });
