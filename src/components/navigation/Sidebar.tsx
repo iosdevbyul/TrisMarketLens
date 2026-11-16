@@ -9,6 +9,7 @@ const navigation = [
   { href: "/", label: "Overview" },
   { href: "/research-path", label: "Research Path" },
   { href: "/research-status", label: "Research Status" },
+  { href: "/ai-research-lab", label: "AI Research Lab" },
   { href: "/autonomous-research", label: "Autonomous Research" },
   { href: "/stocks", label: "Stocks" },
   { href: "/operational-market", label: "Collected Market Data" },
