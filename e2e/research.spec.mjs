@@ -115,3 +115,19 @@ test("autonomous evaluation routes never invent quartiles or outcomes while sour
  await expect(page.getByRole("region",{name:"Autonomous research evaluation insights"})).toHaveCount(0);
  await expect(page.getByText("Median",{exact:true})).toHaveCount(0);
 });
+
+test("API inventory lists real backend routes and distinguishes mapping from verified local E2E", async ({page})=>{
+ await page.goto("/backend-api-coverage");
+ await expect(page.getByRole("heading",{name:"DonghakStockVision API coverage"})).toBeVisible();
+ await expect(page.getByRole("region",{name:"Backend API inventory summary"})).toBeVisible();
+ await expect(page.getByText("Mapped / E2E pending").first()).toBeVisible();
+ await expect(page.getByText("GET /api/v1/security-metadata",{exact:true}).first()).toBeVisible();
+ await expect(page.getByText("POST /api/v1/research/historical-portfolios/compare",{exact:true})).toBeVisible();
+});
+test("security metadata browser distinguishes disabled backend and never substitutes fake tickers",async ({page})=>{
+ await page.goto("/security-metadata?q=005930");
+ await expect(page.getByRole("heading",{name:"Security metadata catalog"})).toBeVisible();
+ await expect(page.getByRole("region",{name:"Security metadata source"})).toBeVisible();
+ await expect(page.getByText("requires HTTP mode",{exact:false})).toBeVisible();
+ await expect(page.getByRole("region",{name:"Security metadata search"})).toHaveCount(0);
+});
