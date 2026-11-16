@@ -946,4 +946,30 @@ Object.assign(ko, {
   "Export research comparison CSV": "연구 비교 CSV 내보내기",
   "Export current page research CSV": "현재 페이지 연구 CSV 내보내기"
 });
+Object.assign(ko, {
+  "KRX operations": "KRX 운영",
+  "Scheduler diagnostics": "스케줄러 진단",
+  "Read-only operator-provided diagnostic reports. This panel does not start collections, approve evidence, or enable PAPER trading.": "운영자가 제공한 읽기 전용 진단 보고서입니다. 이 화면에서는 데이터 수집을 시작하거나 근거를 승인하거나 모의 거래를 활성화하지 않습니다.",
+  "Diagnostics unavailable": "진단 정보를 사용할 수 없음",
+  "Model activity comparison": "모델 활동 비교",
+  "No comparable records on this page": "이 페이지에 비교할 기록이 없습니다.",
+  "Try another date range or page. Missing records are not treated as zero performance.": "다른 날짜 범위나 페이지를 선택하세요. 누락된 기록을 성과 0으로 취급하지 않습니다.",
+  "Inspect recorded research directions by model": "모델별 기록된 연구 방향 확인",
+  "Daily AI research": "일일 AI 연구",
+  "Retained model research history": "보존된 모델 연구 이력",
+  "Uncalibrated conditional research scores and display-only Up/Down/Neutral signals. These are not probabilities of a price increase, approved forward predictions, investment recommendations or trading instructions. Local analysis timestamps are not independently authenticated.": "보정되지 않은 조건부 연구 점수와 표시 전용 상승·하락·중립 신호입니다. 주가 상승 확률, 승인된 미래 예측, 투자 권유 또는 거래 지시가 아닙니다. 로컬 분석 시각은 독립적으로 인증되지 않았습니다.",
+  "Trading date": "거래일",
+  "From (range)": "시작일(범위)",
+  "To (range)": "종료일(범위)",
+  "Page size": "페이지 크기",
+  "Filter research": "연구 필터 적용",
+  "Use either an exact trading date or a date range. Filters are inclusive and independent of the approved publication above.": "특정 거래일 또는 날짜 범위를 사용하세요. 필터에는 양 끝 날짜가 포함되며 위의 승인된 게시 데이터와 독립적입니다.",
+  "Research activity in this page": "이 페이지의 연구 활동",
+  "Visible records only": "표시된 기록만",
+  "Recorded research status by trading date": "거래일별 기록된 연구 상태",
+  "No displayed dates.": "표시할 날짜가 없습니다.",
+  "No retained daily research records match this selection. This does not mean analysis succeeded.": "선택 조건과 일치하는 일일 연구 기록이 없습니다. 분석에 성공했다는 뜻은 아닙니다.",
+  "Most recent retained research entry (not necessarily the latest successful run).": "가장 최근 보존된 연구 기록으로, 마지막 성공 실행과 다를 수 있습니다.",
+  "Next": "다음"
+});
 export function translate(locale: Locale, text: string): string { return locale === "ko" ? (ko[text] ?? ko[text.replace(/\s+/g, " ").trim()] ?? text) : text; }
