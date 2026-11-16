@@ -58,7 +58,7 @@ export default async function AIResearchLabPage({
         </div>)}
       </div>
       <p className="metric-detail">
-        Most recently recorded run: {overview.latestRunTime??"Unreported"}.
+        <Localize text="Most recently recorded run:"/> {overview.latestRunTime??<Localize text="Unreported"/>}.
         Completion and failure counts describe terminal records only, not distinct experiments.
         Research may have progressed since this publication was generated.
         No current CPU, memory or live process state is available from this snapshot.
@@ -82,7 +82,7 @@ export default async function AIResearchLabPage({
       <p className="section-copy"><Localize text="The retained study evidence has explicit per-record flags in the existing research views, but it does not prove independent future performance or investment permission. Cross-study AP ranking is deliberately disabled because dataset and evaluation conditions are not linked." /></p>
     </section>
     {publication?<section className="panel single-panel" aria-label="Research study explorer">
-      <div className="panel-heading"><h2><Localize text="Search retained research studies" /></h2><span className="panel-count">{entries.length} matches</span></div>
+      <div className="panel-heading"><h2><Localize text="Search retained research studies" /></h2><span className="panel-count">{entries.length} <Localize text="matches"/></span></div>
       <form action="/ai-research-lab" method="get" className="stock-explorer">
         <label htmlFor="lab-query"><Localize text="Study label or research agent" /></label>
         <input id="lab-query" name="q" defaultValue={q} maxLength={80} placeholder="historical-expansion"/>
@@ -107,17 +107,17 @@ export default async function AIResearchLabPage({
           <div style={{minWidth:0,overflowWrap:"anywhere"}}>
             <strong><Link href={"/ai-research-lab/studies/"+encodeURIComponent(item.study)}>{item.study}</Link></strong>
             <p className="metric-detail">
-              {item.runCount} run records · {item.resultCount} result records ·
-              {item.completedTerminals} completed terminals · {item.failedTerminals} failed terminals
+              {item.runCount} <Localize text="run records"/> · {item.resultCount} <Localize text="result records"/> ·
+              {item.completedTerminals} <Localize text="completed terminals"/> · {item.failedTerminals} <Localize text="failed terminals"/>
             </p>
             <p className="metric-detail">
-              Agents: {item.agents.length?item.agents.join(", "):"Unreported"} ·
-              Last recorded run: {item.lastRecordedAt??"Unreported"} ·
-              State evidence: {item.observedStates.length?item.observedStates.join(", "):"Unreported"}
+              <Localize text="Agents:"/> {item.agents.length?item.agents.join(", "):<Localize text="Unreported"/>} ·
+              <Localize text="Last recorded run:"/> {item.lastRecordedAt??<Localize text="Unreported"/>} ·
+              <Localize text="State evidence:"/> {item.observedStates.length?item.observedStates.map(x=>x).join(", "):<Localize text="Unreported"/>}
             </p>
           </div>
           <span className="status-pill" data-state={item.partial?"blocked":"in_progress"}>
-            {item.partial?"Partial publication":item.hasDiagnostics?"Diagnostics recorded":"Retained"}
+            <Localize text={item.partial?"Partial publication":item.hasDiagnostics?"Diagnostics recorded":"Retained"}/>
           </span>
         </article>)}
       </div>:<p role="status" className="section-copy"><Localize text="No retained studies match the filters. No new research data is inferred." /></p>}
