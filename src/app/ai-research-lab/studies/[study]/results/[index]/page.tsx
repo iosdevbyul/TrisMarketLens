@@ -1,3 +1,4 @@
+import { Localize } from "@/i18n/Localize";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -28,7 +29,7 @@ export default async function LabResultDetail({
       badge="Source record only"
       description="This record is projected from an actual autonomous_result artifact. The observation index is not an Experiment ID or a validated run→result relationship."/>
     <section className="panel single-panel" aria-label="Result evaluation metrics">
-      <div className="panel-heading"><h2>Retained evaluation metrics</h2><span className="panel-count">{study.study}</span></div>
+      <div className="panel-heading"><h2><Localize text="Retained evaluation metrics" /></h2><span className="panel-count">{study.study}</span></div>
       <div className="operations-overview-grid">
         {([
           ["Mean Average Precision",decimal(result.meanAp)],
@@ -36,17 +37,13 @@ export default async function LabResultDetail({
           ["Worst balanced accuracy",decimal(result.worstBalancedAccuracy)],
           ["Largest train gap",result.largestTrainGap??"Not reported"],
         ] as const).map(([label,value])=><div className="operations-overview-stat" key={label}>
-          <span>{label}</span><strong>{value}</strong>
+          <span><Localize text={label}/></span><strong><Localize text={String(value)}/></strong>
         </div>)}
       </div>
-      <p className="metric-detail">
-        These retrospective scores have no published per-observation comparable baseline,
-        horizon, holdout cohort, training window or independent Final Test certificate.
-        The web cannot establish a best search candidate or an independently validated winner.
-      </p>
+      <p className="metric-detail"><Localize text="These retrospective scores have no published per-observation comparable baseline, horizon, holdout cohort, training window or independent Final Test certificate. The web cannot establish a best search candidate or an independently validated winner." /></p>
     </section>
     <section className="panel single-panel" aria-label="Result integrity and approval flags">
-      <div className="panel-heading"><h2>Recorded review flags</h2><span className="panel-count">Never inferred</span></div>
+      <div className="panel-heading"><h2><Localize text="Recorded review flags" /></h2><span className="panel-count"><Localize text="Never inferred" /></span></div>
       <div className="operations-overview-grid">
         {([
           ["PIT qualified",flag(result.pitQualified)],
@@ -56,26 +53,15 @@ export default async function LabResultDetail({
           ["Robustness summary available",result.hasRobustSummary?"Present, outcome not published":"Not present"],
           ["Generalization training available",result.hasGeneralizationTraining?"Present, outcome not published":"Not present"],
         ] as const).map(([label,value])=><div className="operations-overview-stat" key={label}>
-          <span>{label}</span><strong style={{fontSize:"14px",lineHeight:1.5}}>{value}</strong>
+          <span><Localize text={label}/></span><strong style={{fontSize:"14px",lineHeight:1.5}}><Localize text={value}/></strong>
         </div>)}
       </div>
-      <p className="section-copy">
-        A diagnostic object existing in the original study is not evidence that it passed.
-        No raw model SHA, checkpoint, source PIN, hidden heldout details or original experiment
-        identifiers are copied into this browser view. Any explicit true flag remains a
-        retained artifact field and not permission to trade.
-      </p>
+      <p className="section-copy"><Localize text="A diagnostic object existing in the original study is not evidence that it passed. No raw model SHA, checkpoint, source PIN, hidden heldout details or original experiment identifiers are copied into this browser view. Any explicit true flag remains a retained artifact field and not permission to trade." /></p>
     </section>
     <section className="panel single-panel" aria-label="Result provenance limits">
-      <h2>Missing independent evidence</h2>
-      <p className="section-copy">
-        Report and plan identity, training/assessment dates, selection policy comparisons,
-        final report and cohort diagnostics are unavailable in the current safe publication.
-        This observation is not associated with an inferred run, terminal event or another study.
-      </p>
-      <p><Link href={"/autonomous-research?study="+encodeURIComponent(study.study)}>
-        Inspect study-level metric distributions
-      </Link></p>
+      <h2><Localize text="Missing independent evidence" /></h2>
+      <p className="section-copy"><Localize text="Report and plan identity, training/assessment dates, selection policy comparisons, final report and cohort diagnostics are unavailable in the current safe publication. This observation is not associated with an inferred run, terminal event or another study." /></p>
+      <p><Link href={"/autonomous-research?study="+encodeURIComponent(study.study)}><Localize text="Inspect study-level metric distributions" /></Link></p>
     </section>
   </>;
 }

@@ -1,3 +1,4 @@
+import { Localize } from "@/i18n/Localize";
 import type { DailyResearchRecord } from "@/domain/dailyResearch";
 import { compareVisibleResearchModels } from "@/domain/researchModelEvidenceComparison";
 
@@ -16,8 +17,8 @@ export function ResearchModelEvidenceComparison({
     <section className="panel single-panel" aria-label="Research model evidence comparison">
       <div className="panel-heading">
         <div>
-          <p className="eyebrow">Research evidence</p>
-          <h2>Model activity comparison</h2>
+          <p className="eyebrow"><Localize text="Research evidence" /></p>
+          <h2><Localize text="Model activity comparison" /></h2>
         </div>
         <span className="panel-count">{rows.length} model/source groups</span>
       </div>
@@ -28,7 +29,7 @@ export function ResearchModelEvidenceComparison({
         probabilities, and no accuracy, profit, or model ranking is inferred.
       </p>
       {!rows.length ? (
-        <div className="empty-state"><p>No comparable records on this page</p><span>Try another date range or page. Missing records are not treated as zero performance.</span></div>
+        <div className="empty-state"><p><Localize text="No comparable records on this page" /></p><span><Localize text="Try another date range or page. Missing records are not treated as zero performance." /></span></div>
       ) : (
         <div className="stock-table" style={{ overflowX: "auto", marginTop: "18px" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "850px", textAlign: "left" }}>
@@ -60,7 +61,7 @@ export function ResearchModelEvidenceComparison({
         </div>
       )}
       {rows.length > 0 ? <details style={{ marginTop: "16px" }}>
-        <summary>Inspect recorded research directions by model</summary>
+        <summary><Localize text="Inspect recorded research directions by model" /></summary>
         <div className="status-list" style={{ marginTop: "12px" }}>
           {rows.map((row) => <div className="status-row" key={JSON.stringify([row.modelId, row.modelVersion, row.origin])}>
             <div>

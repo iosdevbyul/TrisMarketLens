@@ -1,3 +1,4 @@
+import { Localize } from "@/i18n/Localize";
 import Link from "next/link";
 import {PageHeader} from "@/components/common/PageHeader";
 import {HistoricalComparisonExport} from "@/components/backtesting/HistoricalComparisonExport";
@@ -45,26 +46,26 @@ export default async function HistoricalPortfolioComparePage({
    description="Side-by-side recorded historical research. No ranking, trading recommendation or inferred performance. Different periods, missing valuation marks and unavailable policies can make economic comparison invalid."/>
   {error?<section className="panel single-panel" role="status"><p className="metric-detail">{error}</p></section>:null}
   {data?<section className="panel single-panel" aria-label="Historical portfolio comparability">
-   <div className="panel-heading"><h2>Evidence comparability</h2><span className="status-pill" data-state="blocked">No ranking</span></div>
+   <div className="panel-heading"><h2><Localize text="Evidence comparability" /></h2><span className="status-pill" data-state="blocked"><Localize text="No ranking" /></span></div>
    <div className="operations-overview-grid">
-    <div className="operations-overview-stat"><span>Periods differ</span><strong>{decision(data.comparability.periodsDiffer)}</strong></div>
-    <div className="operations-overview-stat"><span>Valuation times differ</span><strong>{decision(data.comparability.valuationTimestampsDiffer)}</strong></div>
-    <div className="operations-overview-stat"><span>Observed mark fields differ</span><strong>{decision(data.comparability.observedMarkFieldsDiffer)}</strong></div>
-    <div className="operations-overview-stat"><span>Valuation policy comparison</span><strong>Unavailable</strong></div>
+    <div className="operations-overview-stat"><span><Localize text="Periods differ" /></span><strong>{decision(data.comparability.periodsDiffer)}</strong></div>
+    <div className="operations-overview-stat"><span><Localize text="Valuation times differ" /></span><strong>{decision(data.comparability.valuationTimestampsDiffer)}</strong></div>
+    <div className="operations-overview-stat"><span><Localize text="Observed mark fields differ" /></span><strong>{decision(data.comparability.observedMarkFieldsDiffer)}</strong></div>
+    <div className="operations-overview-stat"><span><Localize text="Valuation policy comparison" /></span><strong><Localize text="Unavailable" /></strong></div>
    </div>
-   <h3>Backend comparison notices</h3>
+   <h3><Localize text="Backend comparison notices" /></h3>
    {data.comparability.notices.map(notice=><p className="metric-detail" key={notice}>{notice.replaceAll("_"," ")}</p>)}
    {Object.entries(data.comparability.unavailable).map(([field,reason])=>
     <p className="metric-detail" key={field}>Unavailable {field}: {reason.replaceAll("_"," ")}</p>)}
   </section>:null}
   {data?<section className="panel single-panel" aria-label="Published portfolio side by side comparison">
-   <div className="panel-heading"><h2>Recorded portfolio fields</h2><span className="panel-count">{items.length} publications</span></div>
+   <div className="panel-heading"><h2><Localize text="Recorded portfolio fields" /></h2><span className="panel-count">{items.length} publications</span></div>
    <HistoricalComparisonExport comparison={data}/>
-   <p className="section-copy">Values below are backend-published historical evidence, not current balances or independently calculated returns. A missing field is never estimated. The columns follow the selected report order, not performance rank.</p>
+   <p className="section-copy"><Localize text="Values below are backend-published historical evidence, not current balances or independently calculated returns. A missing field is never estimated. The columns follow the selected report order, not performance rank." /></p>
    <div style={{overflowX:"auto"}}>
     <table style={{width:"100%",borderCollapse:"collapse",textAlign:"left"}}>
      <thead><tr>
-      <th scope="col" style={{padding:"0.75rem"}}>Recorded field</th>
+      <th scope="col" style={{padding:"0.75rem"}}><Localize text="Recorded field" /></th>
       {items.map((item,index)=><th scope="col" key={item.reportId} style={{padding:"0.75rem"}}>
        <Link href={"/backtesting/portfolios/"+item.reportId}>Report {index+1}</Link>
        <p className="metric-detail"><code>{item.reportId.slice(0,12)}…</code></p>
@@ -76,7 +77,7 @@ export default async function HistoricalPortfolioComparePage({
      </tr>)}</tbody>
     </table>
    </div>
-   <p className="metric-detail">All reports are research-only, non-executable, non-brokerage eligible, and not verified for PIT, OOS, or investment suitability.</p>
+   <p className="metric-detail"><Localize text="All reports are research-only, non-executable, non-brokerage eligible, and not verified for PIT, OOS, or investment suitability." /></p>
   </section>:null}
  </>;
 }

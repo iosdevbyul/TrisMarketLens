@@ -1,3 +1,4 @@
+import { Localize } from "@/i18n/Localize";
 import { getTranslator } from "@/i18n/server";
 import Link from "next/link";
 
@@ -27,9 +28,9 @@ export default async function ModelsPage() {
         title={t("Models")}
       />
 
-      <p className="section-copy"><Link href="/ai-research-models">Inspect AI research LLMs, selection history and provider status</Link></p>
+      <p className="section-copy"><Link href="/ai-research-models"><Localize text="Inspect AI research LLMs, selection history and provider status" /></Link></p>
 
-      <p className="section-copy"><Link href="/research-workbench">Explore models, research blockers and published per-ticker evidence in one workbench</Link></p>
+      <p className="section-copy"><Link href="/research-workbench"><Localize text="Explore models, research blockers and published per-ticker evidence in one workbench" /></Link></p>
 
       <section className="model-grid">
         {models.map((model) => (

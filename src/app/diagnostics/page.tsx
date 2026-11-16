@@ -1,3 +1,4 @@
+import { Localize } from "@/i18n/Localize";
 import Link from "next/link";
 import {loadOperationalCatalog,loadOperationalBars} from "@/data/OperationalMarketDataSource";
 import {getOhlcv} from "@/data/OhlcvDataSource";
@@ -39,54 +40,54 @@ export default async function DiagnosticsPage({searchParams}:{searchParams:Promi
  const nextSteps=diagnosticRemediations(readiness,[...sources,...selectedSources],validTicker);
  return <>
   <PageHeader eyebrow="Operations" title="Backend diagnostics" badge={status} description="Read-only connection checks. Healthy API transport does not certify data freshness, completeness or research approval."/>
-  <p className="section-copy"><Link href="/backend-api-coverage">Review full DonghakStockVision API integration inventory</Link> · <Link href="/security-metadata">Inspect full security metadata publication</Link></p>
-  <section className="panel single-panel" aria-label="Operational readiness"><div className="panel-heading"><h2>Operational readiness</h2><span className="panel-count">{readiness}</span></div>
+  <p className="section-copy"><Link href="/backend-api-coverage"><Localize text="Review full DonghakStockVision API integration inventory" /></Link> · <Link href="/security-metadata"><Localize text="Inspect full security metadata publication" /></Link></p>
+  <section className="panel single-panel" aria-label="Operational readiness"><div className="panel-heading"><h2><Localize text="Operational readiness" /></h2><span className="panel-count">{readiness}</span></div>
    <p className="section-copy">{readiness==="partial_evidence"?"Read-only endpoints responded for the selected ticker. Data provenance, completeness, market freshness and research approval are not certified.":readiness==="needs_review"?"Complete the selected ticker checks and review unavailable or disconnected sources before investigating evidence readiness.":readiness==="not_configured"?"The web is not configured to use the live HTTP backend.":"Backend transport must be restored before examining publication readiness."}</p>
   </section>
   <section className="panel single-panel" aria-label="Next verification steps">
-   <div className="panel-heading"><h2>Next verification steps</h2><span className="panel-count">{nextSteps.length} actions</span></div>
+   <div className="panel-heading"><h2><Localize text="Next verification steps" /></h2><span className="panel-count">{nextSteps.length} actions</span></div>
    <ol>{nextSteps.map(step=><li key={step.id}><strong>{step.title}</strong><p className="metric-detail">{step.detail}</p></li>)}</ol>
-   <p className="section-copy">These are recommended checks, not automatic repairs or verification certificates.</p>
+   <p className="section-copy"><Localize text="These are recommended checks, not automatic repairs or verification certificates." /></p>
   </section>
   <section className="panel single-panel" aria-label="Backend connection">
-   <div className="panel-heading"><h2>Backend connection</h2><span className="panel-count">{status}</span></div>
+   <div className="panel-heading"><h2><Localize text="Backend connection" /></h2><span className="panel-count">{status}</span></div>
    <p className="section-copy">Configured data mode: {mode}</p>
-   {health&&health.status!=="ok"?<div className="run-lock" role="alert"><p>Backend unavailable</p><span>{health.detail}</span></div>:null}
-   <p className="metric-detail">HTTP health verifies read-only transport only. Optional immutable market data and publication inputs are checked separately.</p>
+   {health&&health.status!=="ok"?<div className="run-lock" role="alert"><p><Localize text="Backend unavailable" /></p><span>{health.detail}</span></div>:null}
+   <p className="metric-detail"><Localize text="HTTP health verifies read-only transport only. Optional immutable market data and publication inputs are checked separately." /></p>
   </section>
   <section className="panel single-panel" aria-label="Feature data status">
-   <div className="panel-heading"><h2>Feature data status</h2></div>
+   <div className="panel-heading"><h2><Localize text="Feature data status" /></h2></div>
    {sources.map(item=><article className="operations-run" key={item.name}>
     <div><strong>{item.name}</strong>{item.error?<p className="metric-detail" role="alert">{item.error}</p>:null}</div>
     <span className="status-pill" data-state={item.state==="error"?"blocked":item.state==="available"?"verified":"in_progress"}>{item.state}</span>
    </article>)}
-   <p className="section-copy">Empty means a valid response with no records. Disconnected means no configured source. An HTTP error is never replaced with demo data.</p>
+   <p className="section-copy"><Localize text="Empty means a valid response with no records. Disconnected means no configured source. An HTTP error is never replaced with demo data." /></p>
   </section>
   <section className="panel single-panel" aria-label="Collected operational market data">
-   <div className="panel-heading"><h2>Collected KRX data</h2><span className="panel-count">{operationalState}</span></div>
+   <div className="panel-heading"><h2><Localize text="Collected KRX data" /></h2><span className="panel-count">{operationalState}</span></div>
    <p className="metric-detail">Read-only backend health: {health?.status??"not_required"} · Operational catalog: {operationalState} · Observed tickers: {operational.data?.total??"unknown"}</p>
-   <p className="metric-detail">These correspond to the backend and operationalMarket statuses exposed by <Link href="/api/health">the web health endpoint</Link>. An available catalog is not evidence of validated research data.</p>
-   <p className="section-copy">Unreviewed operational snapshot, separate from the research market universe. A successful backend health response does not guarantee these endpoints are configured.</p>
+   <p className="metric-detail"><Localize text="These correspond to the backend and operationalMarket statuses exposed by" />{" "}<Link href="/api/health"><Localize text="the web health endpoint" /></Link>. An available catalog is not evidence of validated research data.</p>
+   <p className="section-copy"><Localize text="Unreviewed operational snapshot, separate from the research market universe. A successful backend health response does not guarantee these endpoints are configured." /></p>
    {operational.error?<p className="metric-detail" role="status">Catalog: {operational.error}</p>:null}
-   {operational.data?<p className="metric-detail">API returned {operational.data.items.length} tickers on the first page. <Link href="/operational-market">Browse collected tickers</Link></p>:null}
+   {operational.data?<p className="metric-detail">API returned {operational.data.items.length} tickers on the first page. <Link href="/operational-market"><Localize text="Browse collected tickers" /></Link></p>:null}
    {validTicker?<article className="operations-run"><div><strong>Collected OHLCV: {requested}</strong>
     {operationalBars?.error?<p className="metric-detail" role="alert">{operationalBars.error}</p>:null}
-    {operationalBars?.data?<p className="metric-detail">Observed bars: {operationalBars.data.bars.length}. Last date: {operationalBars.data.bars.at(-1)?.date??"—"}. <Link href={"/operational-market/"+requested}>View collected chart</Link></p>:null}
-    {mode!=="http"?<p className="metric-detail">Requires HTTP mode</p>:null}
+    {operationalBars?.data?<p className="metric-detail">Observed bars: {operationalBars.data.bars.length}. Last date: {operationalBars.data.bars.at(-1)?.date??"—"}. <Link href={"/operational-market/"+requested}><Localize text="View collected chart" /></Link></p>:null}
+    {mode!=="http"?<p className="metric-detail"><Localize text="Requires HTTP mode" /></p>:null}
    </div></article>:null}
   </section>
-  <section className="panel single-panel" aria-label="Ticker diagnostics"><h2>Ticker diagnostics</h2>
-   <p className="section-copy">Enter an exact six-character ticker to check the read-only OHLCV and stock analysis endpoints.</p>
-   <form action="/diagnostics" method="get"><label htmlFor="diagnostics-ticker">Ticker</label> <input id="diagnostics-ticker" name="ticker" type="text" defaultValue={requested} maxLength={6} pattern="[0-9A-Za-z]{6}" required/> <button type="submit">Check ticker</button></form>
-   {requested&&!validTicker?<p role="alert" className="section-copy">Ticker must contain exactly six letters or digits.</p>:null}
+  <section className="panel single-panel" aria-label="Ticker diagnostics"><h2><Localize text="Ticker diagnostics" /></h2>
+   <p className="section-copy"><Localize text="Enter an exact six-character ticker to check the read-only OHLCV and stock analysis endpoints." /></p>
+   <form action="/diagnostics" method="get"><label htmlFor="diagnostics-ticker"><Localize text="Ticker" /></label> <input id="diagnostics-ticker" name="ticker" type="text" defaultValue={requested} maxLength={6} pattern="[0-9A-Za-z]{6}" required/> <button type="submit"><Localize text="Check ticker" /></button></form>
+   {requested&&!validTicker?<p role="alert" className="section-copy"><Localize text="Ticker must contain exactly six letters or digits." /></p>:null}
    {validTicker?<><p className="section-copy">Selected ticker: {requested}</p>
     {selectedSources.map(item=><article className="operations-run" key={item.name}><div><strong>{item.name}</strong><p className="metric-detail">Returned records: {item.count}</p>{item.error?<p className="metric-detail" role="alert">{item.error}</p>:null}</div><span className="status-pill" data-state={item.state==="error"?"blocked":item.state==="available"?"verified":"in_progress"}>{item.state}</span></article>)}
    </>:null}
-   <p className="metric-detail">A valid empty response is not the same as an API error. Results are read-only and do not establish publication completeness.</p>
+   <p className="metric-detail"><Localize text="A valid empty response is not the same as an API error. Results are read-only and do not establish publication completeness." /></p>
   </section>
-  <section className="panel single-panel"><h2>Optional publication checks</h2>
-   <p className="section-copy">OHLCV and per-stock analysis require an explicitly selected ticker. Run npm run verify:extensions against an approved local backend to check those endpoints.</p>
-   <p className="section-copy">Prediction evaluation remains disconnected because a reviewed publication endpoint is not available.</p>
+  <section className="panel single-panel"><h2><Localize text="Optional publication checks" /></h2>
+   <p className="section-copy"><Localize text="OHLCV and per-stock analysis require an explicitly selected ticker. Run npm run verify:extensions against an approved local backend to check those endpoints." /></p>
+   <p className="section-copy"><Localize text="Prediction evaluation remains disconnected because a reviewed publication endpoint is not available." /></p>
   </section>
  </>;
 }

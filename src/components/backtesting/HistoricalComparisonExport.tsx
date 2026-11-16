@@ -1,4 +1,5 @@
 "use client";
+import { ClientLocalize } from "../../i18n/LocaleProvider";
 
 import {useState} from "react";
 import type {HistoricalPortfolioComparison} from "@/data/HistoricalPortfolioComparisonDataSource";
@@ -24,9 +25,7 @@ export function HistoricalComparisonExport({comparison}:{comparison:HistoricalPo
   }
  };
  return <div>
-  <button type="button" onClick={download} aria-label="Export historical portfolio research comparison CSV">
-   Export research comparison CSV
-  </button>
+  <button type="button" onClick={download} aria-label="Export historical portfolio research comparison CSV"><ClientLocalize text="Export research comparison CSV" /></button>
   <p className="metric-detail" role="status">{message}</p>
  </div>;
 }

@@ -1,3 +1,4 @@
+import { Localize } from "@/i18n/Localize";
 import { getTranslator } from "@/i18n/server";
 import Link from "next/link";
 
@@ -44,13 +45,13 @@ export default async function BacktestingPage() {
       <section className="panel single-panel" aria-label="Published historical research portfolios">
         <div className="panel-heading">
           <div>
-            <p className="eyebrow">Published archives</p>
-            <h2>Historical portfolio research results</h2>
+            <p className="eyebrow"><Localize text="Published archives" /></p>
+            <h2><Localize text="Historical portfolio research results" /></h2>
           </div>
-          <span className="status-pill" data-state="blocked">Research only</span>
+          <span className="status-pill" data-state="blocked"><Localize text="Research only" /></span>
         </div>
-        <p className="section-copy">Read operator-pinned historical portfolio publications from the existing local DonghakStockVision API. No mock portfolio returns or live-trading approval are inferred.</p>
-        <Link href="/backtesting/portfolios">Browse published historical portfolios</Link>
+        <p className="section-copy"><Localize text="Read operator-pinned historical portfolio publications from the existing local DonghakStockVision API. No mock portfolio returns or live-trading approval are inferred." /></p>
+        <Link href="/backtesting/portfolios"><Localize text="Browse published historical portfolios" /></Link>
       </section>
 
       <WakPanel as="section" className="single-panel">

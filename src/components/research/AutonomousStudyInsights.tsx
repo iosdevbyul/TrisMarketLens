@@ -1,3 +1,4 @@
+import { Localize } from "@/i18n/Localize";
 import {
   EVALUATION_METRICS,
   metricDistribution,
@@ -22,20 +23,16 @@ export function AutonomousStudyInsights({
   const count = study.results.length;
   return (
     <section aria-label="Autonomous research evaluation insights">
-      <h3>Within-study evaluation distribution</h3>
-      <p className="section-copy">
-        Summaries below describe retained result observations in this one research database.
-        Their storage order is not a chronological evaluation series, and they cannot establish
-        improvement across distinct datasets, research periods or holdout conditions.
-      </p>
+      <h3><Localize text="Within-study evaluation distribution" /></h3>
+      <p className="section-copy"><Localize text="Summaries below describe retained result observations in this one research database. Their storage order is not a chronological evaluation series, and they cannot establish improvement across distinct datasets, research periods or holdout conditions." /></p>
       <form action="/autonomous-research" method="get" className="stock-explorer">
         <input type="hidden" name="study" value={study.study}/>
-        <label htmlFor="evaluation-metric">Evaluation metric</label>
+        <label htmlFor="evaluation-metric"><Localize text="Evaluation metric" /></label>
         <select id="evaluation-metric" name="metric" defaultValue={selectedMetric}>
           {EVALUATION_METRICS.map(item=>
-            <option key={item.key} value={item.key}>{item.label}</option>)}
+            <option key={item.key} value={item.key}><Localize text={item.label}/></option>)}
         </select>
-        <button type="submit">Inspect distribution</button>
+        <button type="submit"><Localize text="Inspect distribution" /></button>
       </form>
       <p className="metric-detail">Selected metric: {label}. Scored observations: {distribution.observed} of {count}; missing: {distribution.missing}.</p>
       <div className="operations-overview-grid">
@@ -45,7 +42,7 @@ export function AutonomousStudyInsights({
           ["Maximum",distribution.maximum],
         ] as const).map(([title,number])=>
           <div key={title} className="operations-overview-stat">
-            <span>{title}</span><strong>{value(number)}</strong>
+            <span><Localize text={title}/></span><strong>{value(number)}</strong>
           </div>)}
       </div>
       <div aria-label={label + " histogram"} role="group" style={{display:"grid",gap:"12px",marginTop:"20px"}}>
@@ -59,7 +56,7 @@ export function AutonomousStudyInsights({
         </div>)}
       </div>
       {distribution.observed===0 ? <p role="status" className="section-copy">No valid reported measurements for the selected metric; no inferred score is shown.</p> : null}
-      <h3>Research evidence and review boundaries</h3>
+      <h3><Localize text="Research evidence and review boundaries" /></h3>
       <div className="operations-overview-grid">
         {([
           ["Performance approved (explicit true)",summary.approved],
@@ -71,7 +68,7 @@ export function AutonomousStudyInsights({
           ["Robustness summaries recorded",summary.diagnosticPresence.robustness],
           ["Generalization training recorded",summary.diagnosticPresence.generalization],
         ] as const).map(([name,value])=>
-          <div key={name} className="operations-overview-stat"><span>{name}</span><strong>{value} / {count} results</strong></div>)}
+          <div key={name} className="operations-overview-stat"><span><Localize text={name}/></span><strong>{value} / {count} results</strong></div>)}
       </div>
       <p className="metric-detail" role="status">
         {summary.complete
@@ -82,22 +79,19 @@ export function AutonomousStudyInsights({
       </p>
       <div className="panel-grid">
         <section aria-label="Run state counts">
-          <h3>Run states</h3>
+          <h3><Localize text="Run states" /></h3>
           {summary.runStates.length ? <div className="status-list">{summary.runStates.map(item=>
             <div key={item.state} className="status-row"><span>{item.state}</span><strong>{item.count}</strong></div>)}</div>
-            : <p className="metric-detail">No run states published.</p>}
+            : <p className="metric-detail"><Localize text="No run states published." /></p>}
         </section>
         <section aria-label="Terminal state counts">
-          <h3>Terminal states</h3>
+          <h3><Localize text="Terminal states" /></h3>
           {summary.terminalStates.length ? <div className="status-list">{summary.terminalStates.map(item=>
             <div key={item.state} className="status-row"><span>{item.state}</span><strong>{item.count}</strong></div>)}</div>
-            : <p className="metric-detail">No terminal states published.</p>}
+            : <p className="metric-detail"><Localize text="No terminal states published." /></p>}
         </section>
       </div>
-      <p className="metric-detail">
-        The state counts are independent retained artifacts, not a joined run-to-experiment lifecycle.
-        Original experiment IDs and cross-record join keys remain private in this publication.
-      </p>
+      <p className="metric-detail"><Localize text="The state counts are independent retained artifacts, not a joined run-to-experiment lifecycle. Original experiment IDs and cross-record join keys remain private in this publication." /></p>
     </section>
   );
 }

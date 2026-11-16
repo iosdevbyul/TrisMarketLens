@@ -1,3 +1,4 @@
+import { Localize } from "@/i18n/Localize";
 import Link from "next/link";
 import {PageHeader} from "@/components/common/PageHeader";
 import {loadPinnedMarketSummary} from "@/data/PinnedMarketSummaryDataSource";
@@ -64,31 +65,31 @@ export default async function OperationsTracePage(){
    badge={mode!=="http"?"Demonstration disconnected":unknown?"Review required":"Recorded evidence"}
    description="Trace original KRX collection, scheduler gates, execution records, freshness, alerts and separate research publications. Every stage independently reports its available evidence; no completion, quality, or approval is inferred."/>
   <section className="panel single-panel" aria-label="Evidence chain overview">
-   <div className="panel-heading"><h2>Evidence chain</h2><span className="panel-count">{stages.length} stages</span></div>
+   <div className="panel-heading"><h2><Localize text="Evidence chain" /></h2><span className="panel-count">{stages.length} stages</span></div>
    <p className="section-copy">Backend mode: {mode}. Operational records are unreviewed. A validated research snapshot is not the same dataset as the pinned operational SQLite snapshot. No stage can silently promote raw collection into approved predictions.</p>
    <div className="operations-overview-grid">
-    <div className="operations-overview-stat"><span>Stages needing review</span><strong>{unknown}</strong></div>
-    <div className="operations-overview-stat"><span>Recorded/observed states</span><strong>{stages.filter(stage=>stage.state==="observed").length}</strong></div>
-    <div className="operations-overview-stat"><span>Empty stages</span><strong>{stages.filter(stage=>stage.state==="empty").length}</strong></div>
-    <div className="operations-overview-stat"><span>Approval</span><strong>Not inferred</strong></div>
+    <div className="operations-overview-stat"><span><Localize text="Stages needing review" /></span><strong>{unknown}</strong></div>
+    <div className="operations-overview-stat"><span><Localize text="Recorded/observed states" /></span><strong>{stages.filter(stage=>stage.state==="observed").length}</strong></div>
+    <div className="operations-overview-stat"><span><Localize text="Empty stages" /></span><strong>{stages.filter(stage=>stage.state==="empty").length}</strong></div>
+    <div className="operations-overview-stat"><span><Localize text="Approval" /></span><strong><Localize text="Not inferred" /></strong></div>
    </div>
-   <p className="metric-detail">Counts describe displayed stage statuses only, not ingestion success rate or live provider readiness.</p>
+   <p className="metric-detail"><Localize text="Counts describe displayed stage statuses only, not ingestion success rate or live provider readiness." /></p>
   </section>
   <section className="panel single-panel" aria-label="Collection and research trace stages">
-   <div className="panel-heading"><h2>Recorded evidence and blocking conditions</h2><span className="panel-count">Source-specific</span></div>
+   <div className="panel-heading"><h2><Localize text="Recorded evidence and blocking conditions" /></h2><span className="panel-count"><Localize text="Source-specific" /></span></div>
    {stages.map((stage,index)=><article className="operations-run" key={stage.key}>
     <div>
      <strong>{index+1}. {stage.title}</strong>
      <p className="metric-detail">{stage.detail}</p>
-     <p><Link href={stage.link}>Inspect source evidence</Link></p>
+     <p><Link href={stage.link}><Localize text="Inspect source evidence" /></Link></p>
     </div>
     <span className="status-pill" data-state={stage.state==="observed"?"verified":stage.state==="blocked"?"blocked":"in_progress"}>{stage.state}</span>
    </article>)}
   </section>
   <section className="panel single-panel" aria-label="Evidence limitations">
-   <h2>Verification boundaries</h2>
-   <p className="section-copy">A GET-only API response confirms that the backend exposed a recorded projection. It does not prove exchange-session completeness, point-in-time integrity, prediction accuracy, investment suitability, or live trading readiness. Missing provider configuration is shown as unavailable rather than supplied with demo data.</p>
-   <p><Link href="/diagnostics">Inspect connection and source errors</Link></p>
+   <h2><Localize text="Verification boundaries" /></h2>
+   <p className="section-copy"><Localize text="A GET-only API response confirms that the backend exposed a recorded projection. It does not prove exchange-session completeness, point-in-time integrity, prediction accuracy, investment suitability, or live trading readiness. Missing provider configuration is shown as unavailable rather than supplied with demo data." /></p>
+   <p><Link href="/diagnostics"><Localize text="Inspect connection and source errors" /></Link></p>
   </section>
  </>;
 }

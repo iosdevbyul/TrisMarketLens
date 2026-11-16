@@ -1,3 +1,4 @@
+import { Localize } from "@/i18n/Localize";
 import Link from "next/link";
 import {PageHeader} from "@/components/common/PageHeader";
 import {getDataSource} from "@/data/getDataSource";
@@ -58,33 +59,33 @@ export default async function ResearchPathPage({
    badge={mode!=="http"?"Demonstration mode":attention.length?"Evidence requires review":"Recorded sources"}
    description="Navigate from collected observations to research identity, model qualification, original published signals, blockers and historical portfolios. Each stage is independent; there is no implied inference, live trade or approved forecast."/>
   <section className="panel single-panel" aria-label="Research path selection">
-   <div className="panel-heading"><h2>Select research security</h2><span className="panel-count">{ticker??"No ticker selected"}</span></div>
+   <div className="panel-heading"><h2><Localize text="Select research security" /></h2><span className="panel-count">{ticker??"No ticker selected"}</span></div>
    <form method="get" action="/research-path">
-    <label htmlFor="research-path-ticker">Ticker</label>{" "}
+    <label htmlFor="research-path-ticker"><Localize text="Ticker" /></label>{" "}
     <input id="research-path-ticker" name="ticker" defaultValue={typeof query.ticker==="string"?query.ticker:""}
      maxLength={6} pattern="[0-9A-Za-z]{6}" placeholder="005930" required/>{" "}
-    <button type="submit">Trace research</button>
+    <button type="submit"><Localize text="Trace research" /></button>
    </form>
-   {invalid?<p role="alert" className="metric-detail">Invalid ticker: use exactly six uppercase letters or digits.</p>:null}
+   {invalid?<p role="alert" className="metric-detail"><Localize text="Invalid ticker: use exactly six uppercase letters or digits." /></p>:null}
    {ticker&&stockList&&!stockList.some(stock=>stock.ticker===ticker)?
-    <p role="status" className="metric-detail">This ticker is not in the returned research catalog. No security identity or prediction is assumed.</p>:null}
+    <p role="status" className="metric-detail"><Localize text="This ticker is not in the returned research catalog. No security identity or prediction is assumed." /></p>:null}
    <p className="section-copy">Backend data mode: {mode}. {mode==="mock"?"All mock records are fictional examples.":mode==="http"?"Actual source availability is evaluated separately for each step, not inferred from backend health.":"HTTP source is not enabled."}</p>
   </section>
   <section className="panel single-panel" aria-label="Integrated research steps">
-   <div className="panel-heading"><h2>Source evidence path</h2><span className="panel-count">{attention.length} steps needing review</span></div>
+   <div className="panel-heading"><h2><Localize text="Source evidence path" /></h2><span className="panel-count">{attention.length} steps needing review</span></div>
    {stages.map((stage,index)=><article className="operations-run" key={stage.id}>
     <div>
      <strong>{index+1}. {stage.title}</strong>
      <p className="metric-detail">{stage.note}</p>
-     <p><Link href={stage.href}>Inspect recorded source</Link></p>
+     <p><Link href={stage.href}><Localize text="Inspect recorded source" /></Link></p>
     </div>
     <span className="status-pill" data-state={stage.status==="observed"?"verified":stage.status==="blocked"?"blocked":"in_progress"}>{stage.status}</span>
    </article>)}
   </section>
   <section className="panel single-panel" aria-label="Research integrity limitations">
-   <h2>Source and performance boundaries</h2>
+   <h2><Localize text="Source and performance boundaries" /></h2>
    <p className="section-copy">Observed means source records were returned, not research readiness. Missing or 503 responses remain unavailable; no mock fallback is used in HTTP mode. Unreviewed operational OHLCV never becomes validated research, and the historical portfolio API supplies research-only simulated records without PIT/OOS or trading approval.</p>
-   <p><Link href="/diagnostics">Inspect backend errors</Link> · <Link href="/research-workbench">Review model and publication provenance</Link> · <Link href="/backtesting/portfolios">Compare archived research reports</Link></p>
+   <p><Link href="/diagnostics"><Localize text="Inspect backend errors" /></Link> · <Link href="/research-workbench"><Localize text="Review model and publication provenance" /></Link> · <Link href="/backtesting/portfolios"><Localize text="Compare archived research reports" /></Link></p>
   </section>
  </>;
 }

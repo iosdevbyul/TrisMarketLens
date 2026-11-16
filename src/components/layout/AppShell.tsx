@@ -1,3 +1,4 @@
+import { LocaleProvider } from "@/i18n/LocaleProvider";
 import type { ReactNode } from "react";
 
 import { getLocale } from "@/i18n/server";
@@ -9,7 +10,7 @@ export async function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="app-shell">
       <Sidebar locale={locale} sourceMode={sourceMode} />
-      <main id="main-content" className="content" tabIndex={-1}>{children}</main>
+      <main id="main-content" className="content" tabIndex={-1}><LocaleProvider locale={locale}>{children}</LocaleProvider></main>
     </div>
   );
 }

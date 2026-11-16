@@ -1,3 +1,4 @@
+import { Localize } from "@/i18n/Localize";
 import { getTranslator } from "@/i18n/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -61,10 +62,10 @@ export default async function StockDetailPage({ params, searchParams }: StockDet
         title={stockDisplayName(stock)}
       />
 
-      <p className="section-copy"><Link href={"/research-path?ticker="+encodeURIComponent(ticker)}>Trace this ticker through collection, research verification and historical portfolio evidence</Link>{" · "}<Link href={"/research-workbench?ticker="+encodeURIComponent(ticker)}>Review published model and ticker provenance</Link></p>
+      <p className="section-copy"><Link href={"/research-path?ticker="+encodeURIComponent(ticker)}><Localize text="Trace this ticker through collection, research verification and historical portfolio evidence" /></Link>{" · "}<Link href={"/research-workbench?ticker="+encodeURIComponent(ticker)}><Localize text="Review published model and ticker provenance" /></Link></p>
       <section className="panel single-panel" aria-label="Security identity evidence">
-        <div className="panel-heading"><div><p className="eyebrow">Research evidence</p><h2>Security identity metadata</h2></div><span className="panel-count">{metadata.data ? "Source snapshot" : "Unavailable"}</span></div>
-        <p className="section-copy">Current source-snapshot display metadata only. It does not establish a current listing, security type, point-in-time identity, or historical continuity.</p>
+        <div className="panel-heading"><div><p className="eyebrow"><Localize text="Research evidence" /></p><h2><Localize text="Security identity metadata" /></h2></div><span className="panel-count">{metadata.data ? "Source snapshot" : "Unavailable"}</span></div>
+        <p className="section-copy"><Localize text="Current source-snapshot display metadata only. It does not establish a current listing, security type, point-in-time identity, or historical continuity." /></p>
         {metadata.error ? <p className="metric-detail" role="status">{metadata.error}</p> : null}
         {metadata.data ? <div className="operations-overview-grid">
           {[
@@ -102,7 +103,7 @@ export default async function StockDetailPage({ params, searchParams }: StockDet
 
       <DailyResearchPanel ticker={ticker} result={research} filters={filters} />
       {research.data ? <ResearchModelEvidenceComparison records={research.data.records} totalRecords={research.data.totalRecords} /> : null}
-      <p className="section-copy"><Link href={"/stocks/" + encodeURIComponent(ticker) + "/research-comparison"}>Compare multiple pages of published daily research by model and date range</Link></p>
+      <p className="section-copy"><Link href={"/stocks/" + encodeURIComponent(ticker) + "/research-comparison"}><Localize text="Compare multiple pages of published daily research by model and date range" /></Link></p>
       <section className="panel single-panel" aria-label={t("Prediction evaluation")}>
         <div className="panel-heading"><div><p className="eyebrow">{t("Research evaluation")}</p><h2>{t("Prediction evaluation")}</h2></div>
           <span className="panel-count">{stateLabel(evaluationState)}</span>
@@ -162,7 +163,7 @@ export default async function StockDetailPage({ params, searchParams }: StockDet
         <div className="panel-heading"><div><p className="eyebrow">{t("OHLC history")}</p><h2>{t("Price and volume")}</h2></div><span className="panel-count">{stateLabel(priceState)}</span></div>
         {prices.source === "mock" ? <div className="run-lock" role="status"><p>{t("Artificial OHLCV demo")}</p><span>{t("Example candles are not historical market prices.")}</span></div> : null}
         {prices.error ? <div className="run-lock" role="alert"><p>{t("Price data unavailable")}</p><span>{prices.error}</span><RetrySource locale={locale}/></div> : null}
-        {(priceState === "available" || priceState === "demo") && analysis.data.records.length>0 && !chartAnalysesForSource(prices.source,analysis.source,analysis.error) ? <p role="status" className="metric-detail">Analysis markers hidden: price and analysis sources are different or analysis publication is unavailable. No mixed demo/live signals are displayed.</p> : null}
+        {(priceState === "available" || priceState === "demo") && analysis.data.records.length>0 && !chartAnalysesForSource(prices.source,analysis.source,analysis.error) ? <p role="status" className="metric-detail"><Localize text="Analysis markers hidden: price and analysis sources are different or analysis publication is unavailable. No mixed demo/live signals are displayed." /></p> : null}
         {priceState === "available" || priceState === "demo" ? <OhlcvChart ticker={ticker} bars={prices.data.bars} locale={locale} analyses={chartAnalysesForSource(prices.source,analysis.source,analysis.error)?analysis.data.records:[]} analysisIsDemo={analysis.source === "mock" && prices.source === "mock"} /> : priceState === "error" ? null : <p className="section-copy">{t(priceState === "disconnected" ? "Not connected" : "No validated price bars available yet.")}</p>}
       </section>
     </>

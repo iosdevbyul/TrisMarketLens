@@ -1,4 +1,5 @@
 "use client";
+import { ClientLocalize } from "../../i18n/LocaleProvider";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 export function normalizeOperationalTicker(value:string):string|null{
@@ -16,10 +17,10 @@ export function OperationalTickerSearch(){
   setError(false);
   router.push("/operational-market/"+normalized);
  }} aria-label="Find collected ticker">
-  <label htmlFor="operational-ticker">Open collected ticker</label>{" "}
+  <label htmlFor="operational-ticker"><ClientLocalize text="Open collected ticker" /></label>{" "}
   <input id="operational-ticker" name="ticker" value={ticker} maxLength={6} autoComplete="off" onChange={event=>{setTicker(event.target.value);setError(false);}} placeholder="005930" aria-invalid={error} required/>{" "}
-  <button type="submit">View OHLCV</button>
-  {error?<p role="alert" className="metric-detail">Enter exactly six letters or digits.</p>:null}
-  <p className="metric-detail">Direct lookup uses the configured snapshot. An unknown ticker returns a clear error, not a demo price.</p>
+  <button type="submit"><ClientLocalize text="View OHLCV" /></button>
+  {error?<p role="alert" className="metric-detail"><ClientLocalize text="Enter exactly six letters or digits." /></p>:null}
+  <p className="metric-detail"><ClientLocalize text="Direct lookup uses the configured snapshot. An unknown ticker returns a clear error, not a demo price." /></p>
  </form>;
 }
