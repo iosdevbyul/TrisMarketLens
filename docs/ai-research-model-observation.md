@@ -15,17 +15,24 @@ DONGHAK_AI_MANAGEMENT_TOKEN=<existing-ai-read-scoped-token>
 
 The port is illustrative: use the actual locally configured management listener. Never commit a real token or use `NEXT_PUBLIC_` for it. The frontend accepts only literal loopback IPv4 HTTP origins without paths, userinfo, query or fragments. It does not create the backend management configuration, install models, start a scheduler or modify DonghakStockVision.
 
-The server sends the bearer token only when fetching the existing `GET /api/v1/ai/models`, `/active`, `/history` and `/comparisons` endpoints. It never returns the token or a raw upstream error to the browser. Responses are requested without caching and redirects are rejected. Read-only operations require the backend `ai:read` scope.
+The server sends the bearer token when fetching the existing `GET /api/v1/ai/models`, `/active`, `/history` and `/comparisons` endpoints. It never returns the token or a raw upstream error to the browser. Responses are requested without caching and redirects are rejected. Read-only operations require backend `ai:read`; validating or selecting requires `ai:manage`.
 
 ## Semantics and safety
 
 - Unconfigured, unreachable, rejected credentials and insufficient scopes are distinct visible states.
 - If required catalog/active requests fail, no model status is fabricated. Optional history/comparison failures are identified separately.
 - Installed, configured, reachable, executable, selected and actually applied research models are different concepts. The page must not portray model validation as research success.
-- Model selection is **not** a UI operation in this initial observer. Subsequent mutations require a separate approved authenticated design with explicit user confirmation, version compare-and-set, validation receipt and busy/lease handling.
+- The UI can request an asynchronous validation job, inspect its status, and select only a completed valid model with a backend validation receipt, explicit approval, and the current compare-and-set selection version. A stale selection, busy lease or rejected receipt remains unchanged.
+- The mutation endpoints are invoked by Next.js server actions, not browser-side API calls. No arbitrary endpoint, model configuration, credentials or raw backend error text is accepted from the client. Validation does not itself change the selected model.
 - The page is intentionally a local operator feature; it is not an authenticated multi-user web administration portal or approval for LAN/cloud hosting.
 - Models and comparisons listed here are research infrastructure/evidence, never investment recommendations.
 
 ## Verification
 
 `npm run check` validates the existing web code. CI uses offline fixtures; it cannot confirm connectivity to the operator's private management service. When that service is explicitly configured, manually open `http://127.0.0.1:3000/ai-research-models` and verify the real authenticated observations and absence of tokens in browser requests.
+
+## Validation and selection workflow
+
+Open `/ai-research-models`, request a validation for a registered model, and refresh the displayed job until it completes. Once the backend reports a valid outcome and an unexpired receipt, check the explicit approval box to submit a compare-and-set model selection. A model selection affects only **subsequent manually initiated managed studies**; neither validation nor selection starts research. On 409, refresh the page and re-evaluate the current model/version. 401/403 require the operator to supply correct server-side authentication. The example configuration must use an existing `ai:manage` scoped credential for these operations.
+
+This is not a general-purpose multi-user administrative interface. Access should remain restricted to the local operator. Real validation jobs can consume CPU and memory; no blind retry is performed.
