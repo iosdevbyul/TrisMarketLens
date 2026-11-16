@@ -21,7 +21,7 @@ describe("autonomous research insights",()=>{
     expect(summary.observed).toBe(5);
     expect(summary.missing).toBe(1);
     expect([summary.minimum,summary.q1,summary.median,summary.q3,summary.maximum]).toEqual([0,0.2,0.5,0.8,1]);
-    expect(summary.buckets.map(bucket=>bucket.count)).toEqual([1,1,1,1,1]);
+    // Boundary 0.8 belongs to [0.8, 1], with the upper bound 1.0 inclusive.\n    expect(summary.buckets.map(bucket=>bucket.count)).toEqual([1,1,1,0,2]);
     expect(summary.buckets.reduce((sum,bucket)=>sum+bucket.count,0)).toBe(summary.observed);
   });
   it("preserves absence of metrics and does not invent a statistic",()=>{
