@@ -1,5 +1,5 @@
 "use client";
-import { ClientLocalize } from "../../i18n/LocaleProvider";
+import { useLocalization, ClientLocalize } from "../../i18n/LocaleProvider";
 
 import {useState} from "react";
 import type {HistoricalTickerEvidence} from "@/data/HistoricalPortfolioTickerDataSource";
@@ -7,6 +7,7 @@ import {historicalTickerEvidenceCsv} from "@/domain/historicalTickerEvidenceExpo
 
 export function HistoricalTickerEvidenceExport({evidence}:{evidence:HistoricalTickerEvidence}){
  const [message,setMessage]=useState("");
+ const t = useLocalization();
  const download=()=>{
   try{
    const csv=historicalTickerEvidenceCsv(evidence);
@@ -26,6 +27,6 @@ export function HistoricalTickerEvidenceExport({evidence}:{evidence:HistoricalTi
  };
  return <div>
   <button type="button" onClick={download}><ClientLocalize text="Export current page research CSV" /></button>
-  <p className="metric-detail" role="status">{message}</p>
+  <p className="metric-detail" role="status">{t(message)}</p>
  </div>;
 }

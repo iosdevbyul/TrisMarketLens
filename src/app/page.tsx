@@ -41,10 +41,10 @@ export default async function Home() {
           <div className="metric-grid"><WakMetricCard label="Observed tickers" value={operational.data.total.toLocaleString(locale==="ko"?"ko-KR":"en-US")} detail="Count returned by the read-only operational API" /></div>
           {operational.data.items.length>0 ? <div className="operations-runs">
             {operational.data.items.slice(0,5).map(item=><article className="operations-run" key={item.ticker}>
-              <div><strong><Link href={"/operational-market/"+item.ticker}>{item.ticker}</Link></strong><p className="metric-detail">Latest observed: {item.latestDataDate}</p></div>
+              <div><strong><Link href={"/operational-market/"+item.ticker}>{item.ticker}</Link></strong><p className="metric-detail">{t("Latest observed:")} {item.latestDataDate}</p></div>
             </article>)}
           </div> : <p className="section-copy"><Localize text="This snapshot contains no observed tickers." /></p>}
-        </> : <p className="metric-detail" role="status">Collected data unavailable: {operational.error}</p>}
+        </> : <p className="metric-detail" role="status">{t("Collected data unavailable:")} {operational.error}</p>}
         <Link href="/operational-market"><Localize text="Browse collected KRX prices" /></Link>
       </WakPanel>
       <AnalysisOverviewPanel result={screener} locale={locale} />

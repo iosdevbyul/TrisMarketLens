@@ -1,4 +1,5 @@
 import { Localize } from "@/i18n/Localize";
+import { getTranslator } from "@/i18n/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -15,6 +16,7 @@ export default async function LabResultDetail({
 }:{
   params:Promise<{study:string;index:string}>;
 }){
+  const t=await getTranslator();
   const {study:studyLabel,index:rawIndex}=await params;
   const source=await getAutonomousResearchPublication();
   const study=source.publication?.studies.find(value=>value.study===studyLabel);
@@ -24,8 +26,8 @@ export default async function LabResultDetail({
   if(!result)notFound();
   const back="/ai-research-lab/studies/"+encodeURIComponent(study.study);
   return <>
-    <Link href={back} className="back-link">← Study observations</Link>
-    <PageHeader eyebrow="Read-only experiment evidence" title={"Result observation "+(index+1)}
+    <Link href={back} className="back-link"><Localize text="← Study observations"/></Link>
+    <PageHeader eyebrow="Read-only experiment evidence" title={t("Result observation") +" "+(index+1)}
       badge="Source record only"
       description="This record is projected from an actual autonomous_result artifact. The observation index is not an Experiment ID or a validated run→result relationship."/>
     <section className="panel single-panel" aria-label="Result evaluation metrics">

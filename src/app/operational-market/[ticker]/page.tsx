@@ -1,3 +1,4 @@
+import { getTranslator } from "@/i18n/server";
 import { Localize } from "@/i18n/Localize";
 import {MarketDataBoundary} from "@/components/stocks/MarketDataBoundary";
 import Link from "next/link";
@@ -10,6 +11,7 @@ import {summarizeObservationCoverage} from "@/domain/observationCoverage";
 import {groupObservationMonths} from "@/domain/observationTimeline";
 
 export default async function OperationalTickerPage({params}:{params:Promise<{ticker:string}>}){
+ const t=await getTranslator();
  const {ticker}=await params;
  const result=process.env.MARKET_LENS_DATA_SOURCE==="http"
   ?await loadOperationalBars(ticker,process.env.DONGHAK_API_BASE_URL)
@@ -33,8 +35,8 @@ export default async function OperationalTickerPage({params}:{params:Promise<{ti
      ["No-trade markers",String(coverage.noTradeDates)],
     ].map(([label,value])=><div className="operations-overview-stat" key={label}><span>{label}</span><strong>{value}</strong></div>)}
    </div>:null}
-   {coverage&&coverage.observedDates>1?<p className="metric-detail">Calendar span: {coverage.calendarDays} days. This counts calendar dates, not expected trading sessions; missing records and completeness cannot be determined from this snapshot alone.</p>:null}
-   {result.data?.bars.length===1?<div className="run-lock" role="status"><p><Localize text="Only one collected session is available" /></p><span>This snapshot contains a single trading date. The candle shows that observation only; there is not enough history to infer a price trend or compare chart periods.</span></div>:null}
+   {coverage&&coverage.observedDates>1?<p className="metric-detail">{t("Calendar span:")} {coverage.calendarDays} {t("days")}. {t("This span counts calendar days, not expected trading sessions. Missing records and completeness cannot be determined from this snapshot alone.")}</p>:null}
+   {result.data?.bars.length===1?<div className="run-lock" role="status"><p><Localize text="Only one collected session is available" /></p><span><Localize text="This snapshot contains a single trading date. The candle shows that observation only; there is not enough history to infer a price trend or compare chart periods."/></span></div>:null}
    {result.data?.bars.length?<OperationalOhlcvExport ticker={ticker} bars={result.data.bars} locale={locale}/>:null}
    {latest?<dl className="ohlcv-selected"><div><dt><Localize text="Last observed date" /></dt><dd>{latest.date}</dd></div><div><dt><Localize text="Last collected close" /></dt><dd>{latest.close.toLocaleString(locale==="ko"?"ko-KR":"en-US")}</dd></div><div><dt><Localize text="Last collected volume" /></dt><dd>{latest.volume.toLocaleString(locale==="ko"?"ko-KR":"en-US")}</dd></div></dl>:null}
    {result.data?.bars.length?<OhlcvChart ticker={ticker} bars={result.data.bars} locale={locale}/>:result.data?<p className="section-copy"><Localize text="No collected bars in this operational snapshot." /></p>:null}

@@ -60,7 +60,7 @@ export default async function OperationsTracePage(){
  const stages=createOperationsTrace(inputs);
  const unknown=stages.filter(stage=>stage.state==="unavailable"||stage.state==="blocked").length;
  return <>
-  <Link href="/operations" className="back-link">← Back to operations</Link>
+  <Link href="/operations" className="back-link"><Localize text="← Back to operations"/></Link>
   <PageHeader eyebrow="Read-only operations" title="Collection to research evidence trace"
    badge={mode!=="http"?"Demonstration disconnected":unknown?"Review required":"Recorded evidence"}
    description="Trace original KRX collection, scheduler gates, execution records, freshness, alerts and separate research publications. Every stage independently reports its available evidence; no completion, quality, or approval is inferred."/>

@@ -1,4 +1,5 @@
 import { Localize } from "@/i18n/Localize";
+import { getTranslator } from "@/i18n/server";
 import Link from "next/link";
 import { PageHeader } from "@/components/common/PageHeader";
 import { getAutonomousResearchPublication } from "@/data/AutonomousResearchDataSource";
@@ -12,6 +13,7 @@ export default async function AIResearchLabPage({
 }: {
   searchParams:Promise<{q?:string;state?:string;agent?:string;page?:string}>;
 }){
+  const t=await getTranslator();
   const params=await searchParams;
   const source=await getAutonomousResearchPublication();
   const publication=source.publication;
@@ -32,11 +34,9 @@ export default async function AIResearchLabPage({
       description="A read-only research observatory built from actual retained DonghakStockVision experiment records. Evidence, failures and unknowns remain distinct; this screen never launches research or authorizes investments."/>
     <section className="panel single-panel" aria-label="AI research lab publication">
       <div className="panel-heading"><h2><Localize text="Research evidence source" /></h2><span className="panel-count"><Localize text={source.state}/></span></div>
-      <p className="section-copy" role="status">{source.message}</p>
+      <p className="section-copy" role="status">{t(source.message)}</p>
       {publication?<p className="metric-detail">
-        Generated {publication.generatedAt}. This is an operator-produced, manually refreshed local publication,
-        not live process telemetry. {publication.skippedStudyCount} database sources were excluded from the export;
-        do not interpret displayed counts as the full history of DonghakStockVision.
+        <Localize text="Generated:"/> {publication.generatedAt}. <Localize text="This is a manually refreshed operator publication, not live process telemetry."/> {publication.skippedStudyCount} <Localize text="database sources were excluded from the export. Displayed counts are not the full DonghakStockVision history."/>
       </p>:<p className="metric-detail"><Localize text="The existing read-only local research publication is required. No fictional studies, reports, model rankings or experiment history are substituted when unavailable." /><Link href="/autonomous-research">{" "}<Localize text="Inspect publication configuration" /></Link>.
       </p>}
     </section>
@@ -59,12 +59,10 @@ export default async function AIResearchLabPage({
       </div>
       <p className="metric-detail">
         <Localize text="Most recently recorded run:"/> {overview.latestRunTime??<Localize text="Unreported"/>}.
-        Completion and failure counts describe terminal records only, not distinct experiments.
-        Research may have progressed since this publication was generated.
-        No current CPU, memory or live process state is available from this snapshot.
+        <Localize text="Completion and failure counts describe terminal records, not distinct experiments. Research may have progressed since publication. Current CPU, memory and process state are unavailable."/>
       </p>
       {overview.hasIncompleteEvidence?<p role="status" className="section-copy">
-        Coverage is partial; some source databases or rows were skipped or capped.
+        <Localize text="Coverage is partial; some source databases or rows were skipped or capped."/>
       </p>:null}
     </section>:null}
     <section className="panel single-panel" aria-label="Research qualification boundaries">
@@ -98,9 +96,7 @@ export default async function AIResearchLabPage({
         <button type="submit"><Localize text="Filter studies" /></button>
       </form>
       <p className="metric-detail">
-        States are observed in retained run or terminal artifacts; a recorded running state is not proof
-        that a process is executing now. Study labels are storage labels, not a verified cohort,
-        horizon or selection-policy contract. Filters requiring those contracts are deferred.
+        <Localize text="Recorded run and terminal states are historical observations, not proof a process is running now. Study labels are storage labels, not verified cohorts, horizons or selection policies. Unsupported filters are deferred."/>
       </p>
       {visible.length?<div className="operations-runs">
         {visible.map(item=><article className="operations-run" key={item.study}>
@@ -113,7 +109,7 @@ export default async function AIResearchLabPage({
             <p className="metric-detail">
               <Localize text="Agents:"/> {item.agents.length?item.agents.join(", "):<Localize text="Unreported"/>} ·
               <Localize text="Last recorded run:"/> {item.lastRecordedAt??<Localize text="Unreported"/>} ·
-              <Localize text="State evidence:"/> {item.observedStates.length?item.observedStates.map(x=>x).join(", "):<Localize text="Unreported"/>}
+              <Localize text="State evidence:"/> {item.observedStates.length?item.observedStates.map(t).join(", "):<Localize text="Unreported"/>}
             </p>
           </div>
           <span className="status-pill" data-state={item.partial?"blocked":"in_progress"}>
@@ -123,7 +119,7 @@ export default async function AIResearchLabPage({
       </div>:<p role="status" className="section-copy"><Localize text="No retained studies match the filters. No new research data is inferred." /></p>}
       <div style={{display:"flex",gap:"20px",marginTop:"16px"}}>
         {currentPage>1?<Link href={nextHref(currentPage-1)}><Localize text="Previous page" /></Link>:null}
-        <span className="metric-detail">Page {currentPage} of {pageCount}</span>
+        <span className="metric-detail"><Localize text="Page"/> {currentPage} / {pageCount}</span>
         {currentPage<pageCount?<Link href={nextHref(currentPage+1)}><Localize text="Next page" /></Link>:null}
       </div>
     </section>:null}

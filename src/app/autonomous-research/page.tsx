@@ -47,7 +47,7 @@ export default async function AutonomousResearchPage({
   const metric: EvaluationMetricKey = EVALUATION_METRICS.find(item => item.key === query.metric)?.key ?? "meanAp";
   return (
     <>
-      <Link className="back-link" href="/ai-research-lab">← AI Research Lab overview</Link>
+      <Link className="back-link" href="/ai-research-lab"><Localize text="← AI Research Lab overview"/></Link>
       <PageHeader
         eyebrow="Autonomous research"
         title="Retained experiment evidence"

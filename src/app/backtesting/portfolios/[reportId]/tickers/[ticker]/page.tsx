@@ -1,3 +1,4 @@
+import { getTranslator } from "@/i18n/server";
 import { Localize } from "@/i18n/Localize";
 import Link from "next/link";
 import {PageHeader} from "@/components/common/PageHeader";
@@ -10,13 +11,14 @@ function textValue(value:unknown):string {
 export default async function PortfolioTickerPage({
  params,searchParams
 }:{params:Promise<{reportId:string;ticker:string}>;searchParams:Promise<{offset?:string}>}){
+ const t=await getTranslator();
  const [{reportId,ticker},query]=await Promise.all([params,searchParams]);
  const rawOffset=query.offset??"0";
  const offset=/^(0|[1-9]\d{0,5})$/.test(rawOffset)?Number(rawOffset):NaN;
  const base=process.env.MARKET_LENS_DATA_SOURCE==="http"?process.env.DONGHAK_API_BASE_URL:undefined;
  const {data,error}=await loadHistoricalTickerEvidence(base,reportId,ticker,offset);
  return <>
-  <Link className="back-link" href={"/backtesting/portfolios/"+reportId}>← Back to portfolio detail</Link>
+  <Link className="back-link" href={"/backtesting/portfolios/"+reportId}><Localize text="← Back to portfolio detail"/></Link>
   <PageHeader eyebrow="Historical research" title={"Ticker evidence · "+ticker}
    badge={data?"Research only":"Unavailable"}
    description="Per-security observations from the pinned historical portfolio research publication. Simulated fills and valuation references are not broker trades or live-price approvals."/>
@@ -25,20 +27,20 @@ export default async function PortfolioTickerPage({
    <div className="panel-heading"><h2><Localize text="Recorded security position summary" /></h2><span className="status-pill" data-state="blocked"><Localize text="Not executable" /></span></div>
    <p className="metric-detail"><Localize text="Published report:" />{" "}<code>{data.reportId}</code> · Model: {data.modelId}</p>
    <div className="operations-overview-grid">
-    <div className="operations-overview-stat"><span>Recorded realized net P&amp;L</span><strong>{data.realizedNetPnl??"Unavailable"}</strong></div>
+    <div className="operations-overview-stat"><span><Localize text="Recorded realized net P&L"/></span><strong>{data.realizedNetPnl??"Unavailable"}</strong></div>
     <div className="operations-overview-stat"><span><Localize text="Final valuation" /></span><strong>{data.valuation?"Recorded mark details available":"Unavailable"}</strong></div>
     <div className="operations-overview-stat"><span><Localize text="Recorded positions" /></span><strong>{data.positions.length}</strong></div>
    </div>
    {data.valuation?<p className="metric-detail"><Localize text="A historical valuation record is present. It is not a live market price or independently approved valuation." /></p>:null}
-   {data.realizedNetPnl===null?<p className="metric-detail">Realized P&amp;L not recorded: {data.unavailable.realizedNetPnl}</p>:null}
-   {data.unavailable.valuation?<p className="metric-detail">Final mark unavailable: {data.unavailable.valuation}</p>:null}
+   {data.realizedNetPnl===null?<p className="metric-detail">{t("Realized P&L not recorded:")} {data.unavailable.realizedNetPnl}</p>:null}
+   {data.unavailable.valuation?<p className="metric-detail">{t("Final mark unavailable:")} {data.unavailable.valuation}</p>:null}
    {data.positions.length===0?<p className="section-copy"><Localize text="No recorded positions for this ticker." /></p>:null}
    {data.positions.map((position,index)=><article className="operations-run" key={String(position.position_id??index)}>
     <div>
      <strong>Position {textValue(position.position_id)}</strong>
-     <p className="metric-detail">Status: {textValue(position.status)} · Quantity: {textValue(position.quantity)}</p>
-     <p className="metric-detail">Acquired at: {textValue(position.acquired_at)} · Exited at: {textValue(position.exited_at)}</p>
-     <p className="metric-detail">Recorded realized net P&amp;L: {textValue(position.realized_net_pnl)}</p>
+     <p className="metric-detail">{t("Status:")} {t(textValue(position.status))} · {t("Quantity:")} {textValue(position.quantity)}</p>
+     <p className="metric-detail">{t("Acquired at:")} {textValue(position.acquired_at)} · {t("Exited at:")} {textValue(position.exited_at)}</p>
+     <p className="metric-detail">{t("Recorded realized net P&L:")} {textValue(position.realized_net_pnl)}</p>
     </div>
    </article>)}
   </section>:null}
@@ -50,15 +52,15 @@ export default async function PortfolioTickerPage({
    {data.timeline.map((event,index)=><article className="operations-run" key={String(event.opportunity_id??offset+index)}>
     <div>
      <strong>{textValue(event.trading_date)} · {ticker}</strong>
-     <p className="metric-detail">Decision: {textValue(event.action)} · Rule: {textValue(event.selected_rule)}</p>
+     <p className="metric-detail">{t("Decision:")} {t(textValue(event.action))} · {t("Rule:")} {textValue(event.selected_rule)}</p>
      <p className="metric-detail"><Localize text="Opportunity:" />{" "}<code>{textValue(event.opportunity_id)}</code></p>
-     <p className="metric-detail">Model: {textValue(event.model_id)} · Decision at: {textValue(event.decision_at)}</p>
+     <p className="metric-detail">{t("Model:")} {textValue(event.model_id)} · {t("Decision at:")} {textValue(event.decision_at)}</p>
     </div>
     <span className="status-pill" data-state="blocked"><Localize text="Research" /></span>
    </article>)}
    <nav aria-label="Ticker evidence pagination" className="recorded-run-controls">
     {offset>0?<Link href={"/backtesting/portfolios/"+reportId+"/tickers/"+ticker+"?offset="+Math.max(0,offset-10)}><Localize text="Previous page" /></Link>:null}
-    <span className="metric-detail">{data.timeline.length} of {data.total} returned · Offset {offset}</span>
+    <span className="metric-detail">{data.timeline.length} / {data.total} {t("returned")} · {t("Offset")} {offset}</span>
     {data.timeline.length>0&&offset+data.timeline.length<data.total?<Link href={"/backtesting/portfolios/"+reportId+"/tickers/"+ticker+"?offset="+(offset+data.timeline.length)}><Localize text="Next page" /></Link>:null}
    </nav>
   </section>:null}

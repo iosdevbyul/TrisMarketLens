@@ -24,7 +24,7 @@ export default async function SecurityMetadataPage({
   const visible=filtered.slice((currentPage-1)*LIMIT,currentPage*LIMIT);
   const href=(next:number)=>"/security-metadata?"+new URLSearchParams({q,only,page:String(next)}).toString();
   return <>
-    <Link href="/stocks" className="back-link">← Back to stocks</Link>
+    <Link href="/stocks" className="back-link"><Localize text="← Back to stocks"/></Link>
     <PageHeader eyebrow="Verified reference data" title="Security metadata catalog"
       badge={catalog.state==="available"?"Published backend metadata":catalog.state}
       description="Inspect the full research-snapshot security identity publication. Corporation mapping is not the same as independently verified current security names or historical ticker continuity."/>

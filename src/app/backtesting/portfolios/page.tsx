@@ -1,3 +1,4 @@
+import { getTranslator } from "@/i18n/server";
 import { Localize } from "@/i18n/Localize";
 import Link from "next/link";
 import {PageHeader} from "@/components/common/PageHeader";
@@ -10,6 +11,7 @@ import {
 export default async function PublishedPortfoliosPage({
  searchParams
 }:{searchParams:Promise<{offset?:string;id?:string|string[]}>}){
+ const t=await getTranslator();
  const query=await searchParams;
  const rawOffset=query.offset??"0";
  const offset=/^(0|[1-9]\d{0,5})$/.test(rawOffset)?Number(rawOffset):NaN;
@@ -22,7 +24,7 @@ export default async function PublishedPortfoliosPage({
  const page=result.data;
  const next=page?offset+page.items.length<page.total:null;
  return <>
-  <Link className="back-link" href="/backtesting">← Back to backtesting</Link>
+  <Link className="back-link" href="/backtesting"><Localize text="← Back to backtesting"/></Link>
   <PageHeader
    eyebrow="Backtesting"
    title="Published historical portfolios"
@@ -61,19 +63,19 @@ export default async function PublishedPortfoliosPage({
       <strong>{item.modelFamily.toUpperCase()} · {item.tickers.join(", ")}</strong>
       <p className="metric-detail"><Localize text="Report ID:" />{" "}<code>{item.reportId}</code></p>
       <p><Link href={"/backtesting/portfolios/"+item.reportId}><Localize text="View published summary and decision history" /></Link></p>
-      <p className="metric-detail">Published: {item.publishedAt} · Initial virtual cash: {item.initialVirtualCash}</p>
-      <p className="metric-detail">Evidence scope: {item.evidenceScope} · Final portfolio valuation: {item.portfolioValuationAvailable?"Recorded":"Unavailable"}</p>
-      <p className="metric-detail">Archive integrity verified; offline replay verified. PIT/OOS and trading approval: not verified.</p>
+      <p className="metric-detail">{t("Published:")} {item.publishedAt} · {t("Initial virtual cash:")} {item.initialVirtualCash}</p>
+      <p className="metric-detail">{t("Evidence scope:")} {t(item.evidenceScope)} · {t("Final portfolio valuation:")} {t(item.portfolioValuationAvailable?"Recorded":"Unavailable")}</p>
+      <p className="metric-detail"><Localize text="Archive integrity verified; offline replay verified. PIT/OOS and trading approval: not verified."/></p>
       <p>{included?<Link href={historicalCatalogHref(offset,removeHistoricalSelection(selected,item.reportId))}><Localize text="Remove from comparison" /></Link>
        :canAdd?<Link href={historicalCatalogHref(offset,addHistoricalSelection(selected,item.reportId))}><Localize text="Add to comparison" /></Link>
-       :<span className="metric-detail">Five reports selected; remove one to select another.</span>}</p>
+       :<span className="metric-detail"><Localize text="Five reports selected; remove one to select another."/></span>}</p>
      </div>
      <span className="status-pill" data-state="blocked"><Localize text="Research only" /></span>
     </article>;
    })}
    {page?<nav aria-label="Publication pages" className="recorded-run-controls">
     {offset>0?<Link href={historicalCatalogHref(Math.max(0,offset-10),selected)}><Localize text="Previous page" /></Link>:null}
-    <span className="metric-detail">Returned {page.items.length} of {page.total} reports (offset {offset})</span>
+    <span className="metric-detail">{t("Returned")} {page.items.length} / {page.total} {t("reports")} ({t("Offset")} {offset})</span>
     {next!==null&&page.items.length>0?<Link href={historicalCatalogHref(offset+page.items.length,selected)}><Localize text="Next page" /></Link>:null}
    </nav>:null}
   </section>

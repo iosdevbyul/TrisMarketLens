@@ -1,11 +1,12 @@
 "use client";
-import { ClientLocalize } from "../../i18n/LocaleProvider";
+import { useLocalization, ClientLocalize } from "../../i18n/LocaleProvider";
 import {useMemo,useState} from "react";
 import Link from "next/link";
 import type {DateDistribution} from "@/data/OperationalDateDistributionDataSource";
 import {operationalDateTickersCsv} from "@/domain/operationalDateTickersCsv";
 
 export function OperationalDateDrilldown({distribution}:{distribution:DateDistribution}){
+ const t = useLocalization();
  const [selected,setSelected]=useState(distribution.tickersByDate[0]?.date??"");
  const [query,setQuery]=useState("");
  const tickers=useMemo(()=>distribution.tickersByDate.find(group=>group.date===selected)?.tickers??[],[distribution,selected]);
@@ -30,7 +31,7 @@ export function OperationalDateDrilldown({distribution}:{distribution:DateDistri
    </label>
   </div>
   <button className="operational-export-button" type="button" disabled={filtered.length===0} onClick={exportVisible}>Export {filtered.length} displayed tickers as CSV</button>
-  <p className="metric-detail" role="status">{filtered.length} of {tickers.length} tickers with latest collected date {selected||"—"}. These are operational observations only.</p>
-  {filtered.length===0?<p className="section-copy"><ClientLocalize text="No matching observed tickers." /></p>:<div className="operational-date-tickers" aria-label="Tickers last observed on selected date">{filtered.map(ticker=><Link href={"/operational-market/"+ticker} key={ticker}>{ticker}</Link>)}</div>}
+  <p className="metric-detail" role="status">{t("Showing")} {filtered.length} / {tickers.length} {t("tickers with latest collected date")} {selected||"—"}. {t("These are operational observations only.")}</p>
+  {filtered.length===0?<p className="section-copy"><ClientLocalize text="No matching observed tickers." /></p>:<div className="operational-date-tickers" aria-label={t("Tickers last observed on selected date")}>{filtered.map(ticker=><Link href={"/operational-market/"+ticker} key={ticker}>{ticker}</Link>)}</div>}
  </div>;
 }
