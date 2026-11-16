@@ -1,3 +1,4 @@
+import { Localize } from "@/i18n/Localize";
 import { classifyResearchComparisons, comparisonModelKey, type RawResearchComparison } from "@/domain/aiResearchComparisonGroups";
 
 function field(record: RawResearchComparison, key: string): string {
@@ -16,22 +17,17 @@ export function AIResearchComparisonGroups({ records, available }: {
   return (
     <section className="panel single-panel" aria-label="Research LLM comparison contracts">
       <div className="panel-heading">
-        <div><p className="eyebrow">Managed research</p><h2>Contract-matched research comparisons</h2></div>
+        <div><p className="eyebrow"><Localize text="Managed research" /></p><h2><Localize text="Contract-matched research comparisons" /></h2></div>
         <span className="panel-count">{available ? groups.total + " retained records" : "Unavailable"}</span>
       </div>
-      <p className="section-copy">
-        Research runs are grouped only when the backend reports an identical comparisonContractId.
-        A shared contract permits inspection of matched research conditions, not a claim that one model
-        has higher forecast accuracy. Contract IDs with no matches and records without a contract
-        never contribute to an across-study leaderboard.
-      </p>
-      {!available ? <p className="section-copy" role="status">The authenticated management comparison API is not available.</p> : null}
-      {available && groups.total === 0 ? <div className="empty-state"><p>No research comparison records returned</p><span>Missing records do not imply that a comparison was performed.</span></div> : null}
+      <p className="section-copy"><Localize text="Research runs are grouped only when the backend reports an identical comparisonContractId. A shared contract permits inspection of matched research conditions, not a claim that one model has higher forecast accuracy. Contract IDs with no matches and records without a contract never contribute to an across-study leaderboard." /></p>
+      {!available ? <p className="section-copy" role="status"><Localize text="The authenticated management comparison API is not available." /></p> : null}
+      {available && groups.total === 0 ? <div className="empty-state"><p><Localize text="No research comparison records returned" /></p><span><Localize text="Missing records do not imply that a comparison was performed." /></span></div> : null}
       {groups.comparable.map((group) => (
         <article className="status-list" key={group.contractId} style={{ marginTop: "16px" }}>
           <div className="status-row">
             <div>
-              <p className="status-title">Comparison contract: <code>{group.contractId}</code></p>
+              <p className="status-title"><Localize text="Comparison contract:" />{" "}<code>{group.contractId}</code></p>
               <p className="status-detail">{group.runCount} retained entries · {group.modelKeys.length} reported model identities</p>
             </div>
             <span className="panel-count">{group.runCount < 2 ? "Single run" : "Matched contract"}</span>
@@ -62,12 +58,9 @@ export function AIResearchComparisonGroups({ records, available }: {
       ))}
       {groups.unclassified.length > 0 ? <div className="run-lock" role="status">
         <p>{groups.unclassified.length} records cannot be matched to a comparison contract</p>
-        <span>Those records are excluded from matched groups because their contract identity is absent or invalid. No substitute fingerprint is derived.</span>
+        <span><Localize text="Those records are excluded from matched groups because their contract identity is absent or invalid. No substitute fingerprint is derived." /></span>
       </div> : null}
-      {available && groups.total > 0 ? <p className="metric-detail">
-        Models from different contract IDs are not directly compared, even if their reported metrics or labels look similar.
-        Local research comparisons do not certify future performance.
-      </p> : null}
+      {available && groups.total > 0 ? <p className="metric-detail"><Localize text="Models from different contract IDs are not directly compared, even if their reported metrics or labels look similar. Local research comparisons do not certify future performance." /></p> : null}
     </section>
   );
 }
