@@ -30,7 +30,7 @@ export function AutonomousStudyInsights({
         <label htmlFor="evaluation-metric"><Localize text="Evaluation metric" /></label>
         <select id="evaluation-metric" name="metric" defaultValue={selectedMetric}>
           {EVALUATION_METRICS.map(item=>
-            <option key={item.key} value={item.key}>{item.label}</option>)}
+            <option key={item.key} value={item.key}><Localize text={item.label}/></option>)}
         </select>
         <button type="submit"><Localize text="Inspect distribution" /></button>
       </form>
@@ -42,7 +42,7 @@ export function AutonomousStudyInsights({
           ["Maximum",distribution.maximum],
         ] as const).map(([title,number])=>
           <div key={title} className="operations-overview-stat">
-            <span>{title}</span><strong>{value(number)}</strong>
+            <span><Localize text={title}/></span><strong>{value(number)}</strong>
           </div>)}
       </div>
       <div aria-label={label + " histogram"} role="group" style={{display:"grid",gap:"12px",marginTop:"20px"}}>
@@ -68,7 +68,7 @@ export function AutonomousStudyInsights({
           ["Robustness summaries recorded",summary.diagnosticPresence.robustness],
           ["Generalization training recorded",summary.diagnosticPresence.generalization],
         ] as const).map(([name,value])=>
-          <div key={name} className="operations-overview-stat"><span>{name}</span><strong>{value} / {count} results</strong></div>)}
+          <div key={name} className="operations-overview-stat"><span><Localize text={name}/></span><strong>{value} / {count} results</strong></div>)}
       </div>
       <p className="metric-detail" role="status">
         {summary.complete
