@@ -74,7 +74,7 @@ export default async function AutonomousResearchPage({
               ["Selection records", snapshot.publication.aggregateCounts.autonomous_selection],
               ["Terminal records", snapshot.publication.aggregateCounts.autonomous_terminal],
             ] as const).map(([name,value]) =>
-              <div className="operations-overview-stat" key={name}><span>{name}</span><strong>{value}</strong></div>)}
+              <div className="operations-overview-stat" key={name}><span><Localize text={name}/></span><strong>{value}</strong></div>)}
           </div>
           <p className="section-copy">
             Generated: {snapshot.publication.generatedAt}. These are raw retained counts across databases,
@@ -98,7 +98,7 @@ export default async function AutonomousResearchPage({
             <h3>{current.study}</h3>
             <div className="operations-overview-grid">
               {studyMetrics(current).map(([name,value]) =>
-                <div className="operations-overview-stat" key={name}><span>{name}</span><strong>{value}</strong></div>)}
+                <div className="operations-overview-stat" key={name}><span><Localize text={name}/></span><strong>{value}</strong></div>)}
             </div>
             {current.truncated ? <p role="status" className="metric-detail"><Localize text="This study is only partially included in the published projection." /></p> : null}
             <AutonomousStudyInsights study={current} selectedMetric={metric}/>
@@ -106,7 +106,7 @@ export default async function AutonomousResearchPage({
             {current.runs.length ? <div className="stock-table" style={{overflowX:"auto"}}>
               <table style={{width:"100%",minWidth:"760px",textAlign:"left"}}>
                 <thead><tr>{["Recorded at","Agent","State","Attempts","Completed","Failed","Trained","PIT","Approved"].map(label=>
-                  <th key={label} scope="col" style={{padding:"10px"}}>{label}</th>)}</tr></thead>
+                  <th key={label} scope="col" style={{padding:"10px"}}><Localize text={label}/></th>)}</tr></thead>
                 <tbody>{current.runs.map((run,index)=><tr key={index}>
                   <td style={{padding:"10px"}}>{run.recordedAt ?? "Unreported"}</td>
                   <td style={{padding:"10px"}}>{run.agent ?? "Unreported"}</td>
@@ -123,7 +123,7 @@ export default async function AutonomousResearchPage({
             {current.results.length ? <div className="stock-table" style={{overflowX:"auto"}}>
               <table style={{width:"100%",minWidth:"680px",textAlign:"left"}}>
                 <thead><tr>{["Result #","Mean AP","Stability AP","Worst balanced accuracy","Train gap","Deferred diagnostic","Robustness","Approval"].map(label=>
-                  <th key={label} scope="col" style={{padding:"10px"}}>{label}</th>)}</tr></thead>
+                  <th key={label} scope="col" style={{padding:"10px"}}><Localize text={label}/></th>)}</tr></thead>
                 <tbody>{current.results.map((item,index)=><tr key={index}>
                   <td style={{padding:"10px"}}>{index+1}</td>
                   <td style={{padding:"10px"}}>{score(item.meanAp)}</td>
