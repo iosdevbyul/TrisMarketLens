@@ -143,7 +143,7 @@ function DiagnosticMetrics({diagnostic}:{diagnostic:unknown}) {
     if(!value || typeof value!=="object" || Array.isArray(value))return;
     const item=value as Record<string,unknown>;
     const m=item.metrics && typeof item.metrics==="object" && !Array.isArray(item.metrics)?item.metrics as Record<string,unknown>:{};
-    const safe=(k:string)=>typeof m[k]==="number"&&Number.isFinite(m[k])?m[k] as number:null;
+    const safe=(k:string)=>{const value=m[k];return typeof value==="number"&&Number.isFinite(value)?value:null;};
     rows.push({label,status:typeof item.status==="string"?item.status:"UNKNOWN",ap:safe("pr_auc_ap"),ba:safe("balanced_accuracy"),brier:safe("brier_score")});
   };
   for(const section of sections) {
