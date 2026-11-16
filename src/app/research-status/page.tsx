@@ -4,6 +4,7 @@ import { checkBackendHealth } from "@/data/backendHealth";
 import { getAIManagementSnapshot } from "@/data/AIModelManagementDataSource";
 import { getDailyResearch } from "@/data/DailyResearchDataSource";
 import { researchSourceRows } from "@/domain/researchSourceStatus";
+import { summarizeResearchWorkspace } from "@/domain/researchWorkspaceSummary";
 
 export const dynamic = "force-dynamic";
 
@@ -25,13 +26,14 @@ export default async function ResearchStatusPage({
   ]);
 
   const sources = researchSourceRows({ sourceMode, health, management, daily, ticker });
-  const requiringAttention = sources.filter((item) => item.status === "unavailable" || item.status === "disconnected");
+  const workspace = summarizeResearchWorkspace(sources, management, daily);
+  const recentRecords = daily?.source === "http" && !daily.error ? daily.data?.records ?? [] : [];
   return (
     <>
       <PageHeader
         eyebrow="Research infrastructure"
         title="Integrated AI research status"
-        badge={requiringAttention.length ? "Partial or disconnected" : "Source observations"}
+        badge={workspace.overview === "observed" ? "Published source observations" : workspace.overview === "demo" ? "Demonstration / not live" : "Not fully verified"}
         description="Separate live API reachability, authenticated research LLM controls, recorded comparison evidence and ticker-level daily research. Each publication is checked independently."
       />
       <section className="panel single-panel" aria-label="Source selection">
@@ -60,6 +62,55 @@ export default async function ResearchStatusPage({
           ))}
         </div>
         <p className="section-copy">Empty means a valid response with no published records. Unavailable indicates a failed or unverified source. Demo and disconnected are not equivalent to real backend availability.</p>
+      </section>
+      <section className="panel single-panel" aria-label="Research LLM selection and comparison overview">
+        <div className="panel-heading"><div><p className="eyebrow">Research agent</p><h2>Model selection and experiment comparisons</h2></div><span className="panel-count">{management.state}</span></div>
+        <p className="section-copy">These are actual authenticated management records when configured. Selecting a research LLM does not start a study or change a stock-direction prediction model.</p>
+        <div className="operations-overview-grid">
+          {([
+            ["Selected research LLM", workspace.selectedModelKey ?? "Unreported"],
+            ["Default research LLM", workspace.defaultModelKey ?? "Unreported"],
+            ["Last applied to research", workspace.lastAppliedModelKey ?? "No recorded application"],
+            ["Selection version", workspace.selectionVersion ?? "Unknown"],
+            ["Management busy", workspace.modelBusy === null ? "Unknown" : workspace.modelBusy ? "Yes" : "No"],
+            ["Reported comparison contracts", workspace.comparisonContracts ?? "Unavailable"],
+            ["Contracts with 2+ entries", workspace.matchedContracts ?? "Unavailable"],
+            ["Comparisons lacking contract", workspace.unclassifiedComparisons ?? "Unavailable"],
+          ] as const).map(([label, value]) => <div className="operations-overview-stat" key={label}><span>{label}</span><strong>{value}</strong></div>)}
+        </div>
+        <p className="metric-detail">Only identical backend-provided comparisonContractId values can be inspected together. Two retained entries are not proof of independent performance or stock-price accuracy.</p>
+        <p><Link href="/ai-research-models">Review model catalog, validation controls and matching research runs</Link></p>
+      </section>
+      <section className="panel single-panel" aria-label="Selected ticker research preview">
+        <div className="panel-heading"><div><p className="eyebrow">Daily retained research</p><h2>{ticker ? ticker + " publication preview" : "Choose a ticker for a publication preview"}</h2></div>
+          <span className="panel-count">{workspace.totalResearchRecords === null ? "Not available" : workspace.totalResearchRecords + " published total"}</span></div>
+        <p className="section-copy">This is a bounded preview of up to 10 validated records, not an all-history dataset. A completed research job or a displayed Up/Down label is neither an approved forecast nor a measured return.</p>
+        <div className="operations-overview-grid">
+          {([
+            ["Records in preview", workspace.previewRecords ?? "Unknown"],
+            ["Completed", workspace.previewCompleted ?? "Unknown"],
+            ["Pending", workspace.previewPending ?? "Unknown"],
+            ["Blocked", workspace.previewBlocked ?? "Unknown"],
+            ["Failed", workspace.previewFailed ?? "Unknown"],
+            ["Real-origin records", workspace.previewReal ?? "Unknown"],
+            ["Synthetic fixtures", workspace.previewSynthetic ?? "Unknown"],
+            ["Model versions observed", workspace.previewDistinctModels ?? "Unknown"],
+          ] as const).map(([label, value]) => <div className="operations-overview-stat" key={label}><span>{label}</span><strong>{value}</strong></div>)}
+        </div>
+        {recentRecords.length ? <div className="stock-table" style={{ overflowX: "auto", marginTop: "16px" }}>
+          <table style={{ width: "100%", minWidth: "690px", borderCollapse: "collapse", textAlign: "left" }}>
+            <thead><tr>{["Trading date", "Research model", "Execution status", "Data origin", "Recorded signal"].map(heading =>
+              <th scope="col" key={heading} style={{ borderBottom: "1px solid var(--border)", padding: "10px" }}>{heading}</th>)}</tr></thead>
+            <tbody>{recentRecords.map(record => <tr key={record.jobReference}>
+              <td style={{ padding: "10px" }}>{record.tradingDate}</td>
+              <td style={{ padding: "10px" }}>{record.modelId} · {record.modelVersion}</td>
+              <td style={{ padding: "10px" }}>{record.status}</td>
+              <td style={{ padding: "10px" }}>{record.dataOrigin === "real" ? "Real source" : "Synthetic fixture"}</td>
+              <td style={{ padding: "10px" }}>{record.researchSignal}</td>
+            </tr>)}</tbody>
+          </table>
+        </div> : <p className="section-copy" role="status">{!ticker ? "Enter a ticker above to request a real publication preview." : daily?.error ?? "No records were returned in the preview. This does not prove that an experiment was run."}</p>}
+        {ticker ? <p><Link href={"/stocks/" + ticker + "#daily-research"}>Inspect full per-ticker record details</Link> · <Link href={"/stocks/" + ticker + "/research-comparison"}>Compare up to 1,000 published records</Link></p> : null}
       </section>
       <section className="panel single-panel" aria-label="Research scope and limitations">
         <div className="panel-heading"><h2>Research evidence boundaries</h2><span className="panel-count">No automatic approval</span></div>
