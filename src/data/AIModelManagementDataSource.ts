@@ -112,3 +112,56 @@ export async function getAIManagementSnapshot(): Promise<AIManagementSnapshot> {
     partialErrors,
   };
 }
+
+
+export type AIManagementOperationResult =
+  | { ok: true; data: AIManagementRecord }
+  | { ok: false; status: number; message: string };
+
+/** Small server-only mutation gateway; arbitrary paths, origins, and credentials are not client supplied. */
+export async function requestAIManagementOperation(
+  operation: "validate" | "select",
+  body: { modelKey: string } | { modelKey: string; validationId: string; expectedSelectionVersion: number; approve: true },
+): Promise<AIManagementOperationResult> {
+  const origin = localBaseUrl(process.env.DONGHAK_AI_MANAGEMENT_BASE_URL);
+  const token = process.env.DONGHAK_AI_MANAGEMENT_TOKEN;
+  if (!origin || !token?.trim()) return { ok: false, status: 503, message: "AI management is not configured." };
+  try {
+    const response = await fetch(origin + (operation === "validate" ? "/api/v1/ai/models/validate" : "/api/v1/ai/models/active"), {
+      method: operation === "validate" ? "POST" : "PUT",
+      headers: { Accept: "application/json", "Content-Type": "application/json", Authorization: "Bearer " + token },
+      body: JSON.stringify(body),
+      cache: "no-store",
+      signal: AbortSignal.timeout(8000),
+      redirect: "error",
+    });
+    if (!response.ok) {
+      const messages: Record<number, string> = {
+        401: "AI management authentication was rejected.",
+        403: "The token lacks model management permission.",
+        409: "Management is busy or the selection version has changed. Reload and retry.",
+        413: "The management request exceeded backend limits.",
+        422: "The model, validation receipt or approval was rejected.",
+      };
+      return { ok: false, status: response.status, message: messages[response.status] ?? "AI management rejected this request." };
+    }
+    const data: unknown = await response.json();
+    const parsed = record(data);
+    if (!parsed) return { ok: false, status: 502, message: "Backend returned an invalid management response." };
+    return { ok: true, data: parsed };
+  } catch {
+    return { ok: false, status: 503, message: "AI management backend is unreachable." };
+  }
+}
+
+export async function getAIManagementValidation(jobId: string): Promise<AIManagementRecord | null> {
+  if (!/^[0-9a-f]{64}$/i.test(jobId)) return null;
+  const origin = localBaseUrl(process.env.DONGHAK_AI_MANAGEMENT_BASE_URL);
+  const token = process.env.DONGHAK_AI_MANAGEMENT_TOKEN;
+  if (!origin || !token?.trim()) return null;
+  try {
+    return record(await fetchManagement("/api/v1/ai/models/validations/" + jobId, origin, token));
+  } catch {
+    return null;
+  }
+}
