@@ -39,6 +39,7 @@ export default async function DiagnosticsPage({searchParams}:{searchParams:Promi
  const nextSteps=diagnosticRemediations(readiness,[...sources,...selectedSources],validTicker);
  return <>
   <PageHeader eyebrow="Operations" title="Backend diagnostics" badge={status} description="Read-only connection checks. Healthy API transport does not certify data freshness, completeness or research approval."/>
+  <p className="section-copy"><Link href="/backend-api-coverage">Review full DonghakStockVision API integration inventory</Link> · <Link href="/security-metadata">Inspect full security metadata publication</Link></p>
   <section className="panel single-panel" aria-label="Operational readiness"><div className="panel-heading"><h2>Operational readiness</h2><span className="panel-count">{readiness}</span></div>
    <p className="section-copy">{readiness==="partial_evidence"?"Read-only endpoints responded for the selected ticker. Data provenance, completeness, market freshness and research approval are not certified.":readiness==="needs_review"?"Complete the selected ticker checks and review unavailable or disconnected sources before investigating evidence readiness.":readiness==="not_configured"?"The web is not configured to use the live HTTP backend.":"Backend transport must be restored before examining publication readiness."}</p>
   </section>
