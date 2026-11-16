@@ -1,3 +1,4 @@
+import { Localize } from "@/i18n/Localize";
 import Link from "next/link";
 import { PageHeader } from "@/components/common/PageHeader";
 import { getAutonomousResearchPublication } from "@/data/AutonomousResearchDataSource";
@@ -54,25 +55,17 @@ export default async function AutonomousResearchPage({
         description="Inspect completed research records and evaluation observations from the existing local autonomous engine. This is not a live trading system, historical PIT certificate, or forecast leaderboard."
       />
       <section className="panel single-panel" aria-label="Autonomous research publication source">
-        <div className="panel-heading"><h2>Independent research publication</h2><span className="panel-count">{snapshot.state}</span></div>
+        <div className="panel-heading"><h2><Localize text="Independent research publication" /></h2><span className="panel-count">{snapshot.state}</span></div>
         <p className="section-copy" role="status">{snapshot.message}</p>
-        <p className="metric-detail">
-          This view uses a separate, opt-in server-side snapshot containing only approved summary fields.
-          Research databases and private checkpoint/source identities are never sent to the browser.
-          This is separate from Daily Research, which currently requires its own backend snapshot.
-        </p>
+        <p className="metric-detail"><Localize text="This view uses a separate, opt-in server-side snapshot containing only approved summary fields. Research databases and private checkpoint/source identities are never sent to the browser. This is separate from Daily Research, which currently requires its own backend snapshot." /></p>
         {snapshot.state !== "available" ? <>
-          <p className="section-copy">
-            Run <code>python3 scripts/export-autonomous-research.py</code> from TrisMarketLens
-            on the operator Mac. Then set <code>MARKET_LENS_AUTONOMOUS_RESEARCH_SOURCE=local_snapshot</code>
-            in <code>.env.local</code> and restart the web process.
-          </p>
-          <p><Link href="/ai-research-models">Inspect existing authenticated LLM management</Link></p>
+          <p className="section-copy"><Localize text="Run" />{" "}<code><Localize text="python3 scripts/export-autonomous-research.py" /></code>{" "}<Localize text="from TrisMarketLens on the operator Mac. Then set" />{" "}<code>MARKET_LENS_AUTONOMOUS_RESEARCH_SOURCE=local_snapshot</code><Localize text="in" />{" "}<code>.env.local</code>{" "}<Localize text="and restart the web process." /></p>
+          <p><Link href="/ai-research-models"><Localize text="Inspect existing authenticated LLM management" /></Link></p>
         </> : null}
       </section>
       {snapshot.publication ? <>
         <section className="panel single-panel" aria-label="Autonomous research coverage">
-          <div className="panel-heading"><h2>Retained research coverage</h2>
+          <div className="panel-heading"><h2><Localize text="Retained research coverage" /></h2>
             <span className="panel-count">{snapshot.publication.studyCount} study databases</span></div>
           <div className="operations-overview-grid">
             {([
@@ -92,13 +85,13 @@ export default async function AutonomousResearchPage({
           </p>
         </section>
         <section className="panel single-panel" aria-label="Autonomous research study selection">
-          <div className="panel-heading"><h2>Study evidence</h2><span className="panel-count">Compare only within a study</span></div>
+          <div className="panel-heading"><h2><Localize text="Study evidence" /></h2><span className="panel-count"><Localize text="Compare only within a study" /></span></div>
           <form action="/autonomous-research" method="get" className="stock-explorer">
-            <label htmlFor="autonomous-study">Research database</label>
+            <label htmlFor="autonomous-study"><Localize text="Research database" /></label>
             <select name="study" id="autonomous-study" defaultValue={current?.study ?? ""}>
               {studies.map(study=><option value={study.study} key={study.study}>{study.study}</option>)}
             </select>
-            <button type="submit">Inspect study</button>
+            <button type="submit"><Localize text="Inspect study" /></button>
           </form>
           {invalidSelection ? <p role="status" className="metric-detail">Unknown study; showing the first published study instead.</p> : null}
           {current ? <>
@@ -107,9 +100,9 @@ export default async function AutonomousResearchPage({
               {studyMetrics(current).map(([name,value]) =>
                 <div className="operations-overview-stat" key={name}><span>{name}</span><strong>{value}</strong></div>)}
             </div>
-            {current.truncated ? <p role="status" className="metric-detail">This study is only partially included in the published projection.</p> : null}
+            {current.truncated ? <p role="status" className="metric-detail"><Localize text="This study is only partially included in the published projection." /></p> : null}
             <AutonomousStudyInsights study={current} selectedMetric={metric}/>
-            <h3>Research execution history</h3>
+            <h3><Localize text="Research execution history" /></h3>
             {current.runs.length ? <div className="stock-table" style={{overflowX:"auto"}}>
               <table style={{width:"100%",minWidth:"760px",textAlign:"left"}}>
                 <thead><tr>{["Recorded at","Agent","State","Attempts","Completed","Failed","Trained","PIT","Approved"].map(label=>
@@ -125,8 +118,8 @@ export default async function AutonomousResearchPage({
                   <td style={{padding:"10px"}}>{yesNo(run.pitQualified)}</td>
                   <td style={{padding:"10px"}}>{yesNo(run.performanceApproved)}</td>
                 </tr>)}</tbody>
-              </table></div> : <p className="section-copy">No run records published for this study.</p>}
-            <h3>Experiment evaluation observations</h3>
+              </table></div> : <p className="section-copy"><Localize text="No run records published for this study." /></p>}
+            <h3><Localize text="Experiment evaluation observations" /></h3>
             {current.results.length ? <div className="stock-table" style={{overflowX:"auto"}}>
               <table style={{width:"100%",minWidth:"680px",textAlign:"left"}}>
                 <thead><tr>{["Result #","Mean AP","Stability AP","Worst balanced accuracy","Train gap","Deferred diagnostic","Robustness","Approval"].map(label=>
@@ -141,23 +134,18 @@ export default async function AutonomousResearchPage({
                   <td style={{padding:"10px"}}>{item.hasRobustSummary ? "Recorded" : "Not present"}</td>
                   <td style={{padding:"10px"}}>{yesNo(item.performanceApproved)}</td>
                 </tr>)}</tbody>
-              </table></div> : <p className="section-copy">No experiment result records published for this study.</p>}
-            <h3>Selection and terminal states</h3>
+              </table></div> : <p className="section-copy"><Localize text="No experiment result records published for this study." /></p>}
+            <h3><Localize text="Selection and terminal states" /></h3>
             <div className="operations-overview-grid">
-              <div className="operations-overview-stat"><span>Selection rows included</span><strong>{current.selections.length}</strong></div>
-              <div className="operations-overview-stat"><span>Terminal rows included</span><strong>{current.terminals.length}</strong></div>
-              <div className="operations-overview-stat"><span>Generalization-training summaries present</span>
+              <div className="operations-overview-stat"><span><Localize text="Selection rows included" /></span><strong>{current.selections.length}</strong></div>
+              <div className="operations-overview-stat"><span><Localize text="Terminal rows included" /></span><strong>{current.terminals.length}</strong></div>
+              <div className="operations-overview-stat"><span><Localize text="Generalization-training summaries present" /></span>
                 <strong>{current.results.filter(item=>item.hasGeneralizationTraining).length}</strong></div>
-              <div className="operations-overview-stat"><span>Deferred diagnostics present</span>
+              <div className="operations-overview-stat"><span><Localize text="Deferred diagnostics present" /></span>
                 <strong>{current.results.filter(item=>item.hasDeferredDiagnostic).length}</strong></div>
             </div>
-            <p className="metric-detail">
-              Evaluation metrics are retrospective research observations.
-              No cross-dataset ranking, statistical improvement or forward performance is inferred.
-              Presence of a diagnostic object is not evidence it passed.
-              Run/selection/result row positions have no verified shared identifier in this redacted view.
-            </p>
-          </> : <p>No eligible studies in publication.</p>}
+            <p className="metric-detail"><Localize text="Evaluation metrics are retrospective research observations. No cross-dataset ranking, statistical improvement or forward performance is inferred. Presence of a diagnostic object is not evidence it passed. Run/selection/result row positions have no verified shared identifier in this redacted view." /></p>
+          </> : <p><Localize text="No eligible studies in publication." /></p>}
         </section>
       </> : null}
     </>
