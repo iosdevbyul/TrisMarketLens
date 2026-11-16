@@ -153,10 +153,10 @@ export function labStudies(offset=0,limit=25,options:RequestOptions={}):Promise<
 }
 export function labStudy(id:string,options:RequestOptions={}):Promise<LabLoad<ResearchLabStudy>> {
   if(!validId(id))return Promise.resolve({data:null,state:"not_found",message:"Invalid Study ID."});
-  return request("/studies/"+id,validStudy,options).then(r=>r.data?.studyId===id?r:{data:null,state:"invalid",message:"Study ID mismatch."} as LabLoad<ResearchLabStudy>);
+  return request("/studies/"+id,validStudy,options).then(r=>r.data && r.data.studyId!==id?{data:null,state:"invalid",message:"Study ID mismatch."}:r);
 }
 export function labExperiments(id:string,offset=0,limit=25,options:RequestOptions={}):Promise<LabLoad<LabPage<ResearchLabExperiment>>> {
-  if(!validId(id)||!nonNegative(offset)||limit<1||limit>100)return Promise.resolve({data:null,state:"invalid",message:"Invalid experiment request."});
+  if(!validId(id)||!nonNegative(offset)||!Number.isInteger(limit)||limit<1||limit>100)return Promise.resolve({data:null,state:"invalid",message:"Invalid experiment request."});
   return request("/studies/"+id+"/experiments?offset="+offset+"&limit="+limit,v=>validPage(v,"research_lab_experiments_v1",offset,limit,validExperiment),options)
     .then(r=>r.data?.items.every(x=>x.studyId===id)?r:r.data?{data:null,state:"invalid",message:"Experiment owner mismatch."}:r);
 }
@@ -171,7 +171,7 @@ export function labMemory(id:string,options:RequestOptions={}):Promise<LabLoad<R
     .then(r=>r.data && r.data.studyId!==id?{data:null,state:"invalid",message:"Memory Study ID mismatch."}:r);
 }
 export function labReports(offset=0,limit=25,options:RequestOptions={}):Promise<LabLoad<LabPage<ResearchLabStudy>>> {
-  if(!nonNegative(offset)||limit<1||limit>100)return Promise.resolve({data:null,state:"invalid",message:"Invalid report pagination."});
+  if(!nonNegative(offset)||!Number.isInteger(limit)||limit<1||limit>100)return Promise.resolve({data:null,state:"invalid",message:"Invalid report pagination."});
   return request("/reports?offset="+offset+"&limit="+limit,v=>validPage(v,"research_lab_reports_v1",offset,limit,validStudy),options);
 }
 export function labReport(id:string,options:RequestOptions={}):Promise<LabLoad<ResearchLabReport>> {
