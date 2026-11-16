@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/common/PageHeader";
 import { getAutonomousResearchPublication } from "@/data/AutonomousResearchDataSource";
+import { PublishedStudy } from "@/components/research/ResearchLabPublicationViews";
 import { summarizeStudy } from "@/domain/aiResearchLab";
 import { summarizeStudyEvidence } from "@/domain/autonomousResearchInsights";
 
@@ -16,6 +17,7 @@ export default async function AIResearchStudyDetail({
 }){
   const t=await getTranslator();
   const {study:requested}=await params;
+  if(/^[a-f0-9]{64}$/.test(requested))return <PublishedStudy id={requested}/>;
   const source=await getAutonomousResearchPublication();
   const study=source.publication?.studies.find(item=>item.study===requested);
   if(!study)notFound();
