@@ -35,7 +35,7 @@ export default async function Home() {
       </section>
 
       <WakPanel as="section" className="single-panel">
-        <WakSectionHeader eyebrow="Live data source" title="Collected KRX observations" trailing={<span className="panel-count"><Localize text="Unreviewed operational data" /></span>} />
+        <WakSectionHeader eyebrow={t("Live data source")} title={t("Collected KRX observations")} trailing={<span className="panel-count"><Localize text="Unreviewed operational data" /></span>} />
         <p className="section-copy"><Localize text="Separate from research coverage and model approval. This reports the configured operational snapshot only." /></p>
         {operational.data ? <>
           <div className="metric-grid"><WakMetricCard label="Observed tickers" value={operational.data.total.toLocaleString(locale==="ko"?"ko-KR":"en-US")} detail="Count returned by the read-only operational API" /></div>
