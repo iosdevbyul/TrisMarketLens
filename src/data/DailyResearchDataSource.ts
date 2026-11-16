@@ -1,3 +1,4 @@
+import { normalizeLocalBackendUrl } from "./localBackendUrl";
 import { isSourceCalendarDate } from "../domain/sourceCalendarDate";
 import { isDailyResearchSeries, type DailyResearchSeries } from "../domain/dailyResearch";
 export type DailyResearchMode = "disconnected" | "http";
@@ -23,13 +24,14 @@ export async function loadDailyResearch(ticker: string, { mode = "disconnected",
   const empty = (error: string | null, unavailable = false): DailyResearchResult => ({ source: mode === "http" ? "http" : "disconnected", data: null, error, unavailable });
   if (mode === "disconnected") return empty(null);
   if (mode !== "http") return empty("Unsupported daily research mode");
-  if (!apiBaseUrl?.trim()) return empty("Daily research API base URL is not configured");
+  const baseUrl = normalizeLocalBackendUrl(apiBaseUrl);
+  if (!baseUrl) return empty("Daily research requires an explicitly configured local loopback HTTP backend");
   if (!/^[0-9A-Z]{6}$/.test(ticker)) return empty("Invalid ticker");
   let query: URLSearchParams;
   try { query = dailyResearchQuery(filters); } catch { return empty("Invalid daily research filters"); }
   try {
-    const url = apiBaseUrl.trim().replace(/\/+$/, "") + "/api/v1/stocks/" + encodeURIComponent(ticker) + "/research-analysis?" + query;
-    const response = await fetcher(url, { headers: { Accept: "application/json" }, cache: "no-store", signal: AbortSignal.timeout(5000) });
+    const url = baseUrl + "/api/v1/stocks/" + encodeURIComponent(ticker) + "/research-analysis?" + query;
+    const response = await fetcher(url, { headers: { Accept: "application/json" }, cache: "no-store", signal: AbortSignal.timeout(5000), redirect: "error" });
     if (response.status === 503) return empty("Daily research operational snapshot is not configured (HTTP 503)", true);
     if (!response.ok) return empty("Daily research API returned HTTP " + response.status);
     const body: unknown = await response.json();
