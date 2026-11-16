@@ -120,7 +120,7 @@ export async function PublishedStudy({id,offset=0}:{id:string;offset?:number}) {
       <div className="operations-runs">{memory.data.events.map((e,index)=><div className="operations-run" key={e.experimentId}>
         <div><strong><Link href={experimentHref(id,e.experimentId)}>{index+1}. {idLinks(e.experimentId)}</Link></strong>
         <p className="metric-detail">{t("Selection order")}: {n(e.selectionOrder)} · {t("Cache reused")}: {e.cacheReused===null?"—":e.cacheReused?t("Yes"):t("No")}</p>
-        <p className="metric-detail">{t("Parent experiment")}: {e.parentExperimentId?<Link href={experimentHref(id,e.parentExperimentId)}>{idLinks(e.parentExperimentId)}</Link>:t("Not reported")}</p></div>
+        <p className="metric-detail">{t("Parent experiment")}: {e.parentExperimentId?<Link href={experimentHref(id,e.parentExperimentId)}>{idLinks(e.parentExperimentId)}</Link>:t("Not reported")}</p></div></div>
       )}</div>
       <p className="metric-detail">{t("Memory events describe historical search, not proven causal LLM improvement.")}</p>
       </>:<p role="status">{t(memory.message)}</p>}
