@@ -60,7 +60,7 @@ describe("bounded research comparison", () => {
       const load = vi.fn(async (_ticker: string, options: { offset?: number }) =>
         options.offset === 200 ? second : reply(0, 202, first));
       const result = await loadResearchComparison(ticker, {}, load);
-      if (second.totalRecords === 202 && second.records.length === 2 && second.records[0].jobReference !== "job-0") {
+      if (second.data?.totalRecords === 202 && second.data.records.length === 2 && second.data.records[0].jobReference !== "job-0") {
         expect(result.state).toBe("complete");
       } else {
         expect(result).toMatchObject({ state: "unavailable", records: [], examined: 0 });
