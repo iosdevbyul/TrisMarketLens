@@ -102,6 +102,7 @@ export default async function StockDetailPage({ params, searchParams }: StockDet
 
       <DailyResearchPanel ticker={ticker} result={research} filters={filters} />
       {research.data ? <ResearchModelEvidenceComparison records={research.data.records} totalRecords={research.data.totalRecords} /> : null}
+      <p className="section-copy"><Link href={"/stocks/" + encodeURIComponent(ticker) + "/research-comparison"}>Compare multiple pages of published daily research by model and date range</Link></p>
       <section className="panel single-panel" aria-label={t("Prediction evaluation")}>
         <div className="panel-heading"><div><p className="eyebrow">{t("Research evaluation")}</p><h2>{t("Prediction evaluation")}</h2></div>
           <span className="panel-count">{stateLabel(evaluationState)}</span>

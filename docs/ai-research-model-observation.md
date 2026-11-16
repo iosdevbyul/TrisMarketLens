@@ -42,3 +42,12 @@ This is not a general-purpose multi-user administrative interface. Access should
 The existing `/stocks/[ticker]` Daily Research panel now includes a model-wise comparison table for the **current validated response page**. The grouping key is `modelId + modelVersion + dataOrigin` so real-source and synthetic-fixture rows never share one count. The table shows observed trading-date coverage, recorded jobs, outcome status counts, and count of recorded research scores, with a separate disclosure for Up/Down/Neutral display labels. It does not average uncalibrated scores or infer return, success rate, ranking, trading readiness or autonomous Experiment Memory contents.
 
 A page containing 50 of 300 retained records is always identified as 50 displayed records; comparisons do not silently claim to cover the 250 unrequested records. Unavailable or unconfigured publication leaves the section absent rather than replacing it with demonstration data. No backend API changes are needed.
+
+
+## Bounded multi-page research comparison
+
+Open `/stocks/{ticker}/research-comparison` from the existing stock detail screen. The route uses the independently reviewed daily research publication's existing inclusive `fromDate` and `toDate` filters. It sequentially fetches up to five consecutive `limit=200` pages, stopping after 1,000 records or when the full filtered publication has been retrieved.
+
+Every page uses the current HTTP-only research adapter and its strict schema validator. A moving total, page-size mismatch, broken offset, non-monotonic date boundary, or duplicate job reference causes the complete comparison to be withheld. Disconnected or unpublished data never falls back to mock. The results distinguish `complete` (all matching published records) from `limited` (only first 1,000), and never call a partial count an all-history metric.
+
+The comparison is descriptive only: job status, model and version identity, recorded date coverage, and real versus synthetic publication origins. It does not run autonomous experiments, expose private Experiment Memory, estimate model quality or compute investment performance. Historical publication counts reflect available backend records only, not an independently verified market history.
