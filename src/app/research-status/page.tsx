@@ -1,4 +1,5 @@
 import { Localize } from "@/i18n/Localize";
+import { getTranslator } from "@/i18n/server";
 import Link from "next/link";
 import { PageHeader } from "@/components/common/PageHeader";
 import { checkBackendHealth } from "@/data/backendHealth";
@@ -16,6 +17,7 @@ export default async function ResearchStatusPage({
 }: {
   searchParams: Promise<{ ticker?: string }>;
 }) {
+  const t = await getTranslator();
   const query = await searchParams;
   const entered = typeof query.ticker === "string" ? query.ticker.trim().toUpperCase() : "";
   const validTicker = /^[0-9A-Z]{6}$/.test(entered);
@@ -50,17 +52,17 @@ export default async function ResearchStatusPage({
           <Link href="/research-status"><Localize text="Clear" /></Link>
         </form>
         {entered && !ticker ? <p role="alert" className="metric-detail"><Localize text="Use exactly six letters or digits. No per-ticker API request was made." /></p> : null}
-        <p className="section-copy">Market source mode: {sourceMode}. Management credentials are server-only; this screen never initiates validation, model selection, autonomous learning, or trades.</p>
+        <p className="section-copy">{t("Market source mode:")} {sourceMode}. {t("Management credentials remain server-side. This screen does not launch validation, model selection, autonomous research or trading.")}</p>
       </section>
       <section className="panel single-panel" aria-label="Independent research source status">
-        <div className="panel-heading"><h2><Localize text="Research publication and connectivity" /></h2><span className="panel-count">{sources.length} independent checks</span></div>
+        <div className="panel-heading"><h2><Localize text="Research publication and connectivity" /></h2><span className="panel-count">{sources.length} {t("independent checks")}</span></div>
         <div className="status-list">
           {sources.map((item) => (
             <article className="status-row" key={item.id}>
               <div>
                 <p className="status-title"><Link href={item.href}>{item.name}</Link></p>
                 <p className="status-detail">{item.detail}</p>
-                {item.count !== null ? <p className="metric-detail">Published count: {item.count}</p> : null}
+                {item.count !== null ? <p className="metric-detail">{t("Published count:")} {item.count}</p> : null}
               </div>
               <span className="status-pill" data-state={item.status === "available" ? "verified" : item.status === "unavailable" ? "blocked" : "in_progress"}>{item.status}</span>
             </article>
@@ -130,7 +132,7 @@ export default async function ResearchStatusPage({
         {ticker ? <p><Link href={"/stocks/" + ticker + "#daily-research"}><Localize text="Inspect full per-ticker record details" /></Link> · <Link href={"/stocks/" + ticker + "/research-comparison"}><Localize text="Compare up to 1,000 published records" /></Link></p> : null}
       </section>
       <section className="panel single-panel" aria-label="Research source next verification steps">
-        <div className="panel-heading"><h2><Localize text="Next verification steps" /></h2><span className="panel-count">{nextChecks.length} suggested checks</span></div>
+        <div className="panel-heading"><h2><Localize text="Next verification steps" /></h2><span className="panel-count">{nextChecks.length} {t("suggested checks")}</span></div>
         {nextChecks.length ? <ol>
           {nextChecks.map(action => <li key={action.id}>
             <strong>{action.title}</strong>

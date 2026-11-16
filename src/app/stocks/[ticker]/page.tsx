@@ -77,7 +77,7 @@ export default async function StockDetailPage({ params, searchParams }: StockDet
             ["Historical identity", "Not verified"],
           ].map(([label,value]) => <div className="operations-overview-stat" key={label}><span>{label}</span><strong>{value}</strong></div>)}
         </div> : null}
-        {metadata.data?.security.unavailableReasons.length ? <p className="metric-detail">Source limitations: {metadata.data.security.unavailableReasons.join(", ")}</p> : null}
+        {metadata.data?.security.unavailableReasons.length ? <p className="metric-detail">{t("Source limitations:")} {metadata.data.security.unavailableReasons.join(", ")}</p> : null}
       </section>
       <section className="panel single-panel stock-analysis-panel" aria-label={t("AI analysis")}>
         <div className="panel-heading">

@@ -59,13 +59,13 @@ export default async function OperationsPage() {
             <div className="operations-overview-stat"><span><Localize text="Tickers at newest date (preview)" /></span><strong>{collectionSummary.matchingNewest} / {collectionSummary.previewCount}</strong></div>
             <div className="operations-overview-stat"><span><Localize text="Distinct latest dates (preview)" /></span><strong>{collectionSummary.distinctDates}</strong></div>
           </div>
-          <p className="metric-detail">Date comparisons cover only {collectionSummary.previewCount} returned catalog rows of {collectionSummary.observedCount} observed tickers{collectionSummary.isPartial ? "; not a market-wide freshness or missing-data audit." : "; not a missing-data audit."} No live trading calendar or completeness threshold was assumed.</p>
+          <p className="metric-detail">{t("Collection preview rows:")} {collectionSummary.previewCount} / {collectionSummary.observedCount} {t("observed tickers")}{collectionSummary.isPartial ? "; not a market-wide freshness or missing-data audit." : "; not a missing-data audit."} No live trading calendar or completeness threshold was assumed.</p>
         </> : null}
-        {operational.error ? <p className="metric-detail" role="status">Operational catalog: {operational.error}</p> : null}
+        {operational.error ? <p className="metric-detail" role="status">{t("Operational catalog:")} {operational.error}</p> : null}
         {operational.data?.items.length ? <div className="operations-runs" aria-label="Collected KRX ticker preview">
           {operational.data.items.slice(0,5).map(item => <article className="operations-run" key={item.ticker}>
             <div><strong><Link href={"/operational-market/"+item.ticker}>{item.ticker}</Link></strong>
-            <p className="metric-detail">Latest observed trading date: {item.latestDataDate}</p></div>
+            <p className="metric-detail">{t("Latest observed trading date:")} {item.latestDataDate}</p></div>
             <span className="status-pill" data-state="in_progress"><Localize text="Unreviewed" /></span>
           </article>)}
         </div> : operational.data ? <p className="section-copy"><Localize text="The operational snapshot returned no observed tickers." /></p> : null}
@@ -76,7 +76,7 @@ export default async function OperationsPage() {
         <p className="section-copy"><Localize text="Counts each ticker once by its latest stored observation date across the complete paginated operational catalog. This is not a trading-calendar gap audit, market-wide listing check, or research validation." /></p>
         {distribution.error?<p role="status" className="metric-detail">{distribution.error}</p>:null}
         {distribution.data?<div className="operations-runs">
-          <p className="metric-detail">Newest date: {distribution.data.newestDate??"—"} · Oldest latest date: {distribution.data.oldestDate??"—"}</p>
+          <p className="metric-detail">{t("Newest date:")} {distribution.data.newestDate??"—"} · {t("Oldest latest date:")} {distribution.data.oldestDate??"—"}</p>
           {distribution.data.latestDates.length===0?<p className="section-copy"><Localize text="No collected tickers in the snapshot." /></p>:distribution.data.latestDates.map(item=><div className="operations-run" key={item.date}><strong>{item.date}</strong><span className="metric-detail">{item.count.toLocaleString()} tickers ({(item.count/distribution.data!.observedTickers*100).toFixed(1)}%)</span></div>)}
         </div>:null}
         {distribution.data?.tickersByDate.length ? <OperationalDateDrilldown distribution={distribution.data}/> : null}
