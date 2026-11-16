@@ -37,7 +37,7 @@ export default async function BacktestingPage() {
         </Link>
 
         <WakPanel>
-          <WakSectionHeader eyebrow={t("Readiness")} title={t("Run gate")} trailing={<span className="panel-count">{baseline.readiness.length} checks</span>} />
+          <WakSectionHeader eyebrow={t("Readiness")} title={t("Run gate")} trailing={<span className="panel-count">{baseline.readiness.length} {t("checks")}</span>} />
           <StatusList items={baseline.readiness} />
         </WakPanel>
       </section>
