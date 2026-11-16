@@ -77,7 +77,7 @@ export default async function ResearchStatusPage({
           <div className="operations-overview-stat"><span>Experiment result records</span><strong>{autonomous.publication?.aggregateCounts.autonomous_result ?? "Not published"}</strong></div>
           <div className="operations-overview-stat"><span>Partial or skipped studies</span><strong>{autonomous.publication?.containsPartialStudies ? "Yes" : autonomous.publication ? "No" : "Unknown"}</strong></div>
         </div>
-        <p><Link href="/autonomous-research">Inspect retained autonomous research</Link></p>
+        <p><Link href="/ai-research-lab">Open the AI Research Lab observatory</Link> · <Link href="/autonomous-research">Inspect retained autonomous research</Link></p>
       </section>
       <section className="panel single-panel" aria-label="Research LLM selection and comparison overview">
         <div className="panel-heading"><div><p className="eyebrow">Research agent</p><h2>Model selection and experiment comparisons</h2></div><span className="panel-count">{management.state}</span></div>
