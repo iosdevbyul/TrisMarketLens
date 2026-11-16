@@ -11,6 +11,7 @@ import { getDataSource } from "@/data/getDataSource";
 import { getStockAnalysis } from "@/data/StockAnalysisDataSource";
 import { getDailyResearch } from "@/data/DailyResearchDataSource";
 import { DailyResearchPanel } from "@/components/stocks/DailyResearchPanel";
+import { ResearchModelEvidenceComparison } from "@/components/stocks/ResearchModelEvidenceComparison";
 import type { DailyResearchFilters } from "@/data/DailyResearchDataSource";
 import { getSecurityMetadata } from "@/data/SecurityMetadataDataSource";
 import { getPredictionEvaluations } from "@/data/PredictionEvaluationDataSource";
@@ -100,6 +101,7 @@ export default async function StockDetailPage({ params, searchParams }: StockDet
       </section>
 
       <DailyResearchPanel ticker={ticker} result={research} filters={filters} />
+      {research.data ? <ResearchModelEvidenceComparison records={research.data.records} totalRecords={research.data.totalRecords} /> : null}
       <section className="panel single-panel" aria-label={t("Prediction evaluation")}>
         <div className="panel-heading"><div><p className="eyebrow">{t("Research evaluation")}</p><h2>{t("Prediction evaluation")}</h2></div>
           <span className="panel-count">{stateLabel(evaluationState)}</span>
