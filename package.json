@@ -22,7 +22,7 @@
     "verify:integration:audit": "node --env-file=.env.local scripts/audit-web-backend-integration.mjs",
     "test:e2e": "playwright test",
     "verify:research:workspace": "node --env-file=.env.local scripts/verify-research-workspace-http.mjs",
-    "verify:research:contracts": "node --test scripts/research-contract-core.node-check.mjs"
+    "verify:research:contracts": "node --test scripts/research-contract-core.node-check.mjs scripts/research-verifier-integration.node-check.mjs"
   },
   "dependencies": {
     "next": "16.4.3",
