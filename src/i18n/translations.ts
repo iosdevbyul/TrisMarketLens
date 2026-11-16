@@ -1082,4 +1082,30 @@ Object.assign(ko, {
   "Diagnostics recorded": "진단 기록됨",
   "Retained": "보존됨"
 });
+Object.assign(ko, {
+  "← Back to stock-direction model evidence": "← 주가 방향성 모델 근거로 돌아가기",
+  "The page reads management status through server-side GET requests. Its separate, explicitly approved controls can request model validation or selection; neither action starts a study, changes a stock prediction model, or activates trading. Backend credentials remain server-side.": "이 화면은 서버 측 GET 요청으로 모델 관리 상태를 조회합니다. 별도의 명시적 승인 기능으로 모델 검증 또는 선택을 요청할 수 있지만, 연구를 시작하거나 주가 예측 모델을 변경하거나 거래를 활성화하지는 않습니다. 백엔드 인증 정보는 서버에만 보관됩니다.",
+  "These controls affect only the next explicitly managed research run, never an ongoing worker, stock prediction model, broker, or scheduler. A validation can load a local model and consume CPU; do not retry while it is running.": "이 기능은 명시적으로 관리하는 다음 연구 실행에만 적용됩니다. 실행 중인 작업, 주가 예측 모델, 증권사 또는 스케줄러에는 영향을 주지 않습니다. 검증 과정에서 로컬 모델을 불러와 CPU를 사용할 수 있으므로 실행 중 중복 요청하지 마세요.",
+  "← AI Research Lab": "← AI 연구소",
+  "← Study observations": "← 연구 관측 기록",
+  "← AI Research Lab overview": "← AI 연구소 개요",
+  "← Back to backend diagnostics": "← 백엔드 진단으로 돌아가기",
+  "← Back to published portfolios": "← 게시된 포트폴리오로 돌아가기",
+  "Archive integrity verified; offline authoritative replay passed. Research only; brokerage and live trading eligibility denied.": "보관 자료의 무결성 및 오프라인 재현 검증을 통과했습니다. 연구 전용이며 증권사 거래와 실거래에는 사용할 수 없습니다.",
+  "← Back to portfolio detail": "← 포트폴리오 상세로 돌아가기",
+  "← Back to selected published portfolios": "← 선택한 게시 포트폴리오로 돌아가기",
+  "← Back to backtesting": "← 백테스트로 돌아가기",
+  "Archive integrity verified; offline replay verified. PIT/OOS and trading approval: not verified.": "보관 자료의 무결성과 오프라인 재현을 검증했습니다. PIT·표본외 평가 및 거래 승인은 검증되지 않았습니다.",
+  "Five reports selected; remove one to select another.": "보고서 5개를 선택했습니다. 다른 보고서를 선택하려면 기존 선택을 하나 해제하세요.",
+  "← Back to operations": "← 운영 현황으로 돌아가기",
+  "← Back to model catalog": "← 모델 목록으로 돌아가기",
+  "Invalid model direction; choose Up or Down.": "모델 방향이 잘못됐습니다. 상승 또는 하락을 선택하세요.",
+  "Direction selects a qualified global research model for inspection; the ticker separately selects recorded security publications. Their model identities are not assumed to match.": "방향을 선택하면 적격성 검증된 전체 연구 모델을 조회합니다. 종목코드는 별도로 게시된 종목 기록을 선택하며, 두 모델의 식별자가 같다고 가정하지 않습니다.",
+  "No matching published research analysis for this ticker; this is not a neutral model prediction.": "이 종목에 일치하는 게시 연구 분석이 없습니다. 중립 예측으로 간주하지 않습니다.",
+  "Observed means source records were returned, not research readiness. Missing or 503 responses remain unavailable; no mock fallback is used in HTTP mode. Unreviewed operational OHLCV never becomes validated research, and the historical portfolio API supplies research-only simulated records without PIT/OOS or trading approval.": "관측됨은 출처 기록이 반환됐다는 뜻이며 연구 준비 상태를 입증하지 않습니다. 기록 누락이나 HTTP 503은 사용 불가로 표시하고, HTTP 모드에서 모의 데이터로 대체하지 않습니다. 미검토 운영 OHLCV는 검증된 연구 데이터가 아니며 과거 포트폴리오 API의 모의 기록도 PIT·표본외 평가 및 거래 승인이 없는 연구용 자료입니다.",
+  "← Back to stock research": "← 종목 연구로 돌아가기",
+  "← Back to stocks": "← 종목 목록으로 돌아가기",
+  "This snapshot contains a single trading date. The candle shows that observation only; there is not enough history to infer a price trend or compare chart periods.": "이 스냅샷에는 거래일이 하루만 포함돼 있습니다. 봉 차트는 해당 관측값만 보여주며 가격 추세를 판단하거나 차트 기간을 비교하기에는 이력이 부족합니다.",
+  ". An available catalog is not evidence of validated research data.": " 목록을 사용할 수 있다고 해서 연구 데이터가 검증됐다는 뜻은 아닙니다."
+});
 export function translate(locale: Locale, text: string): string { return locale === "ko" ? (ko[text] ?? ko[text.replace(/\s+/g, " ").trim()] ?? text) : text; }
