@@ -41,13 +41,13 @@ export default async function AIResearchStudyDetail({
         </div>)}
       </div>
       <p className="metric-detail">
-        Last recorded run: {summary.lastRecordedAt??"Unreported"} · Agents: {summary.agents.length?summary.agents.join(", "):"Unreported"} ·
-        Observed states: {summary.observedStates.length?summary.observedStates.join(", "):"Unreported"}
+        <Localize text="Last recorded run:"/> {summary.lastRecordedAt??<Localize text="Unreported"/>} · <Localize text="Agents:"/> {summary.agents.length?summary.agents.join(", "):<Localize text="Unreported"/>} ·
+        <Localize text="Observed states:"/> {summary.observedStates.length?summary.observedStates.join(", "):<Localize text="Unreported"/>}
       </p>
       <p className="section-copy"><Localize text="Completion totals are terminal artifacts, not deduplicated experiments. Run, result and terminal positions have no publicly validated join key. No timeline, cause of improvement, or study-level independent validation is fabricated from record order." /></p>
     </section>
     <section className="panel single-panel" aria-label="Individual experiment observations">
-      <div className="panel-heading"><h2><Localize text="Individual retained result observations" /></h2><span className="panel-count">{study.results.length} included</span></div>
+      <div className="panel-heading"><h2><Localize text="Individual retained result observations" /></h2><span className="panel-count">{study.results.length} <Localize text="included"/></span></div>
       <p className="section-copy">
         Every row is an existing published result observation, not a new experiment claim.
         Observation numbers identify positions in this publication only; they are not
@@ -59,13 +59,13 @@ export default async function AIResearchStudyDetail({
           <thead><tr>{["Observation","Mean AP","Stability AP","Worst balanced accuracy","PIT qualified","Performance approved","Generalization evidence"].map(label=>
             <th key={label} scope="col" style={{padding:"10px"}}><Localize text={label}/></th>)}</tr></thead>
           <tbody>{study.results.map((result,index)=><tr key={index}>
-            <td style={{padding:"10px"}}><Link href={"/ai-research-lab/studies/"+encodeURIComponent(study.study)+"/results/"+index}>Observation {index+1}</Link></td>
+            <td style={{padding:"10px"}}><Link href={"/ai-research-lab/studies/"+encodeURIComponent(study.study)+"/results/"+index}><Localize text="Observation"/> {index+1}</Link></td>
             <td style={{padding:"10px"}}>{display(result.meanAp)}</td>
             <td style={{padding:"10px"}}>{display(result.stabilityAp)}</td>
             <td style={{padding:"10px"}}>{display(result.worstBalancedAccuracy)}</td>
-            <td style={{padding:"10px"}}>{result.pitQualified===null?"Unreported":result.pitQualified?"Recorded true":"Recorded false"}</td>
-            <td style={{padding:"10px"}}>{result.performanceApproved===null?"Unreported":result.performanceApproved?"Recorded true":"Recorded false"}</td>
-            <td style={{padding:"10px"}}>{result.hasDeferredDiagnostic||result.hasRobustSummary||result.hasGeneralizationTraining?"Diagnostic recorded":"Not provided"}</td>
+            <td style={{padding:"10px"}}><Localize text={result.pitQualified===null?"Unreported":result.pitQualified?"Recorded true":"Recorded false"}/></td>
+            <td style={{padding:"10px"}}><Localize text={result.performanceApproved===null?"Unreported":result.performanceApproved?"Recorded true":"Recorded false"}/></td>
+            <td style={{padding:"10px"}}><Localize text={result.hasDeferredDiagnostic||result.hasRobustSummary||result.hasGeneralizationTraining?"Diagnostic recorded":"Not provided"}/></td>
           </tr>)}</tbody>
         </table>
       </div>:<p className="section-copy"><Localize text="No result records in this study publication." /></p>}
