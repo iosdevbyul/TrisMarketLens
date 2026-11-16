@@ -37,7 +37,7 @@ export default async function LabResultDetail({
           ["Worst balanced accuracy",decimal(result.worstBalancedAccuracy)],
           ["Largest train gap",result.largestTrainGap??"Not reported"],
         ] as const).map(([label,value])=><div className="operations-overview-stat" key={label}>
-          <span>{label}</span><strong>{value}</strong>
+          <span><Localize text={label}/></span><strong><Localize text={String(value)}/></strong>
         </div>)}
       </div>
       <p className="metric-detail"><Localize text="These retrospective scores have no published per-observation comparable baseline, horizon, holdout cohort, training window or independent Final Test certificate. The web cannot establish a best search candidate or an independently validated winner." /></p>
@@ -53,7 +53,7 @@ export default async function LabResultDetail({
           ["Robustness summary available",result.hasRobustSummary?"Present, outcome not published":"Not present"],
           ["Generalization training available",result.hasGeneralizationTraining?"Present, outcome not published":"Not present"],
         ] as const).map(([label,value])=><div className="operations-overview-stat" key={label}>
-          <span>{label}</span><strong style={{fontSize:"14px",lineHeight:1.5}}>{value}</strong>
+          <span><Localize text={label}/></span><strong style={{fontSize:"14px",lineHeight:1.5}}><Localize text={value}/></strong>
         </div>)}
       </div>
       <p className="section-copy"><Localize text="A diagnostic object existing in the original study is not evidence that it passed. No raw model SHA, checkpoint, source PIN, hidden heldout details or original experiment identifiers are copied into this browser view. Any explicit true flag remains a retained artifact field and not permission to trade." /></p>
