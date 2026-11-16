@@ -33,7 +33,7 @@ export default async function PortfolioDetailPage({
   ["Fills",String(report.fillCount)],
   ["Open/pending orders",String(report.pendingOrderCount)]]:[];
  return <>
-  <Link className="back-link" href="/backtesting/portfolios">← Back to published portfolios</Link>
+  <Link className="back-link" href="/backtesting/portfolios"><Localize text="← Back to published portfolios"/></Link>
   <PageHeader
    eyebrow="Historical research"
    title="Published portfolio detail"
@@ -49,7 +49,7 @@ export default async function PortfolioDetailPage({
      <span>{label}</span><strong>{value}</strong>
     </div>)}
    </div>
-   <p className="metric-detail">Archive integrity verified; offline authoritative replay passed. Research only; brokerage and live trading eligibility denied.</p>
+   <p className="metric-detail"><Localize text="Archive integrity verified; offline authoritative replay passed. Research only; brokerage and live trading eligibility denied."/></p>
    <p className="metric-detail">Evidence scope: {report.evidenceScope} · Data origin: {report.dataOrigin}</p>
    {report.limitations.length>0?<div><h3><Localize text="Recorded limitations" /></h3>{report.limitations.map((item,index)=><p className="metric-detail" key={index}>{item}</p>)}</div>:null}
    <div className="operations-runs" aria-label="Per-ticker historical evidence">

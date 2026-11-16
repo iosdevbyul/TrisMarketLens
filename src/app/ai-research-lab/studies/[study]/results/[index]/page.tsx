@@ -24,7 +24,7 @@ export default async function LabResultDetail({
   if(!result)notFound();
   const back="/ai-research-lab/studies/"+encodeURIComponent(study.study);
   return <>
-    <Link href={back} className="back-link">← Study observations</Link>
+    <Link href={back} className="back-link"><Localize text="← Study observations"/></Link>
     <PageHeader eyebrow="Read-only experiment evidence" title={"Result observation "+(index+1)}
       badge="Source record only"
       description="This record is projected from an actual autonomous_result artifact. The observation index is not an Experiment ID or a validated run→result relationship."/>

@@ -7,7 +7,7 @@ export default function BackendAPICoveragePage(){
   const totals=apiSurfaceTotals();
   const groups=[...new Set(BACKEND_API_SURFACE.map(item=>item.group))];
   return <>
-    <Link className="back-link" href="/diagnostics">← Back to backend diagnostics</Link>
+    <Link className="back-link" href="/diagnostics"><Localize text="← Back to backend diagnostics"/></Link>
     <PageHeader eyebrow="Development integration audit" title="DonghakStockVision API coverage"
       badge="Route mapping · verification pending"
       description="Every current documented backend HTTP route is tracked here. Mapped means the web has a corresponding feature surface, NOT that its private runtime has been tested end-to-end or that every optional backend publication is configured."/>

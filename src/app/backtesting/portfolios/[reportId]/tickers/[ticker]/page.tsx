@@ -16,7 +16,7 @@ export default async function PortfolioTickerPage({
  const base=process.env.MARKET_LENS_DATA_SOURCE==="http"?process.env.DONGHAK_API_BASE_URL:undefined;
  const {data,error}=await loadHistoricalTickerEvidence(base,reportId,ticker,offset);
  return <>
-  <Link className="back-link" href={"/backtesting/portfolios/"+reportId}>← Back to portfolio detail</Link>
+  <Link className="back-link" href={"/backtesting/portfolios/"+reportId}><Localize text="← Back to portfolio detail"/></Link>
   <PageHeader eyebrow="Historical research" title={"Ticker evidence · "+ticker}
    badge={data?"Research only":"Unavailable"}
    description="Per-security observations from the pinned historical portfolio research publication. Simulated fills and valuation references are not broker trades or live-price approvals."/>

@@ -21,7 +21,7 @@ export default async function AIResearchStudyDetail({
   const evidence=summarizeStudyEvidence(study);
   const href="/autonomous-research?study="+encodeURIComponent(study.study);
   return <>
-    <Link className="back-link" href="/ai-research-lab">← AI Research Lab</Link>
+    <Link className="back-link" href="/ai-research-lab"><Localize text="← AI Research Lab"/></Link>
     <PageHeader eyebrow="Retained research study" title={study.study} badge={study.truncated?"Partial publication":"Stored study"}
       description="Review actual recorded study evidence. The study folder label is not a verified Experiment ID, cohort ID or plan fingerprint, and this is not a live execution controller."/>
     <section className="panel single-panel" aria-label="Study record summary">

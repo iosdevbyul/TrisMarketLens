@@ -40,7 +40,7 @@ export default async function HistoricalPortfolioComparePage({
   {name:"Valuation policy",values:items.map(()=>"Unavailable")}
  ]:[];
  return <>
-  <Link className="back-link" href={historicalCatalogHref(0,validComparisonSelection(reportIds)?reportIds:[])}>← Back to selected published portfolios</Link>
+  <Link className="back-link" href={historicalCatalogHref(0,validComparisonSelection(reportIds)?reportIds:[])}><Localize text="← Back to selected published portfolios"/></Link>
   <PageHeader eyebrow="Historical research" title="Published portfolio comparison"
    badge={data?"Research only":"Unavailable"}
    description="Side-by-side recorded historical research. No ranking, trading recommendation or inferred performance. Different periods, missing valuation marks and unavailable policies can make economic comparison invalid."/>

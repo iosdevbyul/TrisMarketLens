@@ -29,7 +29,7 @@ export default async function AIResearchModelsPage({ searchParams }: { searchPar
   const active = snapshot.active;
   return (
     <>
-      <Link href="/models" className="back-link">← Back to stock-direction model evidence</Link>
+      <Link href="/models" className="back-link"><Localize text="← Back to stock-direction model evidence"/></Link>
       <PageHeader
         eyebrow="Research infrastructure"
         title="AI research LLMs"
@@ -39,7 +39,7 @@ export default async function AIResearchModelsPage({ searchParams }: { searchPar
       <section className="panel single-panel" aria-label="AI management connection">
         <div className="panel-heading"><h2><Localize text="Management connection" /></h2><span className="panel-count">{snapshot.state}</span></div>
         <p className="section-copy" role={snapshot.state === "available" ? undefined : "status"}>{snapshot.message}</p>
-        <p className="metric-detail">The page reads management status through server-side GET requests. Its separate, explicitly approved controls can request model validation or selection; neither action starts a study, changes a stock prediction model, or activates trading. Backend credentials remain server-side.</p>
+        <p className="metric-detail"><Localize text="The page reads management status through server-side GET requests. Its separate, explicitly approved controls can request model validation or selection; neither action starts a study, changes a stock prediction model, or activates trading. Backend credentials remain server-side."/></p>
         {snapshot.partialErrors.map((error) => <p key={error} role="status" className="metric-detail">{error}</p>)}
       </section>
       {active && (
@@ -57,7 +57,7 @@ export default async function AIResearchModelsPage({ searchParams }: { searchPar
       )}
       <section className="panel single-panel" aria-label="Validate or select research model">
         <div className="panel-heading"><h2><Localize text="Validate and select research LLM" /></h2><span className="panel-count"><Localize text="Explicit approval required" /></span></div>
-        <p className="section-copy">These controls affect only the next explicitly managed research run, never an ongoing worker, stock prediction model, broker, or scheduler. A validation can load a local model and consume CPU; do not retry while it is running.</p>
+        <p className="section-copy"><Localize text="These controls affect only the next explicitly managed research run, never an ongoing worker, stock prediction model, broker, or scheduler. A validation can load a local model and consume CPU; do not retry while it is running."/></p>
         {query.notice ? <p role="status" className="section-copy">{({
           "invalid-model": "Select a valid model key.",
           "connection-error": "Management is disconnected. No request was made.",

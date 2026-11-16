@@ -22,7 +22,7 @@ export default async function PublishedPortfoliosPage({
  const page=result.data;
  const next=page?offset+page.items.length<page.total:null;
  return <>
-  <Link className="back-link" href="/backtesting">← Back to backtesting</Link>
+  <Link className="back-link" href="/backtesting"><Localize text="← Back to backtesting"/></Link>
   <PageHeader
    eyebrow="Backtesting"
    title="Published historical portfolios"
@@ -63,10 +63,10 @@ export default async function PublishedPortfoliosPage({
       <p><Link href={"/backtesting/portfolios/"+item.reportId}><Localize text="View published summary and decision history" /></Link></p>
       <p className="metric-detail">Published: {item.publishedAt} · Initial virtual cash: {item.initialVirtualCash}</p>
       <p className="metric-detail">Evidence scope: {item.evidenceScope} · Final portfolio valuation: {item.portfolioValuationAvailable?"Recorded":"Unavailable"}</p>
-      <p className="metric-detail">Archive integrity verified; offline replay verified. PIT/OOS and trading approval: not verified.</p>
+      <p className="metric-detail"><Localize text="Archive integrity verified; offline replay verified. PIT/OOS and trading approval: not verified."/></p>
       <p>{included?<Link href={historicalCatalogHref(offset,removeHistoricalSelection(selected,item.reportId))}><Localize text="Remove from comparison" /></Link>
        :canAdd?<Link href={historicalCatalogHref(offset,addHistoricalSelection(selected,item.reportId))}><Localize text="Add to comparison" /></Link>
-       :<span className="metric-detail">Five reports selected; remove one to select another.</span>}</p>
+       :<span className="metric-detail"><Localize text="Five reports selected; remove one to select another."/></span>}</p>
      </div>
      <span className="status-pill" data-state="blocked"><Localize text="Research only" /></span>
     </article>;
