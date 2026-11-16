@@ -1,5 +1,5 @@
 "use client";
-import { ClientLocalize } from "@/i18n/LocaleProvider";
+import { ClientLocalize } from "../../i18n/LocaleProvider";
 
 import {useState} from "react";
 import type {HistoricalPortfolioComparison} from "@/data/HistoricalPortfolioComparisonDataSource";
