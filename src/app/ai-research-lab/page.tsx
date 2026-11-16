@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/common/PageHeader";
 import { getAutonomousResearchPublication } from "@/data/AutonomousResearchDataSource";
-import { labOverview, searchStudies, recordedStatus } from "@/domain/aiResearchLab";
+import { labOverview, searchStudies } from "@/domain/aiResearchLab";
 
 export const dynamic="force-dynamic";
 const statusOptions=["all","completed","failed","interrupted","paused","running","unreported"] as const;
