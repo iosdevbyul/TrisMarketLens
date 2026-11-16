@@ -107,3 +107,11 @@ test("autonomous research page distinguishes nonpublished local snapshots from r
  await expect(page.getByRole("region",{name:"Autonomous research publication coverage"})).toBeVisible();
  await expect(page.getByRole("link",{name:"Inspect retained autonomous research"})).toBeVisible();
 });
+
+test("autonomous evaluation routes never invent quartiles or outcomes while source disabled", async ({page}) => {
+ await page.goto("/autonomous-research?study=unknown&metric=stabilityAp");
+ await expect(page.getByRole("heading",{name:"Retained experiment evidence"})).toBeVisible();
+ await expect(page.getByRole("region",{name:"Autonomous research publication source"})).toBeVisible();
+ await expect(page.getByRole("region",{name:"Autonomous research evaluation insights"})).toHaveCount(0);
+ await expect(page.getByText("Median",{exact:true})).toHaveCount(0);
+});
