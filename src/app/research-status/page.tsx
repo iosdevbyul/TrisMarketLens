@@ -4,6 +4,7 @@ import { checkBackendHealth } from "@/data/backendHealth";
 import { getAIManagementSnapshot } from "@/data/AIModelManagementDataSource";
 import { getDailyResearch } from "@/data/DailyResearchDataSource";
 import { researchSourceRows } from "@/domain/researchSourceStatus";
+import { researchDiagnosticActions } from "@/domain/researchDiagnosticActions";
 import { summarizeResearchWorkspace } from "@/domain/researchWorkspaceSummary";
 
 export const dynamic = "force-dynamic";
@@ -27,6 +28,7 @@ export default async function ResearchStatusPage({
 
   const sources = researchSourceRows({ sourceMode, health, management, daily, ticker });
   const workspace = summarizeResearchWorkspace(sources, management, daily);
+  const nextChecks = researchDiagnosticActions(sources);
   const recentRecords = daily?.source === "http" && !daily.error ? daily.data?.records ?? [] : [];
   return (
     <>
@@ -111,6 +113,17 @@ export default async function ResearchStatusPage({
           </table>
         </div> : <p className="section-copy" role="status">{!ticker ? "Enter a ticker above to request a real publication preview." : daily?.error ?? "No records were returned in the preview. This does not prove that an experiment was run."}</p>}
         {ticker ? <p><Link href={"/stocks/" + ticker + "#daily-research"}>Inspect full per-ticker record details</Link> · <Link href={"/stocks/" + ticker + "/research-comparison"}>Compare up to 1,000 published records</Link></p> : null}
+      </section>
+      <section className="panel single-panel" aria-label="Research source next verification steps">
+        <div className="panel-heading"><h2>Next verification steps</h2><span className="panel-count">{nextChecks.length} suggested checks</span></div>
+        {nextChecks.length ? <ol>
+          {nextChecks.map(action => <li key={action.id}>
+            <strong>{action.title}</strong>
+            <p className="metric-detail">{action.description}</p>
+            <p><Link href={action.href}>Inspect source evidence</Link></p>
+          </li>)}
+        </ol> : <p className="section-copy">No current connection blockers were identified by these bounded checks. This is not an assertion of research quality or publication completeness.</p>}
+        <p className="section-copy">For the owner-operated Mac backend, run <code>npm run verify:research:workspace</code> from the web repository with pre-existing local configuration to check the live read-only contract. No verifier runs from this page.</p>
       </section>
       <section className="panel single-panel" aria-label="Research scope and limitations">
         <div className="panel-heading"><h2>Research evidence boundaries</h2><span className="panel-count">No automatic approval</span></div>
