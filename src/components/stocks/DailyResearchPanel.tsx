@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { DailyResearchResult } from "@/data/DailyResearchDataSource";
 import type { DailyResearchFilters } from "@/data/DailyResearchDataSource";
 import type { DailyResearchRecord } from "@/domain/dailyResearch";
+import { summarizeDailyResearchPage } from "@/domain/dailyResearchPageSummary";
 
 function details(record: DailyResearchRecord) {
   return [
@@ -22,6 +23,7 @@ function details(record: DailyResearchRecord) {
 }
 export function DailyResearchPanel({ ticker, result, filters }: { ticker: string; result: DailyResearchResult; filters: DailyResearchFilters }) {
   const data = result.data;
+  const summary = data ? summarizeDailyResearchPage(data.records) : null;
   const limit = data?.limit ?? filters.limit ?? 50;
   const offset = data?.offset ?? filters.offset ?? 0;
   const pageUrl = (nextOffset: number) => {
@@ -49,6 +51,28 @@ export function DailyResearchPanel({ ticker, result, filters }: { ticker: string
     {!result.error && result.source === "disconnected" ? <p className="section-copy">Set MARKET_LENS_DAILY_RESEARCH_SOURCE=http to enable this independent read-only research API.</p> : null}
     {data ? <>
       <p className="section-copy">Last successful analysis: {data.lastSuccessfulAnalyzedAt ?? "None"} · Trading date: {data.lastSuccessfulTradingDate ?? "None"} · Origin: {data.lastSuccessfulDataOrigin === "synthetic_fixture" ? "SYNTHETIC FIXTURE" : data.lastSuccessfulDataOrigin === "real" ? "Real provider capture (locally retained; not independently authenticated)" : "None"}.</p>
+      {summary ? <section aria-label="Visible daily research evidence summary">
+        <div className="panel-heading"><h2>Research activity in this page</h2><span className="panel-count">Visible records only</span></div>
+        <p className="section-copy">Counts below describe only the {summary.displayed} records in this current paginated response, not all {data?.totalRecords ?? 0} retained records. A status of completed means the research job produced an artifact, not that its forecast was correct or independently verified.</p>
+        <div className="operations-overview-grid">
+          {([
+            ["Completed", summary.completed], ["Pending", summary.pending], ["Blocked", summary.blocked],
+            ["Failed", summary.failed], ["Real-source records", summary.real], ["Synthetic fixtures", summary.synthetic],
+            ["Distinct model versions", summary.distinctModels], ["Records with a score", summary.withScore],
+          ] as const).map(([label, value]) => <div className="operations-overview-stat" key={label}><span>{label}</span><strong>{value}</strong></div>)}
+        </div>
+        <div className="panel-heading"><h2>Recorded research status by trading date</h2><span className="panel-count">{summary.observedDates.length} dates in page</span></div>
+        {summary.observedDates.length ? <div className="stock-analysis-list">
+          {summary.observedDates.map((date) => <div className="status-row" key={date.date}>
+            <div><p className="status-title">{date.date}</p><p className="status-detail">Completed: {date.completed} · Pending, blocked or failed: {date.unresolved}</p></div>
+            <div aria-hidden="true" style={{display:"flex",width:"min(240px, 40%)",height:"12px",gap:"2px"}}>
+              <span style={{flex:date.completed || 0,background:"var(--accent)",minWidth:date.completed ? 2 : 0}} />
+              <span style={{flex:date.unresolved || 0,background:"var(--warning)",minWidth:date.unresolved ? 2 : 0}} />
+            </div>
+          </div>)}
+        </div> : <p className="section-copy">No displayed dates.</p>}
+        <p className="metric-detail">Within completed records only, the displayed research labels are Up: {summary.directionUp}, Down: {summary.directionDown}, Neutral: {summary.directionNeutral}. These are descriptive output labels, not accuracy or return statistics.</p>
+      </section> : null}
       {data.records.length === 0 ? <p role="status" className="section-copy">No retained daily research records match this selection. This does not mean analysis succeeded.</p> : <div className="stock-analysis-list">{data.records.map((record, index) => <article className="stock-analysis-item" key={record.jobReference}>
         <div className="stock-analysis-heading"><div><strong>{record.tradingDate} · {record.modelId}</strong><p className="metric-detail">{record.modelVersion} · {record.dataOrigin === "synthetic_fixture" ? "SYNTHETIC FIXTURE · NOT LIVE" : "REAL PROVIDER RECORD · LOCAL EVIDENCE ONLY"}</p></div>
           <span className="status-pill" data-state={record.status === "completed" ? "verified" : record.status === "pending" ? "in_progress" : "blocked"}>{record.status === "completed" ? "Research completed (not approved)" : record.status}</span></div>
