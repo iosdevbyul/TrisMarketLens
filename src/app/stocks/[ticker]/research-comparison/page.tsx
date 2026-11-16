@@ -29,7 +29,7 @@ export default async function ResearchHistoryComparisonPage({
 
   return (
     <>
-      <Link href={"/stocks/" + encodeURIComponent(ticker) + "#daily-research"} className="back-link">← Back to stock research</Link>
+      <Link href={"/stocks/" + encodeURIComponent(ticker) + "#daily-research"} className="back-link"><Localize text="← Back to stock research"/></Link>
       <PageHeader
         eyebrow="Daily research evidence"
         title="Historical model comparison"

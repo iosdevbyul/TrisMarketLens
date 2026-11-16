@@ -51,7 +51,7 @@ export default async function ResearchWorkbenchPage({
  const entries=recordEvidence?.entries??[];
  const records=recordEvidence?.records??[];
  return <>
-  <Link className="back-link" href="/models">← Back to model catalog</Link>
+  <Link className="back-link" href="/models"><Localize text="← Back to model catalog"/></Link>
   <PageHeader eyebrow="AI research" title="Research evidence workbench"
    badge={mode==="mock"?"Demonstration":errors.length?"Partial evidence":"Read-only research"}
    description="Follow published model qualification, evidence blockers and explicitly published security analysis. Global Up/Down model statistics do not identify a ticker's inference model or constitute investment advice."/>
@@ -81,9 +81,9 @@ export default async function ResearchWorkbenchPage({
     <input id="workbench-ticker" name="ticker" maxLength={6} defaultValue={ticker} pattern="[0-9A-Za-z]{6}" placeholder="005930"/>{" "}
     <button type="submit"><Localize text="Review evidence" /></button>
    </form>
-   {!direction?<p role="alert">Invalid model direction; choose Up or Down.</p>:null}
+   {!direction?<p role="alert"><Localize text="Invalid model direction; choose Up or Down."/></p>:null}
    {!validTicker?<p role="alert"><Localize text="Ticker must have six letters or digits." /></p>:null}
-   <p className="section-copy">Direction selects a qualified global research model for inspection; the ticker separately selects recorded security publications. Their model identities are not assumed to match.</p>
+   <p className="section-copy"><Localize text="Direction selects a qualified global research model for inspection; the ticker separately selects recorded security publications. Their model identities are not assumed to match."/></p>
   </section>
   <section className="panel single-panel" aria-label="Frozen model qualification">
    <div className="panel-heading"><h2><Localize text="Frozen global model evidence" /></h2><span className="panel-count">{selected?.role??"Unavailable"}</span></div>
@@ -113,7 +113,7 @@ export default async function ResearchWorkbenchPage({
    {recordEvidence?.state==="source_mismatch"?<p role="alert" className="metric-detail"><Localize text="Screener and ticker analysis use different sources. Their records are hidden to prevent presenting demonstration IDs as published HTTP evidence." /></p>:null}
    {recordEvidence?.state==="unavailable"&&ticker&&validTicker?<p role="status" className="metric-detail"><Localize text="Source correspondence cannot be verified: one or both publications are disconnected, invalid or unavailable." /></p>:null}
    {stock?.source==="mock"||screener?.source==="mock"?<p role="status" className="metric-detail"><Localize text="Fictional demonstration analysis — not market observations." /></p>:null}
-   {ticker&&validTicker&&entries.length===0&&records.length===0&&recordEvidence?.state==="not_confirmed"?<p className="metric-detail">No matching published research analysis for this ticker; this is not a neutral model prediction.</p>:null}
+   {ticker&&validTicker&&entries.length===0&&records.length===0&&recordEvidence?.state==="not_confirmed"?<p className="metric-detail"><Localize text="No matching published research analysis for this ticker; this is not a neutral model prediction."/></p>:null}
    {records.map(item=><article className="operations-run" key={item.id}>
     <div>
      <strong>{item.modelId} · {item.modelVersion}</strong>

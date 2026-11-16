@@ -66,7 +66,7 @@ export default async function DiagnosticsPage({searchParams}:{searchParams:Promi
   <section className="panel single-panel" aria-label="Collected operational market data">
    <div className="panel-heading"><h2><Localize text="Collected KRX data" /></h2><span className="panel-count">{operationalState}</span></div>
    <p className="metric-detail">Read-only backend health: {health?.status??"not_required"} · Operational catalog: {operationalState} · Observed tickers: {operational.data?.total??"unknown"}</p>
-   <p className="metric-detail"><Localize text="These correspond to the backend and operationalMarket statuses exposed by" />{" "}<Link href="/api/health"><Localize text="the web health endpoint" /></Link>. An available catalog is not evidence of validated research data.</p>
+   <p className="metric-detail"><Localize text="These correspond to the backend and operationalMarket statuses exposed by" />{" "}<Link href="/api/health"><Localize text="the web health endpoint" /></Link><Localize text=". An available catalog is not evidence of validated research data."/></p>
    <p className="section-copy"><Localize text="Unreviewed operational snapshot, separate from the research market universe. A successful backend health response does not guarantee these endpoints are configured." /></p>
    {operational.error?<p className="metric-detail" role="status">Catalog: {operational.error}</p>:null}
    {operational.data?<p className="metric-detail">API returned {operational.data.items.length} tickers on the first page. <Link href="/operational-market"><Localize text="Browse collected tickers" /></Link></p>:null}

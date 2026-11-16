@@ -84,7 +84,7 @@ export default async function ResearchPathPage({
   </section>
   <section className="panel single-panel" aria-label="Research integrity limitations">
    <h2><Localize text="Source and performance boundaries" /></h2>
-   <p className="section-copy">Observed means source records were returned, not research readiness. Missing or 503 responses remain unavailable; no mock fallback is used in HTTP mode. Unreviewed operational OHLCV never becomes validated research, and the historical portfolio API supplies research-only simulated records without PIT/OOS or trading approval.</p>
+   <p className="section-copy"><Localize text="Observed means source records were returned, not research readiness. Missing or 503 responses remain unavailable; no mock fallback is used in HTTP mode. Unreviewed operational OHLCV never becomes validated research, and the historical portfolio API supplies research-only simulated records without PIT/OOS or trading approval."/></p>
    <p><Link href="/diagnostics"><Localize text="Inspect backend errors" /></Link> · <Link href="/research-workbench"><Localize text="Review model and publication provenance" /></Link> · <Link href="/backtesting/portfolios"><Localize text="Compare archived research reports" /></Link></p>
   </section>
  </>;
