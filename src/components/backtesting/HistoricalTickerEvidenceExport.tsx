@@ -1,4 +1,5 @@
 "use client";
+import { ClientLocalize } from "@/i18n/LocaleProvider";
 
 import {useState} from "react";
 import type {HistoricalTickerEvidence} from "@/data/HistoricalPortfolioTickerDataSource";
@@ -24,7 +25,7 @@ export function HistoricalTickerEvidenceExport({evidence}:{evidence:HistoricalTi
   }
  };
  return <div>
-  <button type="button" onClick={download}>Export current page research CSV</button>
+  <button type="button" onClick={download}><ClientLocalize text="Export current page research CSV" /></button>
   <p className="metric-detail" role="status">{message}</p>
  </div>;
 }

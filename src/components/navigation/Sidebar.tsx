@@ -1,4 +1,5 @@
 "use client";
+import { ClientLocalize } from "@/i18n/LocaleProvider";
 
 import Link from "next/link";
 import { translate, type Locale } from "../../i18n/translations";
@@ -31,8 +32,8 @@ export function Sidebar({ locale, sourceMode }: { locale: Locale; sourceMode: "h
       <Link className="brand" href="/">
         <span className="brand-mark">T</span>
         <span>
-          <span className="brand-name">Tris</span>
-          <span className="brand-subtitle">Market Lens</span>
+          <span className="brand-name"><ClientLocalize text="Tris" /></span>
+          <span className="brand-subtitle"><ClientLocalize text="Market Lens" /></span>
         </span>
       </Link>
 
