@@ -1,5 +1,5 @@
 "use client";
-import { ClientLocalize } from "@/i18n/LocaleProvider";
+import { ClientLocalize } from "../../i18n/LocaleProvider";
 import {useEffect,useState} from "react";
 import {exportPipelineEvidenceCoverageCsv} from "../../domain/pipelineEvidenceCoverageCsv";
 import {exportPipelineTriageCsv} from "../../domain/pipelineTriageCsv";
