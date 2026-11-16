@@ -102,3 +102,27 @@ source bytes remain unchanged, 0600 output is used, sensitive fields are
 excluded, and an active sidecar is not published. CI cannot access the actual
 operator's private research DBs and cannot claim a live local research export
 has succeeded. The owner-run export command is the final integration step.
+
+## Within-study evaluation insights
+
+The evaluation screen computes five-bin score distributions for Mean AP,
+Stability AP and Worst Balanced Accuracy from the current **included study**
+only. It shows the total observed/missing score count, minimum, interpolated
+quartiles, median and maximum, plus the underlying bucket counts. Scores of
+exactly 1.0 are included in the last bucket. Null values do not become zero.
+
+The separate evidence summary counts explicit `true` flags for PIT,
+performance approval and execution authorization, and distinguishes missing
+approval fields from explicit `false`. It also counts **presence only** of
+deferred diagnostics, robustness summaries and generalization training; the
+presence of such an object does **not** mean that it passed any holdout gate.
+
+Run states, terminal states, and evaluation observations are displayed as
+separate collections. The redacted export contains no shared experiment IDs
+or validated timeline join keys, so the web does **not** fabricate a causal
+run→selection→result→terminal chain or any trend implied by SQLite row order.
+Within-study distributions describe recorded artifacts, not forward
+performance or cross-study model superiority.
+
+All these insights derive directly from the existing manually refreshed local
+publication. There are no extra DB reads, network calls, or scheduled jobs.
