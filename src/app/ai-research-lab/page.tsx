@@ -13,13 +13,16 @@ const statusOptions=["all","completed","failed","interrupted","paused","running"
 export default async function AIResearchLabPage({
   searchParams,
 }: {
-  searchParams:Promise<{q?:string;state?:string;agent?:string;page?:string}>;
+  searchParams:Promise<{q?:string;state?:string;agent?:string;page?:string;offset?:string}>;
 }){
   const t=await getTranslator();
   const params=await searchParams;
   const approved=await labStudies(0,1);
   if(approved.data){
-    const offset=typeof params.page==="string"&&/^\d{1,4}$/.test(params.page)?(Math.max(1,Number(params.page))-1)*25:0;
+    const offset=typeof params.offset==="string"&&/^\d{1,5}$/.test(params.offset)
+      ?Math.min(10000,Number(params.offset))
+      :typeof params.page==="string"&&/^\d{1,4}$/.test(params.page)
+        ?(Math.max(1,Number(params.page))-1)*25:0;
     return <PublishedLabOverview offset={offset}/>;
   }
   const source=await getAutonomousResearchPublication();
