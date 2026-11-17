@@ -50,15 +50,15 @@ async function HorizonTable({horizons,studyId}:{horizons:ResearchLabHorizon[];st
 }
 async function StudySummary({study}:{study:ResearchLabStudy}) {
   const t=await getTranslator();
-  return <div className="operations-run">
+  return <article className="operations-run research-lab-study-card">
     <div style={{minWidth:0,overflowWrap:"anywhere"}}>
       <strong><Link href={studyHref(study.studyId)}>{studyName(study,t)}</Link></strong>
       <p className="metric-detail">{t("Study ID")}: {idLinks(study.studyId)} · {study.completed} {t("completed")} / {study.failed} {t("failed")} · {t("budget")} {study.experimentBudget}</p>
       <p className="metric-detail">{t("Report ID")}: {idLinks(study.reportId)} · {study.horizons.length} {t("horizons")} · {t("Independent validation")}: {t(study.independentValidationStatus)}</p>
       <p className="metric-detail"><Link href={studyHref(study.studyId)}>{t("View study and experiments")}</Link> · <Link href={reportHref(study.reportId)}>{t("Read final report")}</Link></p>
     </div>
-    <span className="panel-count" title={t("Research results are descriptive, not approved for live trading.")}>{t("Completed historical study")}</span>
-  </div>;
+    <span className="research-lab-study-status" title={t("Research results are descriptive, not approved for live trading.")}>{t("Completed historical study")}</span>
+  </article>;
 }
 export async function PublishedLabOverview({offset=0}:{offset?:number}) {
   const t=await getTranslator();
