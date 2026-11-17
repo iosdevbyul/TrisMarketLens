@@ -1559,3 +1559,45 @@ h1 {
  .stock-analysis-heading{flex-wrap:wrap}
  .metric-list>div{min-width:0;flex-wrap:wrap}
 }
+
+/* The Research Lab study status is metadata, not a global panel count or alarm badge.
+   Keep its pill geometry independent of flex wrapping and narrow viewport widths. */
+.research-lab-study-card {
+  align-items: flex-start;
+  column-gap: 18px;
+  row-gap: 12px;
+}
+.research-lab-study-card > div:first-child {
+  flex: 1 1 320px;
+  min-width: 0;
+}
+.research-lab-study-status {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  width: max-content;
+  max-width: 100%;
+  min-height: 28px;
+  padding: 5px 11px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-strong);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+@media (max-width: 640px) {
+  .research-lab-study-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .research-lab-study-card > div:first-child {
+    flex-basis: auto;
+  }
+  .research-lab-study-status {
+    align-self: flex-start;
+  }
+}
