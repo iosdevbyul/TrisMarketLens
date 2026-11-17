@@ -14,6 +14,7 @@ const n=(value:number|null|undefined)=>value===null||value===undefined?"—":Str
 const score=(value:number|null|undefined)=>value===null||value===undefined?"—":value.toFixed(4);
 const truncated=(value:string)=>value.length>18?value.slice(0,12)+"…"+value.slice(-6):value;
 const idLinks=(id:string)=> <code title={id} style={{overflowWrap:"anywhere"}}>{truncated(id)}</code>;
+const studyName=(study:ResearchLabStudy,t:(text:string)=>string)=>t(study.cohort)+" / "+t(study.selectionPolicy);
 
 async function Unavailable({message}:{message:string}) {
   const t=await getTranslator();
@@ -51,11 +52,12 @@ async function StudySummary({study}:{study:ResearchLabStudy}) {
   const t=await getTranslator();
   return <div className="operations-run">
     <div style={{minWidth:0,overflowWrap:"anywhere"}}>
-      <strong><Link href={studyHref(study.studyId)}>{study.cohort} / {study.selectionPolicy}</Link></strong>
-      <p className="metric-detail">Study {idLinks(study.studyId)} · {study.completed} {t("completed")} / {study.failed} {t("failed")} · {t("budget")} {study.experimentBudget}</p>
-      <p className="metric-detail">Report <Link href={reportHref(study.reportId)}>{idLinks(study.reportId)}</Link> · {study.horizons.length} {t("horizons")} · {t("Independent validation")}: {t(study.independentValidationStatus)}</p>
+      <strong><Link href={studyHref(study.studyId)}>{studyName(study,t)}</Link></strong>
+      <p className="metric-detail">{t("Study ID")}: {idLinks(study.studyId)} · {study.completed} {t("completed")} / {study.failed} {t("failed")} · {t("budget")} {study.experimentBudget}</p>
+      <p className="metric-detail">{t("Report ID")}: {idLinks(study.reportId)} · {study.horizons.length} {t("horizons")} · {t("Independent validation")}: {t(study.independentValidationStatus)}</p>
+      <p className="metric-detail"><Link href={studyHref(study.studyId)}>{t("View study and experiments")}</Link> · <Link href={reportHref(study.reportId)}>{t("Read final report")}</Link></p>
     </div>
-    <span className="status-pill" data-state="blocked">{t("Research only")}</span>
+    <span className="panel-count" title={t("Research results are descriptive, not approved for live trading.")}>{t("Completed historical study")}</span>
   </div>;
 }
 export async function PublishedLabOverview({offset=0}:{offset?:number}) {
@@ -66,6 +68,10 @@ export async function PublishedLabOverview({offset=0}:{offset?:number}) {
   const completed=available.items.reduce((sum,s)=>sum+s.completed,0);
   return <div>
     <PageHeader eyebrow="AI Research Lab" title="Donghak autonomous research" badge="Approved local research publication" description="Explore original Study and Experiment identities, model evaluation, historical memory, final reports and cohort-matched policy comparisons without triggering research or trading." />
+    <nav aria-label={t("Research Lab navigation")} style={{display:"flex",flexWrap:"wrap",gap:"16px",marginBottom:"24px"}}>
+      <Link href={base+"/reports"}>{t("Final research reports")}</Link>
+      <Link href={base+"/comparisons"}>{t("Matched policy comparisons")}</Link>
+    </nav>
     <section className="panel single-panel" aria-label="Approved Research Lab overview">
       <div className="panel-heading"><h2>{t("Approved Research Lab overview")}</h2><span className="panel-count">{available.total} {t("studies")}</span></div>
       <p className="section-copy">{t("Original Plan IDs and approved report links are supplied by the backend. Counts refer to the returned page, not inferred experiments.")}</p>
@@ -95,7 +101,7 @@ export async function PublishedStudy({id,offset=0}:{id:string;offset?:number}) {
   const s=study.data;
   return <>
     <Link className="back-link" href={base}>{t("Back to AI Research Lab")}</Link>
-    <PageHeader eyebrow="Approved Study" title={s.cohort+" / "+s.selectionPolicy} badge="Research only" description="Original Study Plan ID, verified experiment relationships and retrospective metrics from the approved read-only publication."/>
+    <PageHeader eyebrow="Approved Study" title={studyName(s,t)} badge="Historical research" description="Original Study Plan ID, verified experiment relationships and retrospective metrics from the approved read-only publication."/>
     <section className="panel single-panel">
       <h2>{t("Study scope")}</h2>
       <p className="metric-detail">Study ID: {idLinks(s.studyId)} · {t("Comparison group")}: {idLinks(s.comparisonGroupId)}</p>
@@ -134,7 +140,8 @@ async function MetricMatrix({metrics}:{metrics:Array<Record<string,number|null>|
     <tbody>{metrics.map((m,index)=><tr key={index}><td style={{padding:10}}>{index+1}</td><td style={{padding:10}}>{score(m?.pr_auc_ap)}</td><td style={{padding:10}}>{score(m?.balanced_accuracy)}</td><td style={{padding:10}}>{score(m?.brier_score)}</td></tr>)}</tbody></table></div>;
 }
 
-function DiagnosticMetrics({diagnostic}:{diagnostic:unknown}) {
+async function DiagnosticMetrics({diagnostic}:{diagnostic:unknown}) {
+  const t=await getTranslator();
   if(!diagnostic || typeof diagnostic!=="object" || Array.isArray(diagnostic))return null;
   const groups=diagnostic as Record<string,unknown>;
   const sections=["periods","input_regimes","heldout_regimes","ticker_distribution","seen_symbols","heldout_symbols"];
@@ -155,9 +162,9 @@ function DiagnosticMetrics({diagnostic}:{diagnostic:unknown}) {
   if(!rows.length)return null;
   return <div className="stock-table" style={{overflowX:"auto"}}>
     <table style={{width:"100%",minWidth:620,textAlign:"left"}}>
-      <thead><tr><th>Retrospective population</th><th>Assessment status</th><th>AP</th><th>BA</th><th>Brier</th></tr></thead>
-      <tbody>{rows.map(row=><tr key={row.label}><td style={{padding:8}}>{row.label}</td><td style={{padding:8}}>{row.status}</td><td>{score(row.ap)}</td><td>{score(row.ba)}</td><td>{score(row.brier)}</td></tr>)}</tbody>
-    </table><p className="metric-detail">These diagnostic populations are not independently qualified and were not used to select the candidate.</p>
+      <thead><tr><th>{t("Retrospective population")}</th><th>{t("Assessment status")}</th><th>AP</th><th>BA</th><th>Brier</th></tr></thead>
+      <tbody>{rows.map(row=><tr key={row.label}><td style={{padding:8}}>{row.label.split(" / ").map(part=>t(part)).join(" / ")}</td><td style={{padding:8}}>{t(row.status)}</td><td>{score(row.ap)}</td><td>{score(row.ba)}</td><td>{score(row.brier)}</td></tr>)}</tbody>
+    </table><p className="metric-detail">{t("These diagnostic populations are not independently qualified and were not used to select the candidate.")}</p>
   </div>;
 }
 
@@ -200,7 +207,14 @@ export async function PublishedReports({offset=0}:{offset?:number}) {
   return <><Link className="back-link" href={base}>{t("Back to AI Research Lab")}</Link>
     <PageHeader eyebrow="Research reports" title="Final research reports" badge="Operator-approved projection" description="Published report summaries only; original raw JSON and private source references are not exposed."/>
     {!r.data?<Unavailable message={t(r.message)}/>:<section className="panel single-panel"><h2>{t("Final reports")} ({r.data.total})</h2>
-      {r.data.items.map(s=><StudySummary study={s} key={s.reportId}/>)}
+      {r.data.items.map(s=><article key={s.reportId} className="operations-run">
+        <div style={{minWidth:0,overflowWrap:"anywhere"}}>
+          <strong><Link href={reportHref(s.reportId)}>{studyName(s,t)}</Link></strong>
+          <p className="metric-detail">{t("Report ID")}: {idLinks(s.reportId)} · {s.completed} {t("completed")} / {s.failed} {t("failed")}</p>
+          <p className="metric-detail"><Link href={reportHref(s.reportId)}>{t("Read final report")}</Link> · <Link href={studyHref(s.studyId)}>{t("View study and experiments")}</Link></p>
+        </div>
+        <span className="panel-count">{t("Published report")}</span>
+      </article>)}
       <Pagination path={base+"/reports"} offset={r.data.offset} total={r.data.total} limit={r.data.limit}/><Limits/></section>}
   </>;
 }
@@ -209,7 +223,7 @@ export async function PublishedReport({id}:{id:string}) {
   if(!r.data)return <Unavailable message={t(r.message)}/>;
   const s=r.data;
   return <><Link className="back-link" href={base+"/reports"}>{t("Back to reports")}</Link>
-    <PageHeader eyebrow="Approved final report" title={s.cohort+" / "+s.selectionPolicy} badge="Historical research only" description="Allowlisted final report fields, not an original report download or trading authorization."/>
+    <PageHeader eyebrow="Approved final report" title={studyName(s,t)} badge="Historical research" description="Allowlisted final report fields, not an original report download or trading authorization."/>
     <section className="panel single-panel"><h2>{t("Research report")}</h2>
       <p className="metric-detail">{t("Report ID")}: {idLinks(s.reportId)} · <Link href={studyHref(s.studyId)}>{t("Study details")}</Link></p>
       <p className="metric-detail">{t("Research period")}: {s.researchPeriod.first_date} – {s.researchPeriod.last_date} · {s.researchPeriod.dates} {t("dates")} · {s.researchPeriod.observations} {t("observations")}</p>
@@ -220,7 +234,7 @@ export async function PublishedReport({id}:{id:string}) {
     <section className="panel single-panel"><h2>{t("Horizon selections and performance")}</h2><HorizonTable horizons={s.horizons} studyId={s.studyId}/>
       {s.horizons.map(h=><div key={h.horizon}><h3>{t("Horizon")} {h.horizon}: {t("Selected seen folds")}</h3><MetricMatrix metrics={h.selectedSeenFoldMetrics}/><DiagnosticMetrics diagnostic={h.selectedDeferredDiagnostic}/></div>)}
     </section>
-    <section className="panel single-panel"><h2>{t("Historical discovery and resources")}</h2><p>{t("Discovery records")}: {s.discoveryCurve.length}</p>
+    <section className="panel single-panel"><h2>{t("Historical discovery and resources")}</h2><p>{t("Discovery records")}: {s.discoveryCurve.length} · {t("Learner seconds")}: {n(s.learnerSeconds)} · {t("Maximum RSS KB")}: {n(s.maximumRssKb)}</p>
       {s.discoveryCurve.map((entry,index)=><p className="metric-detail" key={entry.experimentId}>{index+1}. <Link href={experimentHref(s.studyId,entry.experimentId)}>{idLinks(entry.experimentId)}</Link> · {t("Selection order")}: {n(entry.selection)} · {t("Cache reused")}: {entry.cacheReused===null?"—":entry.cacheReused?t("Yes"):t("No")}</p>)}
     </section>
     <section className="panel single-panel"><h2>{t("Report limitations")}</h2><p className="section-copy">{s.limitations.map(v=>t(v.replaceAll("_"," "))).join(" · ")}</p><Limits/></section>
@@ -232,10 +246,10 @@ export async function PublishedComparisons() {
     <PageHeader eyebrow="Research policy comparison" title="Adaptive / Predeclared / Robust" badge="Descriptive only" description="Compare policies only within matching backend-provided cohort and comparison conditions. Differences do not establish causal superiority."/>
     {!r.data?<Unavailable message={t(r.message)}/>:r.data.items.map(group=><section className="panel single-panel" key={group.comparisonGroupId}>
       <div className="panel-heading"><h2>{group.cohort}</h2><span className="panel-count">{group.completeThreeArmComparison?t("Three matching policies"):t("Incomplete policy arms")}</span></div>
-      <p className="metric-detail">{t("Comparison group")}: {idLinks(group.comparisonGroupId)} · {group.policies.join(" / ")}</p>
+      <p className="metric-detail">{t("Comparison group")}: {idLinks(group.comparisonGroupId)} · {group.policies.map(t).join(" / ")}</p>
       {group.horizons.map(h=><div key={h.horizon}><h3>{t("Horizon")} {h.horizon}</h3>
         <div className="operations-runs">{h.arms.map(arm=><div className="operations-run" key={arm.studyId}>
-          <div><strong><Link href={studyHref(arm.studyId)}>{arm.policy}</Link></strong>
+          <div><strong><Link href={studyHref(arm.studyId)}>{t(arm.policy)}</Link></strong>
           <p className="metric-detail">{t("Selected mean AP")}: {score(arm.selectedMeanAP)} · {t("Best seen AP")}: {score(arm.bestSeenAP)} · {t("Selected experiment")}: {arm.selectedExperimentId?<Link href={experimentHref(arm.studyId,arm.selectedExperimentId)}>{idLinks(arm.selectedExperimentId)}</Link>:t("Not selected")}</p></div>
         </div>)}</div></div>)}
       <p className="section-copy">{t("Policy superiority is not established.")} {group.completeThreeArmComparison?t("Matching comparison arms are present."):t("A complete three-arm comparison is unavailable.")}</p><Limits/>

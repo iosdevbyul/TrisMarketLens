@@ -1586,3 +1586,35 @@ Object.assign(ko, {
   "Brier score": "브라이어 점수",
   "Completed candidates": "완료된 후보 실험 수"
 });
+
+Object.assign(ko, {
+  "View study and experiments": "연구 및 실험 상세 보기",
+  "Published report": "게시된 최종 보고서",
+  "Completed historical study": "과거 연구 완료",
+  "Research results are descriptive, not approved for live trading.": "연구 결과는 참고용이며 실제 거래가 승인된 상태가 아닙니다.",
+  "Research Lab navigation": "AI 연구소 바로가기",
+  "historical-cohort1": "과거 연구 그룹 1",
+  "historical-cohort2": "과거 연구 그룹 2",
+  "adaptive": "적응형 탐색",
+  "predeclared": "사전 선언형 탐색",
+  "robust": "강건성 중심 탐색",
+  "Historical research": "과거 연구",
+  "periods": "기간별",
+  "input_regimes": "시장 국면별",
+  "heldout_regimes": "보류 표본 시장 국면별",
+  "ticker_distribution": "종목별",
+  "seen_symbols": "관측 종목",
+  "heldout_symbols": "보류 종목",
+  "up_trend": "상승 추세",
+  "down_trend": "하락 추세",
+  "sideways": "횡보",
+  "high_volatility": "고변동성",
+  "low_volatility": "저변동성",
+  "normal_volatility": "일반 변동성",
+  "normal_volume": "일반 거래량",
+  "volume_surge": "거래량 급증",
+  "internal_descriptive_sufficient": "내부 설명용 표본 충분",
+  "insufficient": "표본 부족",
+  "UNKNOWN": "상태 미확인",
+  "DESCRIPTIVE_RESEARCH_ONLY": "연구 설명 자료 전용"
+});
